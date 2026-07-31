@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="am">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ይቻላል የመጽሐፍት መደብር</title>
+    
+    <!-- Google Site Verification Tag -->
+    <meta name="google-site-verification" content="5z69xjyciaTY6dCohcwNgLjpwEsQlipoO1CwSZATDTU" />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // Multilingual Dictionary
+        const translations = {
+            am: {
+                storeName: 'ይቻላል የመጽሐፍት መደብር',
+                tagline: 'ለተሻለ እውቀት ማንበቤን እቀጥላለሁ!',
+                home: 'ዋና ገጽ',
+                freeRead: '📖 ነጻ ንባብ',
+                account: 'አካውንት',
+                about: 'አባውት',
+                contact: 'አስተያየት',
+                searchPlaceholder: '🔍 መጽሐፍ ወይም ደራሲ ይፈልጉ...',
+                all: 'ሁሉም',
+                novel: 'ልብ ወለድ',
+                history: 'ታሪክ',
+                educational: 'ትምህርታዊ',
+                addToCart: 'ወደ ጋሪ ጨምር 🛒',
+                outOfStock: 'ክምችት አልቋል',
+                cartTitle: '🛒 የትዕዛዝ ጋሪ እና የክፍያ ቅጽ',
+                emptyCart: 'ጋሪው ባዶ ነው።',
+                total: 'ጠቅላላ ክፍያ:',
+                sendOrder: 'ትዕዛዝ በቴሌግራም ላክ 🚀',
+                newsTitle: '📰 የዕለቱ ዜናዎች እና ማስታወቂያዎች',
+                quickCheckout: '⚡ ፈጣን ክፍያ',
+                adminDashboard: 'የአስተዳዳሪ ዳሽቦርድ (Admin Dashboard)',
+                logoutAdmin: 'ከአስተዳዳሪ ውጣ'
+            },
+            en: {
+                storeName: 'Yichalal Book Store',
+                tagline: 'I keep reading for better knowledge!',
+                home: 'Home',
+                freeRead: '📖 Free Read',
+                account: 'Account',
+                about: 'About',
+                contact: 'Contact',
+                searchPlaceholder: '🔍 Search book or author...',
+                all: 'All',
+                novel: 'Novel',
+                history: 'History',
+                educational: 'Educational',
+                addToCart: 'Add to Cart 🛒',
+                outOfStock: 'Out of Stock',
+                cartTitle: '🛒 Cart & Checkout Form',
+                emptyCart: 'Cart is empty.',
+                total: 'Total Payment:',
+                sendOrder: 'Send Order via Telegram 🚀',
+                newsTitle: '📰 Daily News & Announcements',
+                quickCheckout: '⚡ Quick Checkout',
+                adminDashboard: 'Admin Dashboard',
+                logoutAdmin: 'Logout Admin'
+            },
+            om: {
+                storeName: 'Kuusaa Kitaaba Yichalal',
+                tagline: 'Beekumsa fooyya’aadhaaf dubbisuu nan itti fuufa!',
+                home: 'Fuula Dura',
+                freeRead: '📖 Dubbisa Bilisaa',
+                account: 'Herrega',
+                about: 'Waa’ee Keenya',
+                contact: 'Yaada',
+                searchPlaceholder: '🔍 Kitaaba yookin barreessaa barbaadi...',
+                all: 'Hunda',
+                novel: 'Geeddarama (Novel)',
+                history: 'Seenaa',
+                educational: 'Barnootaa',
+                addToCart: 'Gariitti Dabali 🛒',
+                outOfStock: 'Kuusaan Dhumateera',
+                cartTitle: '🛒 Gaarii fi Tarreeffama Kaffaltii',
+                emptyCart: 'Gaariin duwwaa dha.',
+                total: 'Ida’ama Kaffaltii:',
+                sendOrder: 'Ajaja Telegram-dhaan Ergi 🚀',
+                newsTitle: '📰 Oduu fi Beeksisa Har’aa',
+                quickCheckout: '⚡ Kaffaltii Saffisaa',
+                adminDashboard: 'Daashboordi Bulchaa',
+                logoutAdmin: 'Bulchaarraa Bahuu'
+            },
+            sid: {
+                storeName: 'Yichalal Maxaafa Mini',
+                tagline: 'Garaño likki afateeto assate nabbabate digginammanni!',
+                home: 'Hanni Songo',
+                freeRead: '📖 Kuri Nabbaba',
+                account: 'Akawunti',
+                about: 'Aane Hunda',
+                contact: 'Yaafo',
+                searchPlaceholder: '🔍 Maxaafa yini barraan assa...',
+                all: 'Hulu',
+                novel: 'Novel',
+                history: 'Tariiki',
+                educational: 'Barnoota',
+                addToCart: 'Gariira Hosiisi 🛒',
+                outOfStock: 'Kuusa Horoonni Hoodino',
+                cartTitle: '🛒 Garii Shiqqo',
+                emptyCart: 'Gariichi wayaa diikki.',
+                total: 'Huluura Kaffalu:',
+                sendOrder: 'Telenira Shiqishi 🚀',
+                newsTitle: '📰 Faaro Hunda',
+                quickCheckout: '⚡ Saffiro Kaffalu',
+                adminDashboard: 'Hunda Assiichcha Dashboridi',
+                logoutAdmin: 'Hundunni Furtu'
+            }
+        };
+
+        function App() {
+            const [currentLang, setCurrentLang] = React.useState('am');
+            const t = translations[currentLang];
+
+            // URL Hash Routing Support for Admin (e.g. #admin)
+            const [activeTab, setActiveTab] = React.useState(() => {
+                return window.location.hash === '#admin' ? 'admin' : 'home';
+            });
+
+            React.useEffect(() => {
+                const handleHashChange = () => {
+                    if (window.location.hash === '#admin') {
+                        setActiveTab('admin');
+                    }
+                };
+                window.addEventListener('hashchange', handleHashChange);
+                return () => window.removeEventListener('hashchange', handleHashChange);
+            }, []);
+
+            const [isAdminAuthorized, setIsAdminAuthorized] = React.useState(false);
+            
+            // Admin Login States
+            const [adminEmailInput, setAdminEmailInput] = React.useState('');
+            const [adminPassInput, setAdminPassInput] = React.useState('');
+
+            // Admin Password Change States
+            const [newAdminPass, setNewAdminPass] = React.useState('');
+            const [adminPassword, setAdminPassword] = React.useState(() => {
+                return localStorage.getItem('yichalal_admin_pass') || '@Ychu.com2425';
+            });
+
+            // Multiple Admins Management State
+            const [adminList, setAdminList] = React.useState(() => {
+                const saved = localStorage.getItem('yichalal_admins_list_v18');
+                return saved ? JSON.parse(saved) : [
+                    { id: 1, email: 'birhanubiyadgie23@gmail.com', name: 'প্রধান አስተዳዳሪ (Main Admin)' }
+                ];
+            });
+            const [newAdminEmail, setNewAdminEmail] = React.useState('');
+            const [newAdminName, setNewAdminName] = React.useState('');
+
+            // User Account States
+            const [currentUser, setCurrentUser] = React.useState(() => {
+                const saved = localStorage.getItem('yichalal_current_user_v18');
+                return saved ? JSON.parse(saved) : null;
+            });
+            const [authMode, setAuthMode] = React.useState('login');
+            const [authEmail, setAuthEmail] = React.useState('');
+            const [authPassword, setAuthPassword] = React.useState('');
+            const [authName, setAuthName] = React.useState('');
+
+            const [usersList, setUsersList] = React.useState(() => {
+                const saved = localStorage.getItem('yichalal_users_db_v18');
+                return saved ? JSON.parse(saved) : [];
+            });
+
+            const handleAdminLogin = (e) => {
+                e.preventDefault();
+                const matchedAdmin = adminList.find(a => a.email.toLowerCase() === adminEmailInput.trim().toLowerCase());
+                if (matchedAdmin && adminPassInput === adminPassword) {
+                    setIsAdminAuthorized(true);
+                    setAdminEmailInput('');
+                    setAdminPassInput('');
+                    notify('Welcome to Admin Dashboard! 🔐');
+                } else {
+                    alert('የተሳሳተ አስተዳዳሪ ኢሜይል ወይም የይለፍ ቃል! (ዋናው ኢሜይል birhanubiyadgie23@gmail.com መሆን አለበት)');
+                    setAdminPassInput('');
+                }
+            };
+
+            const handleAddAdmin = (e) => {
+                e.preventDefault();
+                if (!newAdminEmail.trim()) return;
+                if (adminList.some(a => a.email.toLowerCase() === newAdminEmail.trim().toLowerCase())) {
+                    alert('ይህ ኢሜይል አስቀድሞ በአስተዳዳሪነት ተመዝግቧል!');
+                    return;
+                }
+                const updatedAdmins = [...adminList, { id: Date.now(), email: newAdminEmail.trim(), name: newAdminName.trim() || 'አስተዳዳሪ' }];
+                setAdminList(updatedAdmins);
+                localStorage.setItem('yichalal_admins_list_v18', JSON.stringify(updatedAdmins));
+                setNewAdminEmail('');
+                setNewAdminName('');
+                notify('አዲስ አስተዳዳሪ በተሳካ ሁኔታ ተጨመረ! ✅');
+            };
+
+            const handleRemoveAdmin = (id, email) => {
+                if (email === 'birhanubiyadgie23@gmail.com') {
+                    alert('ዋናውን የድር ጣቢያ ባለቤት አስተዳዳሪ መሰረዝ አይቻልም!');
+                    return;
+                }
+                if (confirm('ይህን አስተዳዳሪ ማጥፋት ይፈልጋሉ?')) {
+                    const updated = adminList.filter(a => a.id !== id);
+                    setAdminList(updated);
+                    localStorage.setItem('yichalal_admins_list_v18', JSON.stringify(updated));
+                    notify('አስተዳዳሪው ተወግዷል!');
+                }
+            };
+
+            const handleUpdateAdminPassword = (e) => {
+                e.preventDefault();
+                if (!newAdminPass.trim()) return;
+                setAdminPassword(newAdminPass);
+                localStorage.setItem('yichalal_admin_pass', newAdminPass);
+                setNewAdminPass('');
+                notify('የአስተዳዳሪ ፓስወርድ በተሳካ ሁኔታ ተቀይሯል! 🔑');
+            };
+
+            const [books, setBooks] = React.useState(() => {
+                const saved = localStorage.getItem('yichalal_books_v18');
+                return saved ? JSON.parse(saved) : [
+                    { id: 1, title: 'ፍቅር እስከ መቃብር', author: 'በዓሉ ግርማ', price: 400, soldCount: 235, stock: 4, category: 'ልብ ወለድ', description: 'የእዮብ እና የብዙአንቱ ፍቅር እንዲሁም የማህበረሰቡን ገጽታ የሚያሳይ አንጋፋ ልብ ወለድ።', image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=600', isNew: false, isFeatured: true, freeReadContent: 'መግቢያ እና ምዕራፍ 1:\n\nበዕለተ እሁድ ከሰዓት በኋላ የነበረው ጸጥታ ከተማዋን ለብሶአት ነበር። እዮብ በመጽሐፉ ላይ አተኩሮ ሳለ የሰፈሩ ውሾች ይጮሁ ነበር...\n\n(ይህ ነጻ የማንበቢያ ማዕከል ናሙና ክፍል ነው፡፡ ሙሉውን ለማግኘት መጽሐፉን ይግዙ)።', reviews: [{ id: 1, user: 'አበበ', rating: 5, comment: 'በጣም ድንቅ መጽሐፍ ነው!' }] },
+                    { id: 2, title: 'ኦሮማይ', author: 'በዓሉ ግርማ', price: 350, soldCount: 180, stock: 30, category: 'ልብ ወለድ', description: 'በፖለቲካዊ እና ማህበራዊ ዙሪያ ያተኮረ ተወዳጅ እና ታዋቂ መጽሐፍ።', image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&q=80&w=600', isNew: true, isFeatured: true, freeReadContent: 'ምዕራፍ 1 - ጅምር:\n\nማህበራዊው እና ፖለቲካዊው ሂደት በወቅቱ ከፍተኛ ፍላጎት የፈጠረ ነበር። የድርጅቱ ስብሰባዎችም እንዲሁ በተለያዩ ውዝግቦች ታጅበው ነበር...\n\n(ይህ ነጻ የማንበቢያ ማዕከል ናሙና ክፍል ነው)።', reviews: [] },
+                    { id: 3, title: 'ብርቅርቅታ', author: 'አለማየሁ ገላጋይ', price: 380, soldCount: 145, stock: 3, category: 'ልብ ወለድ', description: 'ዘመናዊ ማህበራዊ ህይወትን እና የሰዎችን ስነ-ልቦና በጥልቀት የሚዳስስ ድንቅ መጽሐፍ።', image: 'https://images.unsplash.com/photo-1495640388908-05fa85288e61?auto=format&fit=crop&q=80&w=600', isNew: true, isFeatured: true, freeReadContent: 'መቅድም:\n\nብርቅርቅታ የሰው ልጆችን ውስጣዊ ስሜት የሚፈትሽ እና አዲስ አተያይ የሚሰጥ ድንቅ የአጭር ማስታወሻዎች ስብስብ ነው።\n\n(ይህ ነጻ የማንበቢያ ማዕከል ናሙና ክፍል ነው)።', reviews: [] },
+                    { id: 4, title: 'የኢትዮጵያ ታሪክ', author: 'ተክለጻድቅ መኩሪያ', price: 450, soldCount: 120, stock: 15, category: 'ታሪክ', description: 'ስለ ኢትዮጵያ ከጥንታዊ ዘመን እስከ አዲስ ታሪክ የሚዳስስ አጠቃላይ ድንቅ መጽሐፍ።', image: 'https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&q=80&w=600', isNew: false, isFeatured: false, freeReadContent: 'መግቢያ:\n\nየኢትዮጵያ ጥንታዊ ታሪክ ከክርስቶስ ልደት በፊት የነበሩ ስልጣኔዎችን እና የንግድ መስመሮችን የሚያሳይ ነው።\n\n(ይህ ነጻ የማንበቢያ ማዕከል ናሙና ክፍል ነው)።', reviews: [] }
+                ];
+            });
+
+            const [newsList, setNewsList] = React.useState(() => {
+                const saved = localStorage.getItem('yichalal_news_v18');
+                return saved ? JSON.parse(saved) : [
+                    { id: 1, title: 'እንኳን ወደ ይቻላል መጽሐፍት መደብር በደህና መጡ!', content: 'አዳዲስ መጻሕፍት ገብተዋል እንዲሁም የ10% ቅናሽ ኮድ (YICHALAL10) መጠቀም ይችላሉ።', category: 'አጠቃላይ', date: '2026-07-27' }
+                ];
+            });
+            const [newsTitleInput, setNewsTitleInput] = React.useState('');
+            const [newsContentInput, setNewsContentInput] = React.useState('');
+            const [newsCategory, setNewsCategory] = React.useState('አጠቃላይ');
+
+            const [cart, setCart] = React.useState(() => {
+                const saved = localStorage.getItem('yichalal_cart_v18');
+                return saved ? JSON.parse(saved) : [];
+            });
+
+            const [wishlist, setWishlist] = React.useState(() => {
+                const saved = localStorage.getItem('yichalal_wish_v18');
+                return saved ? JSON.parse(saved) : [];
+            });
+
+            const [orders, setOrders] = React.useState(() => {
+                const saved = localStorage.getItem('yichalal_orders_v18');
+                return saved ? JSON.parse(saved) : [];
+            });
+
+            // Admin Book Form States
+            const [title, setTitle] = React.useState('');
+            const [author, setAuthor] = React.useState('');
+            const [price, setPrice] = React.useState('');
+            const [soldCount, setSoldCount] = React.useState('');
+            const [stock, setStock] = React.useState('');
+            const [category, setCategory] = React.useState('ልብ ወለድ');
+            const [description, setDescription] = React.useState('');
+            const [image, setImage] = React.useState('');
+            const [freeReadContent, setFreeReadContent] = React.useState('');
+            const [isNewBook, setIsNewBook] = React.useState(false);
+            const [isFeaturedBook, setIsFeaturedBook] = React.useState(false);
+            const [editId, setEditId] = React.useState(null);
+
+            // Filter & Search
+            const [searchTerm, setSearchTerm] = React.useState('');
+            const [selectedCategory, setSelectedCategory] = React.useState('ሁሉም');
+
+            const [activeReadBook, setActiveReadBook] = React.useState(null);
+
+            const [customerName, setCustomerName] = React.useState('');
+            const [customerPhone, setCustomerPhone] = React.useState('');
+            const [customerAddress, setCustomerAddress] = React.useState('');
+            const [paymentMethod, setPaymentMethod] = React.useState('ንግድ ባንክ');
+            const [transactionId, setTransactionId] = React.useState('');
+            const [promoCode, setPromoCode] = React.useState('');
+            const [discount, setDiscount] = React.useState(0);
+
+            const [reviewRating, setReviewRating] = React.useState(5);
+            const [reviewComment, setReviewComment] = React.useState('');
+
+            const [fbName, setFbName] = React.useState('');
+            const [fbType, setFbType] = React.useState('አስተያየት');
+            const [fbMessage, setFbMessage] = React.useState('');
+
+            const [selectedBook, setSelectedBook] = React.useState(null);
+            const [notification, setNotification] = React.useState('');
+
+            const [currentHeroSlide, setCurrentHeroSlide] = React.useState(0);
+            
+            const heroSlides = [
+                {
+                    title: 'ልዩ የጽሐፍ ስራዎች ማደሪያ',
+                    subtitle: 'ጥራትና ጥንቁቅ የፈጠራ ውጤቶችን ከኛ ጋር ይለማመዱ።',
+                    bgImg: 'https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&q=80&w=1600'
+                },
+                {
+                    title: 'አዳዲስ እና ምርጥ መጻሕፍት',
+                    subtitle: 'እውቀትዎን የሚያዳብሩ ምርጥ መጻሕፍትን በተመጣጣኝ ዋጋ ያግኙ።',
+                    bgImg: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=1600'
+                }
+            ];
+
+            React.useEffect(() => {
+                const heroTimer = setInterval(() => {
+                    setCurrentHeroSlide(prev => (prev + 1) % heroSlides.length);
+                }, 6000);
+                return () => clearInterval(heroTimer);
+            }, [heroSlides.length]);
+
+            React.useEffect(() => {
+                localStorage.setItem('yichalal_books_v18', JSON.stringify(books));
+            }, [books]);
+
+            React.useEffect(() => {
+                localStorage.setItem('yichalal_news_v18', JSON.stringify(newsList));
+            }, [newsList]);
+
+            React.useEffect(() => {
+                localStorage.setItem('yichalal_cart_v18', JSON.stringify(cart));
+            }, [cart]);
+
+            React.useEffect(() => {
+                localStorage.setItem('yichalal_wish_v18', JSON.stringify(wishlist));
+            }, [wishlist]);
+
+            React.useEffect(() => {
+                localStorage.setItem('yichalal_orders_v18', JSON.stringify(orders));
+            }, [orders]);
+
+            React.useEffect(() => {
+                localStorage.setItem('yichalal_current_user_v18', JSON.stringify(currentUser));
+            }, [currentUser]);
+
+            React.useEffect(() => {
+                localStorage.setItem('yichalal_users_db_v18', JSON.stringify(usersList));
+            }, [usersList]);
+
+            const notify = (msg) => {
+                setNotification(msg);
+                setTimeout(() => setNotification(''), 3000);
+            };
+
+            const handleRegister = (e) => {
+                e.preventDefault();
+                if (!authEmail || !authPassword || !authName) return;
+                const existing = usersList.find(u => u.email === authEmail);
+                if (existing) {
+                    alert('Email already registered!');
+                    return;
+                }
+                const newUser = { id: Date.now(), name: authName, email: authEmail, password: authPassword, registeredAt: new Date().toLocaleString() };
+                const updatedUsers = [...usersList, newUser];
+                setUsersList(updatedUsers);
+                setCurrentUser(newUser);
+                setCustomerName(authName);
+                notify('Account created successfully! 🎉');
+                setActiveTab('home');
+            };
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                const found = usersList.find(u => u.email === authEmail && u.password === authPassword);
+                if (found) {
+                    setCurrentUser(found);
+                    setCustomerName(found.name);
+                    notify(`Welcome back, ${found.name}! 👋`);
+                    setActiveTab('home');
+                } else {
+                    alert('Invalid email or password!');
+                }
+            };
+
+            const handleLogout = () => {
+                setCurrentUser(null);
+                notify('Logged out successfully!');
+                setActiveTab('account');
+            };
+
+            const applyPromo = () => {
+                if (promoCode.trim().toUpperCase() === 'YICHALAL10') {
+                    setDiscount(0.1);
+                    notify('10% Discount applied! 🎉');
+                } else {
+                    setDiscount(0);
+                    notify('Invalid Promo Code!');
+                }
+            };
+
+            const handleAdminSubmit = (e) => {
+                e.preventDefault();
+                const sales = parseInt(soldCount) || 0;
+                const availableStock = parseInt(stock) || 0;
+                const defaultImg = image.trim() || 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=600';
+                const defaultRead = freeReadContent.trim() || 'Sample free reading text.';
+
+                if (editId) {
+                    setBooks(books.map(b => b.id === editId ? {
+                        ...b, title, author, price: parseFloat(price), soldCount: sales, stock: availableStock, category, description, image: defaultImg, freeReadContent: defaultRead, isNew: isNewBook, isFeatured: isFeaturedBook
+                    } : b));
+                    setEditId(null);
+                    notify('Book updated!');
+                } else {
+                    const newBook = {
+                        id: Date.now(), title, author, price: parseFloat(price), soldCount: sales, stock: availableStock, category, description: description || 'Quality book.', image: defaultImg, freeReadContent: defaultRead, isNew: isNewBook, isFeatured: isFeaturedBook, reviews: []
+                    };
+                    setBooks([...books, newBook]);
+                    notify('New book added!');
+                }
+                setTitle(''); setAuthor(''); setPrice(''); setSoldCount(''); setStock(''); setDescription(''); setImage(''); setFreeReadContent(''); setIsNewBook(false); setIsFeaturedBook(false);
+            };
+
+            const handleNewsSubmit = (e) => {
+                e.preventDefault();
+                if (!newsTitleInput.trim() || !newsContentInput.trim()) return;
+                const newNewsItem = {
+                    id: Date.now(),
+                    title: newsTitleInput,
+                    content: newsContentInput,
+                    category: newsCategory,
+                    date: new Date().toISOString().split('T')[0]
+                };
+                setNewsList([newNewsItem, ...newsList]);
+                setNewsTitleInput('');
+                setNewsContentInput('');
+                notify('News published successfully! 📰');
+            };
+
+            const addToCart = (book) => {
+                if (book.stock <= 0) {
+                    notify('Out of stock');
+                    return;
+                }
+                const exist = cart.find(item => item.id === book.id);
+                if (exist) {
+                    if (exist.quantity >= book.stock) {
+                        notify('Exceeds stock limit!');
+                        return;
+                    }
+                    setCart(cart.map(i => i.id === book.id ? { ...i, quantity: i.quantity + 1 } : i));
+                } else {
+                    setCart([...cart, { ...book, quantity: 1 }]);
+                }
+                notify(`"${book.title}" added to cart! 🛒`);
+            };
+
+            const updateQty = (id, delta) => {
+                setCart(cart.map(item => {
+                    if (item.id === id) {
+                        const bookInfo = books.find(b => b.id === id);
+                        const newQ = item.quantity + delta;
+                        if (delta > 0 && bookInfo && newQ > bookInfo.stock) {
+                            notify('Cannot exceed stock!');
+                            return item;
+                        }
+                        return newQ > 0 ? { ...item, quantity: newQ } : null;
+                    }
+                    return item;
+                }).filter(Boolean));
+            };
+
+            const toggleWishlist = (book) => {
+                if (wishlist.some(i => i.id === book.id)) {
+                    setWishlist(wishlist.filter(i => i.id !== book.id));
+                    notify('Removed from wishlist.');
+                } else {
+                    setWishlist([...wishlist, book]);
+                    notify('Added to wishlist! ❤️');
+                }
+            };
+
+            const handleAddReview = (e, bookId) => {
+                e.preventDefault();
+                if (!reviewComment.trim()) return;
+                const newReview = {
+                    id: Date.now(),
+                    user: currentUser ? currentUser.name : (customerName || 'Guest'),
+                    rating: parseInt(reviewRating),
+                    comment: reviewComment
+                };
+
+                setBooks(books.map(b => {
+                    if (b.id === bookId) {
+                        const updatedReviews = [newReview, ...(b.reviews || [])];
+                        const updatedBook = { ...b, reviews: updatedReviews };
+                        if (selectedBook && selectedBook.id === bookId) {
+                            setSelectedBook(updatedBook);
+                        }
+                        return updatedBook;
+                    }
+                    return b;
+                }));
+
+                setReviewComment('');
+                notify('Review added successfully! ⭐️');
+            };
+
+            const subTotal = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+            const finalTotal = Math.round(subTotal * (1 - discount));
+
+            const handleCheckout = (e) => {
+                e.preventDefault();
+                if (cart.length === 0) return;
+                if (!transactionId.trim()) {
+                    alert('Please enter Transaction ID!');
+                    return;
+                }
+
+                let list = cart.map(i => `- ${i.title} (${i.quantity} pcs) - ${i.price * i.quantity} ETB`).join('\n');
+
+                const newOrder = {
+                    id: Date.now(),
+                    customerName: customerName || (currentUser ? currentUser.name : 'Guest'),
+                    customerEmail: currentUser ? currentUser.email : 'N/A',
+                    customerPhone,
+                    customerAddress,
+                    paymentMethod,
+                    transactionId,
+                    items: cart,
+                    total: finalTotal,
+                    date: new Date().toLocaleString()
+                };
+
+                setOrders([newOrder, ...orders]);
+
+                setBooks(books.map(book => {
+                    const cartItem = cart.find(i => i.id === book.id);
+                    if (cartItem) {
+                        return {
+                            ...book,
+                            stock: Math.max(0, book.stock - cartItem.quantity),
+                            soldCount: (book.soldCount || 0) + cartItem.quantity
+                        };
+                    }
+                    return book;
+                }));
+
+                let msg = `📚 New Order from Store!\n\n👤 Name: ${newOrder.customerName}\n📞 Phone: ${customerPhone}\n📍 Address: ${customerAddress}\n💳 Payment: ${paymentMethod}\n🧾 TxID: ${transactionId}\n\n🛒 Items:\n${list}\n\n💰 Total: ${finalTotal} ETB`;
+                window.open(`https://t.me/Ychalal2?text=${encodeURIComponent(msg)}`, '_blank');
+                
+                notify('Order sent successfully!');
+                setCart([]);
+                setCustomerPhone(''); setCustomerAddress(''); setTransactionId(''); setPromoCode(''); setDiscount(0);
+            };
+
+            const handleFeedbackSubmit = (e) => {
+                e.preventDefault();
+                let fbMsg = `📝 Feedback from customer!\n\n👤 Name: ${fbName || 'Anonymous'}\n📌 Type: ${fbType}\n💬 Message:\n${fbMessage}`;
+                window.open(`https://t.me/Ychalal2?text=${encodeURIComponent(fbMsg)}`, '_blank');
+                notify('Feedback sent successfully!');
+                setFbName(''); setFbMessage(''); setFbType('አስተያየት');
+            };
+
+            const filteredBooks = books.filter(b => {
+                const matchSearch = b.title.toLowerCase().includes(searchTerm.toLowerCase()) || b.author.toLowerCase().includes(searchTerm.toLowerCase());
+                const matchCat = selectedCategory === 'ሁሉም' || b.category === selectedCategory;
+                return matchSearch && matchCat;
+            });
+
+            return (
+                <div className="min-h-screen flex flex-col justify-between">
+                    {/* Notification Toast */}
+                    {notification && (
+                        <div className="fixed bottom-5 right-5 z-50 bg-gray-900 text-white px-4 py-3 rounded-xl shadow-2xl text-sm font-bold animate-bounce">
+                            {notification}
+                        </div>
+                    )}
+
+                    {/* Header */}
+                    <header className="bg-white shadow-sm sticky top-0 z-40">
+                        <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div className="flex items-center space-x-3 cursor-pointer" onClick={() => setActiveTab('home')}>
+                                <img src="channels4_profile.jpg" alt="Logo" className="w-11 h-11 rounded-full object-cover shadow border" />
+                                <div>
+                                    <h1 className="font-bold text-gray-900 text-base">{t.storeName}</h1>
+                                    <p className="text-xs text-emerald-700 font-semibold">{t.tagline}</p>
+                                </div>
+                            </div>
+                            
+                            <div className="flex flex-wrap items-center justify-center gap-2">
+                                {/* Search Bar in Header */}
+                                <div className="relative">
+                                    <input 
+                                        type="text" 
+                                        placeholder={t.searchPlaceholder} 
+                                        value={searchTerm} 
+                                        onChange={e => { setSearchTerm(e.target.value); if(activeTab !== 'home') setActiveTab('home'); }} 
+                                        className="bg-gray-50 border border-gray-200 text-xs rounded-xl px-3 py-2 w-40 md:w-56 outline-none focus:ring-2 focus:ring-indigo-500" 
+                                    />
+                                </div>
+
+                                {/* Language Switcher Selector */}
+                                <select 
+                                    value={currentLang} 
+                                    onChange={(e) => setCurrentLang(e.target.value)} 
+                                    className="bg-indigo-50 border border-indigo-200 text-indigo-800 text-xs font-bold rounded-xl px-2.5 py-2 outline-none cursor-pointer"
+                                >
+                                    <option value="am">አማርኛ (Amharic)</option>
+                                    <option value="en">English</option>
+                                    <option value="om">Afaan Oromoo</option>
+                                    <option value="sid">Sidaamu Afoo</option>
+                                </select>
+
+                                <button onClick={() => setActiveTab('home')} className={`px-3 py-2 rounded-xl text-xs md:text-sm font-bold ${activeTab === 'home' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-200'}`}>{t.home}</button>
+                                <button onClick={() => setActiveTab('freeread')} className={`px-3 py-2 rounded-xl text-xs md:text-sm font-bold ${activeTab === 'freeread' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-200'}`}>{t.freeRead}</button>
+                                <button onClick={() => setActiveTab('account')} className={`px-3 py-2 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1 ${activeTab === 'account' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-200'}`}>
+                                    👤 {currentUser ? currentUser.name : t.account}
+                                </button>
+                                <button onClick={() => setActiveTab('about')} className={`px-3 py-2 rounded-xl text-xs md:text-sm font-bold ${activeTab === 'about' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-200'}`}>{t.about}</button>
+                                <button onClick={() => setActiveTab('contact')} className={`px-3 py-2 rounded-xl text-xs md:text-sm font-bold ${activeTab === 'contact' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-200'}`}>{t.contact}</button>
+                                
+                                <a href="tel:+251930836065" className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1 shadow transition">
+                                    📞 0930836065
+                                </a>
+
+                                {/* Quick Checkout Button beside Cart Badge */}
+                                {cart.length > 0 && (
+                                    <a 
+                                        href="#checkout" 
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            const checkoutEl = document.getElementById('checkout-section');
+                                            if(checkoutEl) checkoutEl.scrollIntoView({ behavior: 'smooth' });
+                                        }}
+                                        className="bg-amber-500 hover:bg-amber-600 text-white px-3 py-2 rounded-xl text-xs font-black shadow animate-pulse flex items-center gap-1"
+                                    >
+                                        {t.quickCheckout}
+                                    </a>
+                                )}
+                                
+                                <div className="bg-indigo-50 text-indigo-700 px-3 py-2 rounded-xl text-xs md:text-sm font-bold flex items-center gap-1">
+                                    🛒 <span className="bg-indigo-600 text-white text-[11px] px-1.5 py-0.5 rounded-full">{cart.reduce((a, c) => a + c.quantity, 0)}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+
+                    {/* Main Content Areas */}
+                    {activeTab === 'home' && (
+                        <div>
+                            {/* Hero Slider */}
+                            <section className="relative text-white py-16 px-6 overflow-hidden bg-gray-900 shadow-inner">
+                                <div className="absolute inset-0 opacity-60">
+                                    <img src={heroSlides[currentHeroSlide].bgImg} alt="Banner" className="w-full h-full object-cover transition-all duration-700" />
+                                </div>
+                                <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/70 to-transparent"></div>
+
+                                <div className="max-w-5xl mx-auto relative z-10 min-h-[220px] flex flex-col justify-center px-10 md:px-16 space-y-3">
+                                    <h2 className="text-3xl md:text-4xl font-black text-amber-400 drop-shadow-md">{heroSlides[currentHeroSlide].title}</h2>
+                                    <p className="text-sm md:text-base text-white font-medium max-w-lg drop-shadow">{heroSlides[currentHeroSlide].subtitle}</p>
+                                </div>
+                            </section>
+
+                            <main className="max-w-6xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                <div className="lg:col-span-2 space-y-6">
+                                    {newsList.length > 0 && (
+                                        <div className="bg-white p-5 rounded-2xl shadow-sm border space-y-3">
+                                            <div className="flex flex-col md:flex-row justify-between items-center gap-2 border-b pb-2">
+                                                <h3 className="font-black text-base text-indigo-900 flex items-center gap-2">
+                                                    <span>📰</span> {t.newsTitle}
+                                                </h3>
+                                            </div>
+
+                                            <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
+                                                {newsList.map(news => (
+                                                    <div key={news.id} className="bg-indigo-50/50 border-l-4 border-indigo-600 p-3 rounded-r-xl space-y-1">
+                                                        <div className="flex justify-between items-center">
+                                                            <div className="flex items-center gap-2">
+                                                                <h4 className="font-bold text-sm text-gray-900">{news.title}</h4>
+                                                                <span className="bg-indigo-100 text-indigo-700 text-[9px] font-bold px-2 py-0.5 rounded">
+                                                                    {news.category || 'General'}
+                                                                </span>
+                                                            </div>
+                                                            <span className="text-[10px] text-gray-500 font-medium">{news.date}</span>
+                                                        </div>
+                                                        <p className="text-xs text-gray-700 leading-relaxed">{news.content}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="bg-white p-4 rounded-2xl shadow-sm flex flex-col md:flex-row gap-4 justify-between items-center">
+                                        <div className="flex flex-wrap gap-2 w-full justify-center md:justify-start">
+                                            {[t.all, t.novel, t.history, t.educational].map(cat => (
+                                                <button key={cat} onClick={() => setSelectedCategory(cat)} className={`px-4 py-2 rounded-xl text-xs font-bold ${selectedCategory === cat ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'}`}>{cat}</button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {filteredBooks.map(book => {
+                                            const avgRating = book.reviews && book.reviews.length > 0 
+                                                ? (book.reviews.reduce((a, r) => a + r.rating, 0) / book.reviews.length).toFixed(1) 
+                                                : null;
+
+                                            return (
+                                                <div key={book.id} className="bg-white border p-5 rounded-2xl flex flex-col justify-between shadow-sm relative hover:shadow-md transition-shadow">
+                                                    <div className="absolute top-4 right-4 z-10 flex items-center space-x-2">
+                                                        {book.isNew && <span className="bg-sky-100 text-sky-700 text-[10px] font-bold px-2 py-0.5 rounded-full">New</span>}
+                                                        <button onClick={() => toggleWishlist(book)} className={`text-lg bg-white/80 p-1 rounded-full ${wishlist.some(i => i.id === book.id) ? 'text-red-500' : 'text-gray-300'}`}>❤️</button>
+                                                    </div>
+                                                    
+                                                    <div className="w-full h-48 bg-gray-100 rounded-xl overflow-hidden mb-4 cursor-pointer" onClick={() => setSelectedBook(book)}>
+                                                        <img src={book.image} alt={book.title} className="w-full h-full object-cover hover:scale-105 transition-transform" />
+                                                    </div>
+
+                                                    <div>
+                                                        <div className="flex justify-between items-center mb-1">
+                                                            <span className="text-[11px] font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">{book.category}</span>
+                                                            {avgRating && <span className="text-xs font-bold text-amber-500">⭐ {avgRating} ({book.reviews.length})</span>}
+                                                        </div>
+                                                        <h3 className="font-bold text-gray-900 text-lg mt-1 cursor-pointer hover:text-indigo-600" onClick={() => setSelectedBook(book)}>{book.title}</h3>
+                                                        <p className="text-gray-500 text-sm mb-2">{book.author}</p>
+                                                        <p className="text-indigo-600 font-extrabold text-base mb-3">{book.price} ETB</p>
+                                                    </div>
+
+                                                    <div className="space-y-2 pt-2 border-t">
+                                                        <button onClick={() => setSelectedBook(book)} className="w-full bg-indigo-50 text-indigo-700 text-xs font-bold py-2 rounded-xl hover:bg-indigo-100">Details & Reviews 💬</button>
+                                                        <button onClick={() => { setActiveReadBook(book); setActiveTab('freeread'); }} className="w-full bg-amber-100 text-amber-800 text-xs font-bold py-2 rounded-xl hover:bg-amber-200">{t.freeRead} 📖</button>
+                                                        <button onClick={() => addToCart(book)} disabled={book.stock <= 0} className={`w-full text-white text-xs font-bold py-2.5 rounded-xl ${book.stock > 0 ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-gray-300 cursor-not-allowed'}`}>
+                                                            {book.stock > 0 ? t.addToCart : t.outOfStock}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div id="checkout-section" className="bg-white p-6 rounded-2xl shadow-sm sticky top-24 space-y-4 border-2 border-amber-400/50">
+                                        <h3 className="text-base font-bold border-b pb-2">{t.cartTitle}</h3>
+                                        {cart.length === 0 ? (
+                                            <div className="text-center py-6 space-y-2">
+                                                <p className="text-gray-400 text-sm">{t.emptyCart}</p>
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-4">
+                                                <ul className="divide-y text-sm max-h-40 overflow-y-auto space-y-2">
+                                                    {cart.map(item => (
+                                                        <li key={item.id} className="py-2 flex flex-col space-y-1">
+                                                            <div className="flex justify-between font-bold"><span>{item.title}</span><span className="text-indigo-600">{item.price * item.quantity} ETB</span></div>
+                                                            <div className="flex justify-between items-center text-xs">
+                                                                <span className="text-gray-500">Qty: {item.quantity}</span>
+                                                                <div className="space-x-1">
+                                                                    <button onClick={() => updateQty(item.id, -1)} className="px-2 py-0.5 bg-gray-200 rounded font-bold">-</button>
+                                                                    <button onClick={() => updateQty(item.id, 1)} className="px-2 py-0.5 bg-gray-200 rounded font-bold">+</button>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+
+                                                <div className="border-t pt-3 space-y-2">
+                                                    <div className="flex gap-2">
+                                                        <input type="text" placeholder="Promo Code" value={promoCode} onChange={e => setPromoCode(e.target.value)} className="w-full border rounded-xl px-3 py-1.5 text-xs outline-none" />
+                                                        <button onClick={applyPromo} className="bg-indigo-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold">Apply</button>
+                                                    </div>
+                                                    {discount > 0 && <p className="text-xs text-emerald-600 font-bold">✓ 10% Discount Applied!</p>}
+
+                                                    <div className="flex justify-between text-sm font-bold pt-1">
+                                                        <span>{t.total}</span>
+                                                        <span className="text-indigo-600">{finalTotal} ETB</span>
+                                                    </div>
+                                                </div>
+
+                                                <form onSubmit={handleCheckout} className="space-y-3 pt-2 border-t">
+                                                    <input type="text" placeholder="Full Name *" required value={customerName} onChange={e => setCustomerName(e.target.value)} className="w-full border rounded-xl px-3 py-2 text-xs outline-none" />
+                                                    <input type="tel" placeholder="Phone Number *" required value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} className="w-full border rounded-xl px-3 py-2 text-xs outline-none" />
+                                                    <input type="text" placeholder="Address *" required value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} className="w-full border rounded-xl px-3 py-2 text-xs outline-none" />
+                                                    
+                                                    <div className="bg-gray-50 p-3 rounded-xl border space-y-2">
+                                                        <label className="text-[11px] font-bold text-gray-700 block">Payment Method:</label>
+                                                        <select value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)} className="w-full border rounded-xl px-3 py-2 text-xs outline-none bg-white font-bold">
+                                                            <option value="ንግድ ባንክ">Commercial Bank of Ethiopia (CBE)</option>
+                                                            <option value="ቴሌብር">Telebirr</option>
+                                                        </select>
+
+                                                        <div className="bg-indigo-50/60 p-2.5 rounded-xl text-[11px] text-indigo-900 font-semibold space-y-1">
+                                                            {paymentMethod === 'ንግድ ባንክ' && <p>📌 CBE Account: <span className="font-black text-indigo-700">1000324406461</span> (Birhanu Biyadgie)</p>}
+                                                            {paymentMethod === 'ቴሌብር' && <p>📌 Telebirr: <span className="font-black text-indigo-700">0930836065</span> (Birhanu)</p>}
+                                                        </div>
+
+                                                        <input type="text" placeholder="Transaction ID (TxID) *" required value={transactionId} onChange={e => setTransactionId(e.target.value)} className="w-full border rounded-xl px-3 py-2 text-xs outline-none bg-white font-bold text-indigo-700" />
+                                                    </div>
+
+                                                    <button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs shadow-md">
+                                                        {t.sendOrder}
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </main>
+                        </div>
+                    )}
+
+                    {/* Book Detail Modal */}
+                    {selectedBook && (
+                        <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4 overflow-y-auto">
+                            <div className="bg-white max-w-2xl w-full rounded-3xl p-6 relative max-h-[90vh] overflow-y-auto space-y-6">
+                                <button onClick={() => setSelectedBook(null)} className="absolute top-4 right-4 bg-gray-100 hover:bg-gray-200 w-8 h-8 rounded-full font-bold text-gray-700">✕</button>
+                                
+                                <div className="flex flex-col md:flex-row gap-6 items-center">
+                                    <img src={selectedBook.image} alt={selectedBook.title} className="w-40 h-56 object-cover rounded-2xl shadow border" />
+                                    <div className="space-y-2 flex-1">
+                                        <span className="bg-indigo-50 text-indigo-700 text-[10px] font-bold px-2.5 py-0.5 rounded">{selectedBook.category}</span>
+                                        <h2 className="text-2xl font-black text-gray-900">{selectedBook.title}</h2>
+                                        <p className="text-sm font-semibold text-gray-600">Author: {selectedBook.author}</p>
+                                        <p className="text-indigo-600 font-extrabold text-lg">{selectedBook.price} ETB</p>
+                                        <p className="text-xs text-gray-600 leading-relaxed">{selectedBook.description}</p>
+                                        <div className="pt-2 flex gap-2">
+                                            <button onClick={() => { addToCart(selectedBook); setSelectedBook(null); }} className="bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold">{t.addToCart}</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="border-t pt-4 space-y-4">
+                                    <h3 className="font-bold text-sm text-gray-900">Customer Reviews & Ratings</h3>
+                                    
+                                    <div className="space-y-3 max-h-40 overflow-y-auto">
+                                        {selectedBook.reviews && selectedBook.reviews.length > 0 ? (
+                                            selectedBook.reviews.map(rev => (
+                                                <div key={rev.id} className="bg-gray-50 p-3 rounded-xl border text-xs space-y-1">
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="font-bold text-gray-900">{rev.user}</span>
+                                                        <span className="text-amber-500 font-bold">{'⭐'.repeat(rev.rating)}</span>
+                                                    </div>
+                                                    <p className="text-gray-700">{rev.comment}</p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p className="text-xs text-gray-400">No reviews yet.</p>
+                                        )}
+                                    </div>
+
+                                    <form onSubmit={(e) => handleAddReview(e, selectedBook.id)} className="bg-indigo-50/50 p-4 rounded-2xl border space-y-3 text-xs">
+                                        <h4 className="font-bold text-indigo-900">Leave a Review</h4>
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-medium">Rating:</span>
+                                            <select value={reviewRating} onChange={e => setReviewRating(e.target.value)} className="border rounded-lg px-2 py-1 bg-white font-bold">
+                                                <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                                                <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                                                <option value="3">⭐⭐⭐ (3/5)</option>
+                                                <option value="2">⭐⭐ (2/5)</option>
+                                                <option value="1">⭐ (1/5)</option>
+                                            </select>
+                                        </div>
+                                        <textarea rows="2" placeholder="Write your review here..." required value={reviewComment} onChange={e => setReviewComment(e.target.value)} className="w-full border rounded-xl p-2.5 outline-none bg-white"></textarea>
+                                        <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-xl">Submit Review ✉️</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Account Tab */}
+                    {activeTab === 'account' && (
+                        <div className="max-w-md mx-auto px-6 py-12">
+                            {currentUser ? (
+                                <div className="bg-white p-8 rounded-3xl shadow-sm space-y-6 text-center">
+                                    <div className="w-20 h-20 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center text-3xl font-black mx-auto">
+                                        {currentUser.name.charAt(0)}
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h2 className="text-2xl font-black text-gray-900">{currentUser.name}</h2>
+                                        <p className="text-xs text-gray-500">{currentUser.email}</p>
+                                    </div>
+                                    <button onClick={handleLogout} className="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl text-xs hover:bg-red-100 transition">
+                                        Logout
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="bg-white p-8 rounded-3xl shadow-sm space-y-6">
+                                    <div className="flex justify-center space-x-2 border-b pb-4">
+                                        <button onClick={() => setAuthMode('login')} className={`px-4 py-2 rounded-xl text-xs font-bold ${authMode === 'login' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600'}`}>Login</button>
+                                        <button onClick={() => setAuthMode('register')} className={`px-4 py-2 rounded-xl text-xs font-bold ${authMode === 'register' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600'}`}>Register</button>
+                                    </div>
+
+                                    {authMode === 'login' ? (
+                                        <form onSubmit={handleLogin} className="space-y-4 text-xs">
+                                            <h2 className="text-lg font-black text-gray-900 text-center mb-2">Login to Account</h2>
+                                            <input type="email" placeholder="Email *" required value={authEmail} onChange={e => setAuthEmail(e.target.value)} className="w-full border rounded-xl px-3 py-2.5 outline-none" />
+                                            <input type="password" placeholder="Password *" required value={authPassword} onChange={e => setAuthPassword(e.target.value)} className="w-full border rounded-xl px-3 py-2.5 outline-none" />
+                                            <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl shadow">Login 🚀</button>
+                                        </form>
+                                    ) : (
+                                        <form onSubmit={handleRegister} className="space-y-4 text-xs">
+                                            <h2 className="text-lg font-black text-gray-900 text-center mb-2">Create Account</h2>
+                                            <input type="text" placeholder="Full Name *" required value={authName} onChange={e => setAuthName(e.target.value)} className="w-full border rounded-xl px-3 py-2.5 outline-none" />
+                                            <input type="email" placeholder="Email *" required value={authEmail} onChange={e => setAuthEmail(e.target.value)} className="w-full border rounded-xl px-3 py-2.5 outline-none" />
+                                            <input type="password" placeholder="Password *" required value={authPassword} onChange={e => setAuthPassword(e.target.value)} className="w-full border rounded-xl px-3 py-2.5 outline-none" />
+                                            <button type="submit" className="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl shadow">Register 🎉</button>
+                                        </form>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Free Reading Room Tab */}
+                    {activeTab === 'freeread' && (
+                        <div className="max-w-4xl mx-auto px-6 py-8 space-y-6">
+                            <div className="bg-gradient-to-r from-amber-500 to-amber-700 text-white p-6 rounded-3xl shadow-md">
+                                <h2 className="text-2xl font-black">{t.freeRead}</h2>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="bg-white p-4 rounded-3xl shadow-sm space-y-3">
+                                    <h3 className="font-bold text-sm text-gray-900 border-b pb-2">Books List</h3>
+                                    <div className="space-y-2 max-h-96 overflow-y-auto">
+                                        {books.map(b => (
+                                            <div key={b.id} onClick={() => setActiveReadBook(b)} className={`p-3 rounded-2xl cursor-pointer flex items-center space-x-3 transition border ${activeReadBook?.id === b.id ? 'bg-amber-50 border-amber-500' : 'bg-gray-50 hover:bg-gray-100'}`}>
+                                                <img src={b.image} alt={b.title} className="w-10 h-10 object-cover rounded-xl" />
+                                                <div className="overflow-hidden">
+                                                    <h4 className="font-bold text-xs truncate">{b.title}</h4>
+                                                    <p className="text-[10px] text-gray-500">{b.author}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="md:col-span-2 bg-white p-6 rounded-3xl shadow-sm space-y-4">
+                                    {activeReadBook ? (
+                                        <div className="space-y-4">
+                                            <div className="flex justify-between items-start border-b pb-3">
+                                                <div>
+                                                    <span className="bg-amber-100 text-amber-800 text-[10px] font-bold px-2.5 py-0.5 rounded-full">{activeReadBook.category}</span>
+                                                    <h3 className="text-xl font-black text-gray-900 mt-1">{activeReadBook.title}</h3>
+                                                </div>
+                                                <button onClick={() => addToCart(activeReadBook)} className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-xs font-bold shadow">
+                                                    {t.addToCart}
+                                                </button>
+                                            </div>
+
+                                            <div className="bg-amber-50/50 border border-amber-200/60 p-6 rounded-2xl text-sm leading-relaxed whitespace-pre-line text-gray-800 font-serif max-h-[400px] overflow-y-auto">
+                                                {activeReadBook.freeReadContent}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="text-center py-20 space-y-3">
+                                            <p className="text-4xl">📖</p>
+                                            <p className="text-sm font-bold text-gray-600">Select a book from the left to read.</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* About Us Tab */}
+                    {activeTab === 'about' && (
+                        <div className="max-w-4xl mx-auto px-6 py-12 bg-white my-8 rounded-3xl shadow-sm space-y-6">
+                            <div className="text-center space-y-3">
+                                <img src="channels4_profile.jpg" alt="Logo" className="w-20 h-20 rounded-full mx-auto object-cover border-2 shadow" />
+                                <h2 className="text-2xl font-black text-gray-900">{t.storeName}</h2>
+                                <p className="text-sm text-indigo-700 font-semibold">{t.tagline}</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Contact Tab */}
+                    {activeTab === 'contact' && (
+                        <div className="max-w-xl mx-auto px-6 py-12 bg-white my-8 rounded-3xl shadow-sm space-y-6">
+                            <div className="text-center space-y-2">
+                                <h2 className="text-2xl font-black text-gray-900">Contact & Support</h2>
+                                <div className="pt-2">
+                                    <a href="tel:+251930836065" className="inline-block bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl text-sm shadow">
+                                        📞 Call: 0930836065
+                                    </a>
+                                </div>
+                            </div>
+                            <form onSubmit={handleFeedbackSubmit} className="space-y-4 text-sm pt-4 border-t">
+                                <input type="text" placeholder="Your Name" value={fbName} onChange={e => setFbName(e.target.value)} className="w-full border rounded-xl px-3 py-2 outline-none" />
+                                <textarea rows="4" required placeholder="Your message..." value={fbMessage} onChange={e => setFbMessage(e.target.value)} className="w-full border rounded-xl p-3 outline-none"></textarea>
+                                <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl shadow">Send Message ✉️</button>
+                            </form>
+                        </div>
+                    )}
+
+                    {/* Admin Dashboard Tab - Hidden from Public Navigation & Protected by Hash URL #admin */}
+                    {activeTab === 'admin' && (
+                        <div className="max-w-5xl mx-auto px-6 py-12">
+                            {!isAdminAuthorized ? (
+                                <div className="max-w-md mx-auto bg-white p-8 rounded-3xl shadow-sm space-y-6 text-center">
+                                    <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center text-2xl mx-auto font-bold shadow-inner">🔒</div>
+                                    <h2 className="text-xl font-black text-gray-900">Admin Secret Login</h2>
+                                    <form onSubmit={handleAdminLogin} className="space-y-4 text-xs text-left">
+                                        <div>
+                                            <label className="block font-bold text-gray-700 mb-1">Admin Email:</label>
+                                            <input 
+                                                type="email" 
+                                                placeholder="ኢሜይል ያስገቡ" 
+                                                required 
+                                                value={adminEmailInput} 
+                                                onChange={e => setAdminEmailInput(e.target.value)} 
+                                                className="w-full border rounded-xl px-4 py-3 outline-none font-bold text-sm bg-gray-50 focus:bg-white" 
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block font-bold text-gray-700 mb-1">Password:</label>
+                                            <input 
+                                                type="password" 
+                                                placeholder="ፓስወርድ ያስገቡ" 
+                                                required 
+                                                value={adminPassInput} 
+                                                onChange={e => setAdminPassInput(e.target.value)} 
+                                                className="w-full border rounded-xl px-4 py-3 outline-none font-bold text-sm bg-gray-50 focus:bg-white" 
+                                            />
+                                        </div>
+                                        <button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow text-sm">Login 🚀</button>
+                                    </form>
+                                </div>
+                            ) : (
+                                <div className="space-y-8">
+                                    <div className="bg-white p-6 rounded-3xl shadow-sm flex justify-between items-center">
+                                        <h2 className="text-xl font-black text-gray-900">{t.adminDashboard}</h2>
+                                        <button onClick={() => { setIsAdminAuthorized(false); window.location.hash = ''; setActiveTab('home'); }} className="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold">{t.logoutAdmin}</button>
+                                    </div>
+
+                                    {/* 1. ORDERS / PURCHASING REQUESTS SECTION */}
+                                    <div className="bg-white p-6 rounded-3xl shadow-sm space-y-4 border border-indigo-100">
+                                        <h3 className="font-bold text-base text-gray-900 border-b pb-2">📦 የተጠቃሚዎች የግዥ ጥያቄዎች (Orders) ({orders.length})</h3>
+                                        {orders.length === 0 ? (
+                                            <p className="text-xs text-gray-400 py-4">እስካሁን የመጣ የግዥ ጥያቄ የለም።</p>
+                                        ) : (
+                                            <div className="space-y-4 max-h-96 overflow-y-auto pr-1">
+                                                {orders.map(order => (
+                                                    <div key={order.id} className="bg-gray-50 border p-4 rounded-2xl space-y-2 text-xs">
+                                                        <div className="flex justify-between font-bold text-gray-900">
+                                                            <span>👤 {order.customerName} ({order.customerPhone})</span>
+                                                            <span className="text-indigo-600 font-extrabold">{order.total} ETB</span>
+                                                        </div>
+                                                        <div className="text-gray-600 grid grid-cols-1 md:grid-cols-3 gap-1">
+                                                            <p>📍 አድራሻ: {order.customerAddress}</p>
+                                                            <p>💳 ክፍያ: {order.paymentMethod}</p>
+                                                            <p>🧾 TxID: <span className="font-bold text-indigo-700">{order.transactionId}</span></p>
+                                                        </div>
+                                                        <div className="border-t pt-2 mt-1">
+                                                            <p className="font-bold text-gray-700">የተገዙ መጻሕፍት:</p>
+                                                            <ul className="list-disc pl-4 space-y-0.5 text-gray-600">
+                                                                {order.items.map((it, idx) => (
+                                                                    <li key={idx}>{it.title} - ብዛት: {it.quantity} (አጠቃላይ: {it.price * it.quantity} ብር)</li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                        <div className="text-[10px] text-gray-400 text-right">{order.date}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* 2. REGISTERED USERS / LOGGED IN USERS SECTION */}
+                                    <div className="bg-white p-6 rounded-3xl shadow-sm space-y-4 border border-indigo-100">
+                                        <h3 className="font-bold text-base text-gray-900 border-b pb-2">👥 ሎግ ኢን / አካውንት የፈጠሩ ተጠቃሚዎች ዝርዝር ({usersList.length})</h3>
+                                        {usersList.length === 0 ? (
+                                            <p className="text-xs text-gray-400 py-4">እስካሁን የተመዘገበ ተጠቃሚ የለም።</p>
+                                        ) : (
+                                            <div className="space-y-2 max-h-60 overflow-y-auto">
+                                                {usersList.map(usr => (
+                                                    <div key={usr.id} className="bg-indigo-50/50 p-3 rounded-xl flex justify-between items-center text-xs border">
+                                                        <div>
+                                                            <p className="font-bold text-gray-900">{usr.name}</p>
+                                                            <p className="text-gray-500">{usr.email}</p>
+                                                        </div>
+                                                        <span className="text-[10px] text-gray-400 font-medium">{usr.registeredAt || 'የተመዘገበ'}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* 3. MANAGE ADMINS SECTION */}
+                                    <div className="bg-white p-6 rounded-3xl shadow-sm space-y-4 border border-indigo-100">
+                                        <h3 className="font-bold text-base text-gray-900 border-b pb-2">🔐 አስተዳዳሪዎችን ማስተዳደር እና ማከል</h3>
+                                        <form onSubmit={handleAddAdmin} className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                                            <input 
+                                                type="text" 
+                                                placeholder="የአስተዳዳሪ ስም (ለምሳሌ፦ ጓደኛዬ)" 
+                                                value={newAdminName} 
+                                                onChange={e => setNewAdminName(e.target.value)} 
+                                                className="border rounded-xl px-3 py-2.5 outline-none font-bold" 
+                                            />
+                                            <input 
+                                                type="email" 
+                                                placeholder="አዲስ አስተዳዳሪ ኢሜይል *" 
+                                                required 
+                                                value={newAdminEmail} 
+                                                onChange={e => setNewAdminEmail(e.target.value)} 
+                                                className="border rounded-xl px-3 py-2.5 outline-none font-bold" 
+                                            />
+                                            <button type="submit" className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl">አስተዳዳሪ ጨምር ➕</button>
+                                        </form>
+
+                                        <div className="space-y-2 pt-2">
+                                            <p className="text-xs font-bold text-gray-700">ነባር አስተዳዳሪዎች ዝርዝር:</p>
+                                            <div className="space-y-2 max-h-40 overflow-y-auto">
+                                                {adminList.map(adm => (
+                                                    <div key={adm.id} className="flex justify-between items-center bg-gray-50 p-2.5 rounded-xl border text-xs">
+                                                        <div>
+                                                            <span className="font-bold text-gray-900">{adm.name}</span> - <span className="text-indigo-600">{adm.email}</span>
+                                                        </div>
+                                                        {adm.email !== 'birhanubiyadgie23@gmail.com' && (
+                                                            <button onClick={() => handleRemoveAdmin(adm.id, adm.email)} className="bg-red-50 text-red-600 px-2.5 py-1 rounded-lg font-bold">አስወግድ</button>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Change Password Section */}
+                                    <div className="bg-white p-6 rounded-3xl shadow-sm space-y-4 border border-indigo-100">
+                                        <h3 className="font-bold text-base text-gray-900 border-b pb-2">🔑 የአስተዳዳሪ ፓስወርድ መቀየሪያ</h3>
+                                        <form onSubmit={handleUpdateAdminPassword} className="flex gap-3 text-xs">
+                                            <input 
+                                                type="password" 
+                                                placeholder="አዲስ የይለፍ ቃል ያስገቡ" 
+                                                required 
+                                                value={newAdminPass} 
+                                                onChange={e => setNewAdminPass(e.target.value)} 
+                                                className="flex-1 border rounded-xl px-4 py-2.5 outline-none font-bold" 
+                                            />
+                                            <button type="submit" className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl">ፓስወርድ ቀይር</button>
+                                        </form>
+                                    </div>
+
+                                    <div className="bg-white p-6 rounded-3xl shadow-sm space-y-4 border border-indigo-100">
+                                        <h3 className="font-bold text-base text-gray-900 border-b pb-2">{t.newsTitle}</h3>
+                                        <form onSubmit={handleNewsSubmit} className="space-y-3 text-xs">
+                                            <input type="text" placeholder="News Title..." required value={newsTitleInput} onChange={e => setNewsTitleInput(e.target.value)} className="w-full border rounded-xl px-3 py-2 outline-none" />
+                                            <textarea placeholder="News Content..." rows="3" required value={newsContentInput} onChange={e => setNewsContentInput(e.target.value)} className="w-full border rounded-xl p-3 outline-none"></textarea>
+                                            <button type="submit" className="bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl text-xs">Publish News 🚀</button>
+                                        </form>
+                                    </div>
+
+                                    <div className="bg-white p-6 rounded-3xl shadow-sm space-y-4">
+                                        <h3 className="system-title font-bold text-base text-gray-900 border-b pb-2">Add/Edit Book</h3>
+                                        <form onSubmit={handleAdminSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                                            <input type="text" placeholder="Book Title *" required value={title} onChange={e => setTitle(e.target.value)} className="border rounded-xl px-3 py-2 outline-none" />
+                                            <input type="text" placeholder="Author *" required value={author} onChange={e => setAuthor(e.target.value)} className="border rounded-xl px-3 py-2 outline-none" />
+                                            <input type="number" placeholder="Price (ETB) *" required value={price} onChange={e => setPrice(e.target.value)} className="border rounded-xl px-3 py-2 outline-none" />
+                                            <input type="number" placeholder="Stock *" required value={stock} onChange={e => setStock(e.target.value)} className="border rounded-xl px-3 py-2 outline-none" />
+                                            <input type="url" placeholder="Image URL" value={image} onChange={e => setImage(e.target.value)} className="border rounded-xl px-3 py-2 outline-none md:col-span-2" />
+                                            <textarea placeholder="Free Read Content" rows="3" value={freeReadContent} onChange={e => setFreeReadContent(e.target.value)} className="border rounded-xl p-3 outline-none md:col-span-2"></textarea>
+                                            <button type="submit" className="bg-indigo-600 text-white font-bold py-2.5 px-6 rounded-xl text-xs md:col-span-2">Save Book</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Footer */}
+                    <footer className="bg-white border-t mt-16">
+                        <div className="max-w-6xl mx-auto px-6 py-6 text-center text-xs text-gray-500 space-y-2">
+                            <p>© 2026 {t.storeName}. All rights reserved.</p>
+                            <p className="font-semibold text-emerald-700">{t.tagline}</p>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
