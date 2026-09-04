@@ -23,9 +23,9 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        // እዚህጋ የራስዎን የ Supabase ዩአርኤል እና ኪ (Key) ብቻ ያስገቡ
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE';
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+        // የተስተካከለው የ Supabase ዩአርኤል እና የሰጡት ትክክለኛ ቁልፍ (Anon Key)
+        const SUPABASE_URL = 'https://csaqipbyxpprdsnyjpsc.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzYXFpcGJ5eHBwcmRzbnlqcHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTkwODIsImV4cCI6MjEwNDA5NTA4Mn0.1WJdBD5Ho_oFezTOnActxVjZ_O7_6999wIPZ2imilzk';
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -50,7 +50,7 @@
                 alert('መጽሐፉ ወደ ግዢ ሰንጠረዥ ተጨምሯል!');
             };
 
-            const filteredBooks = books.filter(b => b.title.toLowerCase().includes(search.toLowerCase()));
+            const filteredBooks = books.filter(b => b.title && b.title.toLowerCase().includes(search.toLowerCase()));
 
             return (
                 <div className="min-h-screen flex flex-col">
