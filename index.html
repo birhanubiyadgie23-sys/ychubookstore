@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ይቻላል የመጻሕፍት መደብር</title>
+    <title>ብርሃኑ መጻሕፍት መደብር</title>
     <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -45,11 +45,11 @@
     </section>
 
     <div class="filters">
-        <button class="filter-btn active" onclick="filterBooks('all')">ሁሉም</button>
-        <button class="filter-btn" onclick="filterBooks('fiction')">ልቦለድ</button>
-        <button class="filter-btn" onclick="filterBooks('history')">ታሪክ</button>
-        <button class="filter-btn" onclick="filterBooks('philosophy')">ፍልስፍና</button>
-        <button class="filter-btn" onclick="filterBooks('poetry')">ግጥም</button>
+        <button class="filter-btn active" onclick="filterBooks('all', event)">ሁሉም</button>
+        <button class="filter-btn" onclick="filterBooks('fiction', event)">ልቦለድ</button>
+        <button class="filter-btn" onclick="filterBooks('history', event)">ታሪክ</button>
+        <button class="filter-btn" onclick="filterBooks('philosophy', event)">ፍልስፍና</button>
+        <button class="filter-btn" onclick="filterBooks('poetry', event)">ግጥም</button>
     </div>
 
     <div class="container">
@@ -57,19 +57,18 @@
     </div>
 
     <script>
-        // ድርብ ክትትልን ለመከላከል የ Supabase ክላይንት መኖሩን ማረጋገጥ
-        if (typeof window.supabaseClient === 'undefined') {
-            const SUPABASE_URL = 'https://csaqipbyxpprdsnyjpsc.supabase.co';
-            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzYXFpcGJ5eHBwcmRzbnlqcHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTkwODIsImV4cCI6MjEwNDA5NTA4Mn0.1WJdBD5Ho_oFezTOnActxVjZ_O7_6999wIPZ2imilzk';
-            window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        }
-        const supabase = window.supabaseClient;
+        // የተባዛ ስም እንዳይፈጠር የተለየ ተለዋዋጭ ስም መጠቀም
+        const SUPABASE_URL = 'https://csaqipbyxpprdsnyjpsc.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzYXFpcGJ5eHBwcmRzbnlqcHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTkwODIsImV4cCI6MjEwNDA5NTA4Mn0.1WJdBD5Ho_oFezTOnActxVjZ_O7_6999wIPZ2imilzk';
+        
+        // ሱፓቤዝን በሌላ ስም እናስጀምራለን
+        const dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let allBooks = [];
         let cartCount = 0;
 
         async function fetchBooks() {
-            const { data, error } = await supabase.from('books').select('*');
+            const { data, error } = await dbClient.from('books').select('*');
             if (error) {
                 console.error('መረጃዎችን ማምጣት አልተቻለም:', error.message);
                 return;
@@ -104,9 +103,11 @@
             });
         }
 
-        function filterBooks(category) {
+        function filterBooks(category, evt) {
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            if (evt && evt.target) {
+                evt.target.classList.add('active');
+            }
 
             if (category === 'all') {
                 displayBooks(allBooks);
@@ -122,6 +123,7 @@
             alert(`"${bookTitle}" ወደ ቅርጫትዎ ተጨምሯል!`);
         }
 
+        // ፋይሉ ሲጫን መረጃዎችን መጥራት
         fetchBooks();
     </script>
 </body>
