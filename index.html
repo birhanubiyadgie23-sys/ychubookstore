@@ -83,7 +83,6 @@
         .submit-btn { width: 100%; background: #27ae60; color: white; border: none; padding: 10px; cursor: pointer; font-weight: bold; border-radius: 4px; }
         .close-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; float: right; }
 
-        /* አንብቦ የመገደብ እና ኮሜንት ማዕቀፍ */
         .reader-box { line-height: 1.8; font-size: 1.05rem; color: #444; margin-bottom: 20px; }
         .paywall-overlay { background: #fff3f3; border: 1px dashed #e91e63; padding: 20px; text-align: center; border-radius: 8px; margin-top: 15px; }
         .comments-section { margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px; }
@@ -174,7 +173,6 @@
                 <button class="submit-btn" style="background: #e91e63;" onclick="buyCurrentBookFromReader()">አሁን ይግዙ (<span id="paywall-book-price"></span> ብር)</button>
             </div>
 
-            <!-- የአስተያየት መስጫ ክፍል -->
             <div class="comments-section">
                 <h4>የአንባብያን አስተያየቶች</h4>
                 <div id="comments-list" style="max-height: 120px; overflow-y: auto; margin-bottom: 10px;"></div>
@@ -241,22 +239,37 @@
         const dbClient = window.supabase.createClient(SUPABASE_URL, activeKey);
 
         let currentUser = null;
+        let isAdmin = false;
         let allBooks = [];
         let cart = [];
         let isSignUpMode = false;
         let activeReadingBook = null;
         let currentCategory = 'all';
 
-        const ADMIN_EMAIL = "admin@birhanu.com";
-
         async function initApp() {
             const { data: { session } } = await dbClient.auth.getSession();
             if (session) {
                 currentUser = session.user;
-                updateAuthUI();
+                await checkAdminStatus(currentUser.id);
             }
             fetchBooks();
             fetchNews();
+        }
+
+        // 🟢 ከዳታቤዝ (profiles ቴብል) አድሚን መሆኑን ማረጋገጫ
+        async function checkAdminStatus(userId) {
+            const { data, error } = await dbClient
+                .from('profiles')
+                .select('role')
+                .eq('id', userId)
+                .single();
+            
+            if (data && data.role === 'admin') {
+                isAdmin = true;
+            } else {
+                isAdmin = false;
+            }
+            updateAuthUI();
         }
 
         async function fetchBooks() {
@@ -304,7 +317,6 @@
             });
         }
 
-        // --- የፍለጋ ስራ (Search Functionality) ---
         function searchBooks() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             let filtered = allBooks.filter(b => 
@@ -321,7 +333,6 @@
             searchBooks();
         }
 
-        // --- የነጻ ንባብ እና የ Paywall ስርዓት ---
         async function openReader(bookId) {
             const book = allBooks.find(b => b.id == bookId);
             if (!book) return;
@@ -333,13 +344,11 @@
             const contentBox = document.getElementById('reader-content-box');
             const paywallSection = document.getElementById('paywall-section');
 
-            const fullText = book.content || "ይህ መጽሐፍ ገና ሙሉ ይዘት አልተጫነለትም። ሆኖም የናሙና ንባብ እዚህ አለ፤ ተጨማሪ መረጃዎችን ማግኘት ይችላሉ። እውቀት የሰው ልጅ የዕድገት መሰረት ነው። በተለያዩ ዘርፎች ላይ የተጻፉ ጠቃሚ መጽሐፍትን በማንበብ አእምሮዎን ማሳደግ ይችላሉ። የንባብ ልምድ ማዳበር ለግል እና ለሀገር እድገት ትልቅ አስተዋጽኦ አለው።";
-            
+            const fullText = book.content || "ይህ መጽሐፍ ገና ሙሉ ይዘት አልተጫነለትም። ሆኖም የናሙና ንባብ እዚህ አለ፤ ተጨማሪ መረጃዎችን ማግኘት ይችላሉ።";
             const freeLimit = 250;
             
             if (fullText.length > freeLimit) {
-                const freePart = fullText.substring(0, freeLimit) + "...";
-                contentBox.innerHTML = `<p>${freePart}</p>`;
+                contentBox.innerHTML = `<p>${fullText.substring(0, freeLimit)}...</p>`;
                 paywallSection.style.display = 'block';
                 document.getElementById('paywall-book-price').innerText = book.price;
             } else {
@@ -351,9 +360,7 @@
             document.getElementById('readerModal').style.display = 'flex';
         }
 
-        function closeReaderModal() {
-            document.getElementById('readerModal').style.display = 'none';
-        }
+        function closeReaderModal() { document.getElementById('readerModal').style.display = 'none'; }
 
         function buyCurrentBookFromReader() {
             if (activeReadingBook) {
@@ -363,14 +370,13 @@
             }
         }
 
-        // --- ኮሜንት እና አስተያየት መስጫ ---
         async function loadComments(bookId) {
             const list = document.getElementById('comments-list');
             list.innerHTML = 'ሀሳቦች በመጫን ላይ...';
             const { data } = await dbClient.from('comments').select('*').eq('book_id', bookId);
             
             if (!data || data.length === 0) {
-                list.innerHTML = '<p style="font-size:0.85rem; color:#888;">እስካሁን የተሰጠ አስተያየት የለም። የመጀመሪያው ይሁኑ!</p>';
+                list.innerHTML = '<p style="font-size:0.85rem; color:#888;">እስካሁን የተሰጠ አስተያየት የለም።</p>';
                 return;
             }
             list.innerHTML = '';
@@ -385,7 +391,7 @@
 
         async function postComment() {
             if (!currentUser) {
-                alert('እባክዎ አስተያየት ለመስጠት መጀመሪያ ይግቡ (Login)!');
+                alert('እባክዎ አስተያየት ለመስጠት መጀመሪያ ይግቡ!');
                 openAuthModal();
                 return;
             }
@@ -402,7 +408,6 @@
             loadComments(activeReadingBook.id);
         }
 
-        // --- ሎጊን እና ሳይን አፕ ስራዎች ---
         function openAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
         function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
 
@@ -432,7 +437,7 @@
                 const { data, error } = await dbClient.auth.signInWithPassword({ email, password });
                 if (error) { alert('መግባት አልተቻለም: ' + error.message); return; }
                 currentUser = data.user;
-                updateAuthUI();
+                await checkAdminStatus(currentUser.id);
                 closeAuthModal();
                 alert('እንኳን ደህና መጡ!');
             }
@@ -447,9 +452,12 @@
                 authBtn.innerText = 'ውጣ (Logout)';
                 authBtn.onclick = handleLogout;
 
-                if (currentUser.email === ADMIN_EMAIL) {
+                if (isAdmin) {
                     adminBookBtn.style.display = 'inline-block';
                     adminNewsBtn.style.display = 'inline-block';
+                } else {
+                    adminBookBtn.style.display = 'none';
+                    adminNewsBtn.style.display = 'none';
                 }
             } else {
                 authBtn.innerText = 'ግባ / ተመዝገብ';
@@ -462,12 +470,12 @@
         async function handleLogout() {
             await dbClient.auth.signOut();
             currentUser = null;
+            isAdmin = false;
             updateAuthUI();
             alert('ከአካውንትዎ ወጥተዋል!');
             window.location.reload();
         }
 
-        // --- አድሚን ማስገቢያዎች ---
         function openBookModal() { document.getElementById('bookModal').style.display = 'flex'; }
         function closeBookModal() { document.getElementById('bookModal').style.display = 'none'; }
         function openNewsModal() { document.getElementById('newsModal').style.display = 'flex'; }
@@ -503,7 +511,6 @@
             fetchNews();
         }
 
-        // --- ግዢ እና ቅርጫት ---
         function addToCart(book) {
             cart.push(book);
             document.getElementById('cart-count').innerText = cart.length;
