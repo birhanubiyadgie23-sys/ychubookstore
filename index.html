@@ -1,112 +1,141 @@
 <!DOCTYPE html>
-<html lang="am" dir="ltr">
+<html lang="am">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ይቻላል የመጽሐፍት መደብር | Yichalal Bookstore</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- React and ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <!-- Babel for JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Supabase JS Client -->
+    <title>ይቻላል የመጻሕፍት መደብር</title>
+    <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background-color: #f9f9f9; color: #333; }
+        /* ራስጌ */
+        header { background: #3f51b5; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .cart-info { background: #ff9800; padding: 8px 15px; border-radius: 20px; font-weight: bold; }
+        
+        /* 1. የመግቢያ ባነር (Hero Section) */
+        .hero { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f') center/cover; color: white; text-align: center; padding: 60px 20px; }
+        .hero h1 { font-size: 2.2rem; margin-bottom: 10px; }
+        .hero p { font-size: 1.1rem; color: #ddd; }
+
+        /* 2. የምድብ ማጣሪያ አዝራሮች (Category Filters) */
+        .filters { display: flex; justify-content: center; gap: 10px; padding: 20px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .filter-btn { padding: 8px 18px; border: 1px solid #3f51b5; background: white; color: #3f51b5; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .filter-btn.active, .filter-btn:hover { background: #3f51b5; color: white; }
+
+        /* የመጻሕፍት ዝርዝር መዋቅር */
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.08); display: flex; flex-direction: column; justify-content: space-between; }
+        .card img { width: 100%; height: 180px; object-fit: cover; }
+        .card-body { padding: 15px; }
+        .card-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; }
+        .card-author { color: #666; font-size: 0.9rem; margin-bottom: 8px; }
+        .rating { color: #f39c12; font-size: 0.9rem; margin-bottom: 10px; }
+        .price { color: #e91e63; font-weight: bold; font-size: 1.1rem; }
+        .buy-btn { width: 100%; background: #3f51b5; color: white; border: none; padding: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .buy-btn:hover { background: #303f9f; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
-    <div id="root"></div>
+<body>
 
-    <script type="text/babel">
+    <!-- ራስጌ -->
+    <header>
+        <h2>ብርሃኑ መጻሕፍት መደብር</h2>
+        <div class="cart-info">🛒 ቅርጫት: <span id="cart-count">0</span></div>
+    </header>
+
+    <!-- 1. የመግቢያ ባነር (Hero Section) -->
+    <section class="hero">
+        <h1>እንኳን ወደ ብርሃኑ መጻሕፍት መደብር በደህና መጡ</h1>
+        <p>የእውቀት ማዕድ - የሚፈልጉትን መጽሐፍ ይምረጡ፣ ያንብቡ፣ ሕይወትዎን ያበልጽጉ!</p>
+    </section>
+
+    <!-- 2. የምድብ ማጣሪያዎች (Category Filters) -->
+    <div class="filters">
+        <button class="filter-btn active" onclick="filterBooks('all')">ሁሉም</button>
+        <button class="filter-btn" onclick="filterBooks('fiction')">ልቦለድ</button>
+        <button class="filter-btn" onclick="filterBooks('history')">ታሪክ</button>
+        <button class="filter-btn" onclick="filterBooks('philosophy')">ፍልስፍና</button>
+        <button class="filter-btn" onclick="filterBooks('poetry')">ግጥም</button>
+    </div>
+
+    <!-- የመጻሕፍት ማሳያ ቦታ -->
+    <div class="container">
+        <div id="books-grid" class="grid">
+            <!-- መረጃዎች ከ Supabase በ JS ይጫናሉ -->
+        </div>
+    </div>
+
+    <script>
+        // Supabase ግንኙነት ማዋቀሪያ
         const SUPABASE_URL = 'https://csaqipbyxpprdsnyjpsc.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzYXFpcGJ5eHBwcmRzbnlqcHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTkwODIsImV4cCI6MjEwNDA5NTA4Mn0.1WJdBD5Ho_oFezTOnActxVjZ_O7_6999wIPZ2imilzk';
-        
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        function App() {
-            const [books, setBooks] = React.useState([]);
-            const [cart, setCart] = React.useState([]);
-            const [view, setView] = React.useState('home');
-            const [search, setSearch] = React.useState('');
+        let allBooks = [];
+        let cartCount = 0;
 
-            React.useEffect(() => {
-                fetchBooks();
-            }, []);
-
-            const fetchBooks = async () => {
-                const { data, error } = await supabase.from('books').select('*');
-                if (data) setBooks(data);
-                if (error) console.error(error);
-            };
-
-            const addToCart = (book) => {
-                setCart([...cart, book]);
-                alert('መጽሐፉ ወደ ግዢ ሰንጠረዥ ተጨምሯል!');
-            };
-
-            const filteredBooks = books.filter(b => b.title && b.title.toLowerCase().includes(search.toLowerCase()));
-
-            return (
-                <div className="min-h-screen flex flex-col">
-                    <header className="bg-indigo-900 text-white p-4 flex justify-between items-center shadow-md">
-                        <h1 className="text-xl font-bold cursor-pointer" onClick={() => setView('home')}>ይቻላል የመጽሐፍት መደብር</h1>
-                        <div className="space-x-4">
-                            <button onClick={() => setView('home')} className="hover:text-yellow-400">መነሻ</button>
-                            <button onClick={() => setView('cart')} className="hover:text-yellow-400">ግዢ ({cart.length})</button>
-                        </div>
-                    </header>
-
-                    <main className="container mx-auto p-4 flex-grow">
-                        {view === 'home' ? (
-                            <div>
-                                <input 
-                                    type="text" 
-                                    placeholder="መጻሕፍትን ይፈልጉ..." 
-                                    value={search} 
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    className="w-full p-3 border rounded-lg mb-6 outline-none shadow-sm"
-                                />
-                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                                    {filteredBooks.map(book => (
-                                        <div key={book.id} className="bg-white p-4 rounded-xl shadow border flex flex-col justify-between">
-                                            <div>
-                                                <img src={book.image || 'https://via.placeholder.com/150'} alt="" className="h-40 w-full object-cover rounded mb-2"/>
-                                                <h3 className="font-bold text-lg">{book.title}</h3>
-                                                <p className="text-sm text-gray-500">{book.author}</p>
-                                                <p className="text-indigo-600 font-bold mt-2">{book.price} ብር</p>
-                                            </div>
-                                            <button onClick={() => addToCart(book)} className="mt-4 bg-indigo-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-indigo-700">ግዛ / አስገባ</button>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow border">
-                                <h2 className="text-2xl font-bold mb-4">የግዢ ሰንጠረዥ</h2>
-                                {cart.length === 0 ? <p className="text-gray-500">ባዶ ነው።</p> : (
-                                    cart.map((item, idx) => (
-                                        <div key={idx} className="flex justify-between border-b py-2">
-                                            <span>{item.title}</span>
-                                            <span className="font-bold">{item.price} ብር</span>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
-                        )}
-                    </main>
-                </div>
-            );
+        // መጻሕፍትን ከ Supabase መጫን
+        async function fetchBooks() {
+            const { data, error } = await supabase.from('books').select('*');
+            if (error) {
+                console.error('መረጃዎችን ማምጣት አልተቻለም:', error.message);
+                return;
+            }
+            allBooks = data;
+            displayBooks(allBooks);
         }
 
-        // React 18 አዲሱ የሬንደሪንግ ዘዴ (createRoot)
-        const container = document.getElementById('root');
-        const root = ReactDOM.createRoot(container);
-        root.render(<App />);
+        // መጻሕፍትን በገጽ ላይ ማሳየት
+        function displayBooks(books) {
+            const grid = document.getElementById('books-grid');
+            grid.innerHTML = '';
+
+            if (books.length === 0) {
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #777;">ምንም መጽሐፍ አልተገኘምም።</p>';
+                return;
+            }
+
+            books.forEach(book => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <img src="${book.image_url || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c'}" alt="${book.title}">
+                    <div class="card-body">
+                        <div class="card-title">${book.title}</div>
+                        <div class="card-author">ደራሲ፡ ${book.author || 'ያልታወቀ'}</div>
+                        <div class="rating">⭐ ${book.rating || '4.5'}</div>
+                        <div class="price">${book.price} ብር</div>
+                    </div>
+                    <button class="buy-btn" onclick="addToCart('${book.title}')">ግዛ / ወደ ቅርጫት ጨምር</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // 3. የምድብ ማጣሪያ ተግባር (Category Filter Logic)
+        function filterBooks(category) {
+            // የአዝራሮችን ገጽታ መቀየር
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (category === 'all') {
+                displayBooks(allBooks);
+            } else {
+                const filtered = allBooks.filter(book => book.category === category);
+                displayBooks(filtered);
+            }
+        }
+
+        // 4. የግዢ ቅርጫት ማስተካከያ (Cart System)
+        function addToCart(bookTitle) {
+            cartCount++;
+            document.getElementById('cart-count').innerText = cartCount;
+            alert(`"${bookTitle}" ወደ ቅርጫትዎ ተጨምሯል!`);
+        }
+
+        // ገጹ ሲከፈት መረጃዎችን መጥራት
+        fetchBooks();
     </script>
 </body>
 </html>
