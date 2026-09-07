@@ -66,9 +66,14 @@
         .hero h1 { font-size: 2.2rem; margin-bottom: 10px; }
         .hero p { font-size: 1.1rem; color: #ddd; }
 
-        .filters { display: flex; justify-content: center; gap: 10px; padding: 20px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-wrap: wrap; }
+        /* የማጣሪያ እና የዜና አዝራሮች አቀማመጥ */
+        .filters-container { display: flex; justify-content: center; gap: 10px; padding: 20px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-wrap: wrap; align-items: center; }
         .filter-btn { padding: 8px 18px; border: 1px solid #3f51b5; background: white; color: #3f51b5; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; }
         .filter-btn.active, .filter-btn:hover { background: #3f51b5; color: white; }
+
+        /* ለዜና ማሳያ የተለየ ከለር ያለው አዝራር */
+        .news-toggle-btn { padding: 8px 18px; border: 1px solid #ff9800; background: white; color: #ff9800; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .news-toggle-btn.active, .news-toggle-btn:hover { background: #ff9800; color: white; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
         .card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.08); display: flex; flex-direction: column; justify-content: space-between; }
@@ -81,9 +86,10 @@
         .buy-btn { width: 100%; background: #3f51b5; color: white; border: none; padding: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; }
         .buy-btn:hover { background: #303f9f; }
 
-        /* የዜናዎች (News) ሴክሽን ስታይል */
-        .news-section { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
-        .news-section h2 { color: #3f51b5; border-bottom: 2px solid #3f51b5; padding-bottom: 8px; margin-bottom: 20px; }
+        /* የዜናዎች (News) ሴክሽን (በነባሪ ተደብቆ አዝራሩ ሲነካ የሚከፈት) */
+        .news-section { display: none; max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .news-section.show { display: block; }
+        .news-section h2 { color: #ff9800; border-bottom: 2px solid #ff9800; padding-bottom: 8px; margin-bottom: 20px; }
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
         .news-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); border-left: 4px solid #ff9800; }
         .news-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 8px; color: #333; }
@@ -119,14 +125,24 @@
         <p>የእውቀት ማዕድ - የሚፈልጉትን መጽሐፍ ይምረጡ፣ ያንብቡ፣ ሕይወትዎን ያበልጽጉ!</p>
     </section>
 
-    <!-- የካታጎሪ አዝራሮች -->
-    <div class="filters">
+    <!-- የካታጎሪ እና የዜና ማሳያ አዝራሮች (ከመፈክሩ በታች) -->
+    <div class="filters-container">
         <button class="filter-btn active" onclick="filterBooks('all', event)">ሁሉም</button>
         <button class="filter-btn" onclick="filterBooks('fiction', event)">ልቦለድ</button>
         <button class="filter-btn" onclick="filterBooks('history', event)">ታሪክ</button>
         <button class="filter-btn" onclick="filterBooks('philosophy', event)">ፍልስፍና</button>
         <button class="filter-btn" onclick="filterBooks('poetry', event)">ግጥም</button>
+        <!-- የዜና ማሳያ አክቲቭ አዝራር -->
+        <button class="news-toggle-btn" id="newsToggleBtn" onclick="toggleNews()">📢 ማስታወቂያዎች እና ዜናዎች</button>
     </div>
+
+    <!-- ዜናዎች የሚታዩበት ክፍል (በነባሪ ተደብቋል) -->
+    <section id="newsSection" class="news-section">
+        <h2>የመደብሩ ማስታወቂያዎች እና ዜናዎች</h2>
+        <div id="news-grid" class="news-grid">
+            <p style="color: #888;">ዜናዎች በመጫን ላይ...</p>
+        </div>
+    </section>
 
     <div class="main-layout">
         <div class="content-area">
@@ -147,14 +163,6 @@
             <div class="instruction-text">መጻሕፍቱን መርጠው ሲጨርሱ ይህንን በመንካት ግዢውን ይፈጽሙ!</div>
         </div>
     </div>
-
-    <!-- አዲስ የተጨመረው የዜናዎች (News) ሴክሽን -->
-    <section class="news-section">
-        <h2>ማስታወቂያዎች እና ዜናዎች</h2>
-        <div id="news-grid" class="news-grid">
-            <p style="color: #888;">ዜናዎች በመጫን ላይ...</p>
-        </div>
-    </section>
 
     <!-- የክፍያ ማጠናቀቂያ መስኮት -->
     <div id="checkoutModal" class="modal">
@@ -192,7 +200,6 @@
         let allBooks = [];
         let cart = []; 
 
-        // መጻሕፍትን እና ዜናዎችን በአንድ ላይ መጫን
         async function fetchData() {
             await fetchBooks();
             await fetchNews();
@@ -208,7 +215,6 @@
             displayBooks(allBooks);
         }
 
-        // ከ news ቴብል መረጃዎችን የማምጫ ፋንክሽን
         async function fetchNews() {
             const { data, error } = await dbClient.from('news').select('*');
             if (error) {
@@ -250,7 +256,6 @@
             });
         }
 
-        // ዜናዎችን በገጹ ላይ ማሳያ
         function displayNews(newsList) {
             const newsGrid = document.getElementById('news-grid');
             newsGrid.innerHTML = '';
@@ -270,6 +275,15 @@
                 `;
                 newsGrid.appendChild(newsCard);
             });
+        }
+
+        // የዜና ማሳያውን መክፈቻና መዘጊያ (Toggle) ፋንክሽን
+        function toggleNews() {
+            const newsSection = document.getElementById('newsSection');
+            const newsToggleBtn = document.getElementById('newsToggleBtn');
+            
+            newsSection.classList.toggle('show');
+            newsToggleBtn.classList.toggle('active');
         }
 
         function filterBooks(category, evt) {
@@ -300,7 +314,7 @@
             const totalElement = document.getElementById('sidebar-total-price');
             
             if (cart.length === 0) {
-                container.innerHTML = '<p style="color: #888; text-align: center; margin: 20px 0;">እንዳይጠፋ ቅርጫቱ ባዶ ነው።</p>';
+                container.innerHTML = '<p style="color: #888; text-align: center; margin: 20px 0;">እንዳይጠفة ቅርጫቱ ባዶ ነው።</p>';
                 totalElement.innerText = '0';
                 return;
             }
@@ -356,7 +370,6 @@
             closeCheckout();
         }
 
-        // ፕሮግራሙ ሲጀመር ዳታዎችን መጥራት
         fetchData();
     </script>
 </body>
