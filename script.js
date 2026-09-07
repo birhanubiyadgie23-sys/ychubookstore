@@ -165,4 +165,4 @@ function handleFormSubmit() {
 
 // ፋይሉ ሲከፈት የግንኙነት ምርመራውን ማቀጣጠር እና የዩዘርን ሁኔታ ማጣራት
 testConnection();
-updateAuthUI();
+updateAuthUI(); // ገጹ ሲከፈት ወዲያውኑ ዩዘሩ አድሚን መሆኑን እንዲያጣራ
