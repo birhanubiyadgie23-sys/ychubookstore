@@ -1023,7 +1023,41 @@
             document.getElementById(sectionId).classList.toggle('show');
             document.getElementById(btnId).classList.toggle('active');
         }
+// የቴሌግራም ማሳወቂያ መላኪያ ፋንክሽን
+async function sendTelegramNotification(bookTitle, buyerName, price) {
+    const BOT_TOKEN = 'የእርስዎን_ቦት_ቶክን_እዚህ_ያስገቡ'; // ከ Telegram BotFather ያገኙትን ቶክን ያስገቡ
+    const CHAT_ID = 'የእርስዎን_ቻት_አይዲ_እዚህ_ያስገቡ';     // የቻት ወይም የግለሰብ መለያ ቁጥር (Chat ID)
+    
+    const message = `📚 አዲስ መጽሐፍ ግዥ ተፈጽሟል!\n\n` +
+                    `📖 የመጽሐፉ ርዕስ: ${bookTitle}\n` +
+                    `👤 ገዢው/ተጠቃሚው: ${buyerName || 'ያልታወቀ'}\n` +
+                    `💰 ዋጋው: ${price} ብር\n` +
+                    `⏰ ሰዓት: ${new Date().toLocaleString()}`;
 
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                chat_id: CHAT_ID,
+                text: message
+            })
+        });
+
+        const data = await response.json();
+        if (data.ok) {
+            console.log("የቴሌግራም ማሳወቂያው በተሳካ ሁኔታ ተልኳል!");
+        } else {
+            console.error("ቴሌግራም ላይ መልእክት መላክ አልተቻለም:", data.description);
+        }
+    } catch (error) {
+        console.error("የቴሌግራም ኔትወርክ ስህተት አጋጥሟል:", error);
+    }
+}
         initApp();
     </script>
 </body>
