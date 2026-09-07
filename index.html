@@ -8,21 +8,17 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background-color: #f9f9f9; color: #333; }
-        /* ራስጌ */
         header { background: #3f51b5; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
         .cart-info { background: #ff9800; padding: 8px 15px; border-radius: 20px; font-weight: bold; }
         
-        /* 1. የመግቢያ ባነር (Hero Section) */
         .hero { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f') center/cover; color: white; text-align: center; padding: 60px 20px; }
         .hero h1 { font-size: 2.2rem; margin-bottom: 10px; }
         .hero p { font-size: 1.1rem; color: #ddd; }
 
-        /* 2. የምድብ ማጣሪያ አዝራሮች (Category Filters) */
         .filters { display: flex; justify-content: center; gap: 10px; padding: 20px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .filter-btn { padding: 8px 18px; border: 1px solid #3f51b5; background: white; color: #3f51b5; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; }
         .filter-btn.active, .filter-btn:hover { background: #3f51b5; color: white; }
 
-        /* የመጻሕፍት ዝርዝር መዋቅር */
         .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
         .card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.08); display: flex; flex-direction: column; justify-content: space-between; }
@@ -38,19 +34,16 @@
 </head>
 <body>
 
-    <!-- ራስጌ -->
     <header>
         <h2>ብርሃኑ መጻሕፍት መደብር</h2>
         <div class="cart-info">🛒 ቅርጫት: <span id="cart-count">0</span></div>
     </header>
 
-    <!-- 1. የመግቢያ ባነር (Hero Section) -->
     <section class="hero">
         <h1>እንኳን ወደ ብርሃኑ መጻሕፍት መደብር በደህና መጡ</h1>
         <p>የእውቀት ማዕድ - የሚፈልጉትን መጽሐፍ ይምረጡ፣ ያንብቡ፣ ሕይወትዎን ያበልጽጉ!</p>
     </section>
 
-    <!-- 2. የምድብ ማጣሪያዎች (Category Filters) -->
     <div class="filters">
         <button class="filter-btn active" onclick="filterBooks('all')">ሁሉም</button>
         <button class="filter-btn" onclick="filterBooks('fiction')">ልቦለድ</button>
@@ -59,34 +52,32 @@
         <button class="filter-btn" onclick="filterBooks('poetry')">ግጥም</button>
     </div>
 
-    <!-- የመጻሕፍት ማሳያ ቦታ -->
     <div class="container">
-        <div id="books-grid" class="grid">
-            <!-- መረጃዎች ከ Supabase በ JS ይጫናሉ -->
-        </div>
+        <div id="books-grid" class="grid"></div>
     </div>
 
     <script>
-        // Supabase ግንኙነት ማዋቀሪያ
-        const SUPABASE_URL = 'https://csaqipbyxpprdsnyjpsc.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzYXFpcGJ5eHBwcmRzbnlqcHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTkwODIsImV4cCI6MjEwNDA5NTA4Mn0.1WJdBD5Ho_oFezTOnActxVjZ_O7_6999wIPZ2imilzk';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // ድርብ ክትትልን ለመከላከል የ Supabase ክላይንት መኖሩን ማረጋገጥ
+        if (typeof window.supabaseClient === 'undefined') {
+            const SUPABASE_URL = 'https://csaqipbyxpprdsnyjpsc.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzYXFpcGJ5eHBwcmRzbnlqcHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTkwODIsImV4cCI6MjEwNDA5NTA4Mn0.1WJdBD5Ho_oFezTOnActxVjZ_O7_6999wIPZ2imilzk';
+            window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        }
+        const supabase = window.supabaseClient;
 
         let allBooks = [];
         let cartCount = 0;
 
-        // መጻሕፍትን ከ Supabase መጫን
         async function fetchBooks() {
             const { data, error } = await supabase.from('books').select('*');
             if (error) {
                 console.error('መረጃዎችን ማምጣት አልተቻለም:', error.message);
                 return;
             }
-            allBooks = data;
+            allBooks = data || [];
             displayBooks(allBooks);
         }
 
-        // መጻሕፍትን በገጽ ላይ ማሳየት
         function displayBooks(books) {
             const grid = document.getElementById('books-grid');
             grid.innerHTML = '';
@@ -113,9 +104,7 @@
             });
         }
 
-        // 3. የምድብ ማጣሪያ ተግባር (Category Filter Logic)
         function filterBooks(category) {
-            // የአዝራሮችን ገጽታ መቀየር
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
 
@@ -127,14 +116,12 @@
             }
         }
 
-        // 4. የግዢ ቅርጫት ማስተካከያ (Cart System)
         function addToCart(bookTitle) {
             cartCount++;
             document.getElementById('cart-count').innerText = cartCount;
             alert(`"${bookTitle}" ወደ ቅርጫትዎ ተጨምሯል!`);
         }
 
-        // ገጹ ሲከፈት መረጃዎችን መጥራት
         fetchBooks();
     </script>
 </body>
