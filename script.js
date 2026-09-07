@@ -5,6 +5,9 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // የ Supabase ክላይንት መፍጠር
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// የሚንቀሳቀሰው አሁን የገባው ተጠቃሚ መረጃ (Current User)
+let currentUser = null;
+
 // 1. ግንኙነቱ በትክክል መከናወኑን ማረጋገጫ (Test Connection)
 async function testConnection() {
     const statusEl = document.getElementById('status');
@@ -30,7 +33,7 @@ async function testConnection() {
     }
 }
 
-// 2. አድሚን ሎግ ኢን የሚያደርግበት ፋንክሽን
+// 2. ሎግ ኢን የሚያደርግበት ፋንክሽን
 async function loginAdmin(email, password) {
     const { data, error } = await supabase.auth.signInWithPassword({
         email: email,
@@ -41,17 +44,80 @@ async function loginAdmin(email, password) {
         alert("ግባ መሳሳት አለ (Login Failed): " + error.message);
         return false;
     } else {
-        alert("በተሳካ ሁኔታ ገብተዋል! አሁን መጽሐፍ መመዝገብ ይችላሉ።");
+        currentUser = data.user;
+        await updateAuthUI();
+        alert("በተሳካ ሁኔታ ገብተዋል!");
         return true;
     }
 }
 
-// 3. መጽሐፍ መዝጋቢው ፋንክሽን
+// 3. ሎግ ഔት (Logout) የሚያደርግበት ፋንክሽን
+async function handleLogout() {
+    await supabase.auth.signOut();
+    currentUser = null;
+    await updateAuthUI();
+    alert("ከአካውንትዎ ውጥተዋል።");
+}
+
+// 4. የተጠቃሚውን ሚና (Role) ከ Supabase profiles ቴብል በማረጋገጥ አድሚን አዝራሮችን መቆጣጠሪያ
+async function updateAuthUI() {
+    const authBtn = document.getElementById('authBtn');
+    const adminBookBtn = document.getElementById('adminBookBtn');
+    const adminNewsBtn = document.getElementById('adminNewsBtn');
+
+    // አሁን የገባ ተጠቃሚ መኖሩን ማረጋገጥ
+    const { data: { session } } = await supabase.auth.getSession();
+    currentUser = session?.user || null;
+
+    if (currentUser) {
+        if (authBtn) {
+            authBtn.innerText = 'ውጣ (Logout)';
+            authBtn.onclick = handleLogout;
+        }
+
+        // አድሚን መሆኑን ከ Supabase 'profiles' ቴብል ማረጋገጥ (role = 'admin' መሆኑን ማየት)
+        const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', currentUser.id)
+            .single();
+
+        // ተጠቃሚው አድሚን ሚና ካለው ብቻ አዝራሮቹን እናሳያለን
+        if (profile && profile.role === 'admin') {
+            if (adminBookBtn) adminBookBtn.style.display = 'inline-block';
+            if (adminNewsBtn) adminNewsBtn.style.display = 'inline-block';
+        } else {
+            if (adminBookBtn) adminBookBtn.style.display = 'none';
+            if (adminNewsBtn) adminNewsBtn.style.display = 'none';
+        }
+    } else {
+        if (authBtn) {
+            authBtn.innerText = 'ግባ / ተመዝገብ';
+            // authBtn.onclick = openAuthModal; // የሎግኢን ፖፕአፕ መክፈቻዎ የሚጠራበትን ፋንክሽን እዚህ ያስገቡ
+        }
+        if (adminBookBtn) adminBookBtn.style.display = 'none';
+        if (adminNewsBtn) adminNewsBtn.style.display = 'none';
+    }
+}
+
+// 5. መጽሐፍ መዝጋቢው ፋንክሽን (በዳታቤዝ አድሚን ሚናው የተረጋገጠ)
 async function addBook(title, author, price, category, imageUrl, content) {
-    // መጀመሪያ አድሚን መሆኑን/መግባቱን ማረጋገጥ
+    // መጀመሪያ ሎግ ኢን ማድረጉን ማረጋገጥ
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
-        alert("እባክዎ መጀመሪያ እንደ አድሚን ይግቡ (Login)!");
+        alert("እባክዎ መጀመሪያ ይግቡ (Login)!");
+        return;
+    }
+
+    // ከዳታቤዝ አድሚን መሆኑን ዳግም ማረጋገጥ (ለተጨማሪ ደህንነት)
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+
+    if (!profile || profile.role !== 'admin') {
+        alert("ይህንን ድርጊት ለመፈጸም አድሚን መሆን አለብዎት!");
         return;
     }
 
@@ -75,7 +141,7 @@ async function addBook(title, author, price, category, imageUrl, content) {
     }
 }
 
-// 4. ከ HTML ፎርም መረጃዎችን ተቀብሎ ወደ addBook የሚልከው ረዳት ፋንክሽን
+// 6. ከ HTML ፎርም መረጃዎችን ተቀብሎ ወደ addBook የሚልከው ረዳት ፋንክሽን
 function handleFormSubmit() {
     const title = document.getElementById('title')?.value;
     const author = document.getElementById('author')?.value;
@@ -92,5 +158,6 @@ function handleFormSubmit() {
     addBook(title, author, price, category, imageUrl, content);
 }
 
-// ፋይሉ ሲከፈት የግንኙነት ምርመራውን ማቀጣጠር
+// ፋይሉ ሲከፈት የግንኙነት ምርመራውን ማቀጣጠር እና የዩዘርን ሁኔታ ማጣራት
 testConnection();
+updateAuthUI();
