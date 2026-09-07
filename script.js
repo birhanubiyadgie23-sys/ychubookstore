@@ -75,12 +75,16 @@ async function updateAuthUI() {
             authBtn.onclick = handleLogout;
         }
 
-        // አድሚን መሆኑን ከ Supabase 'profiles' ቴብል ማረጋገጥ (role = 'admin' መሆኑን ማየት)
+        // ከፕሮፋይል ቴብል መረጃውን ማንበብ
         const { data: profile, error } = await supabase
             .from('profiles')
             .select('role')
             .eq('id', currentUser.id)
             .single();
+
+        // በኮንሶል ውስጥ ምን እያነበበ እንደሆነ ለማየት (F12 ተጭነው ማየት ይችላሉ)
+        console.log("Profile Data:", profile);
+        console.log("Error if any:", error);
 
         // ተጠቃሚው አድሚን ሚና ካለው ብቻ አዝራሮቹን እናሳያለን
         if (profile && profile.role === 'admin') {
@@ -93,7 +97,6 @@ async function updateAuthUI() {
     } else {
         if (authBtn) {
             authBtn.innerText = 'ግባ / ተመዝገብ';
-            // authBtn.onclick = openAuthModal; // የሎግኢን ፖፕአፕ መክፈቻዎ የሚጠራበትን ፋንክሽን እዚህ ያስገቡ
         }
         if (adminBookBtn) adminBookBtn.style.display = 'none';
         if (adminNewsBtn) adminNewsBtn.style.display = 'none';
