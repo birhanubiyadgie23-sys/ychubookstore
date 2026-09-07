@@ -9,7 +9,7 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background-color: #f9f9f9; color: #333; }
         header { background: #3f51b5; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-        .cart-info { background: #ff9800; padding: 8px 15px; border-radius: 20px; font-weight: bold; }
+        .cart-info { background: #ff9800; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; }
         
         .hero { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f') center/cover; color: white; text-align: center; padding: 60px 20px; }
         .hero h1 { font-size: 2.2rem; margin-bottom: 10px; }
@@ -30,13 +30,24 @@
         .price { color: #e91e63; font-weight: bold; font-size: 1.1rem; }
         .buy-btn { width: 100%; background: #3f51b5; color: white; border: none; padding: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; }
         .buy-btn:hover { background: #303f9f; }
+
+        /* የክፍያ መስኮት (Modal) ዲዛይን */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 10px; width: 400px; max-width: 90%; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .modal-content h3 { margin-top: 0; color: #3f51b5; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        .checkout-btn { width: 100%; background: #27ae60; color: white; border: none; padding: 10px; cursor: pointer; font-weight: bold; border-radius: 4px; }
+        .checkout-btn:hover { background: #219653; }
+        .close-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; float: right; }
     </style>
 </head>
 <body>
 
     <header>
         <h2>ብርሃኑ መጻሕፍት መደብር</h2>
-        <div class="cart-info">🛒 ቅርጫት: <span id="cart-count">0</span></div>
+        <div class="cart-info" onclick="openCheckout()">🛒 ቅርጫት (<span id="cart-count">0</span>) - ግዢውን ጨርስ</div>
     </header>
 
     <section class="hero">
@@ -56,16 +67,41 @@
         <div id="books-grid" class="grid"></div>
     </div>
 
+    <!-- የክፍያ ማጠናቀቂያ መስኮት (Checkout Modal) -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeCheckout()">✕ ዝጋ</button>
+            <h3>የግዢ እና የክፍያ ማጠናቀቂያ</h3>
+            <p>የተመረጡ መጻሕፍት ብዛት: <strong id="modal-cart-count">0</strong></p>
+            
+            <div class="form-group">
+                <label>ሙሉ ስምዎ:</label>
+                <input type="text" id="cust-name" placeholder="ስምዎን ያስገቡ">
+            </div>
+            <div class="form-group">
+                <label>ስልክ ቁጥር:</label>
+                <input type="text" id="cust-phone" placeholder="09xxxxxxxx">
+            </div>
+            <div class="form-group">
+                <label>የክፍያ አማራጭ ይምረጡ:</label>
+                <select id="payment-method">
+                    <option value="telebirr">ቴሌብር (Telebirr)</option>
+                    <option value="cbe">የኢትዮጵያ ንግድ ባንክ (CBE)</option>
+                    <option value="cash">በእጅ ሲረከቡ (Cash on Delivery)</option>
+                </select>
+            </div>
+            <button class="checkout-btn" onclick="completePurchase()">ክፍያውን አጠናቅ (Order)</button>
+        </div>
+    </div>
+
     <script>
-        // የተባዛ ስም እንዳይፈጠር የተለየ ተለዋዋጭ ስም መጠቀም
         const SUPABASE_URL = 'https://csaqipbyxpprdsnyjpsc.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzYXFpcGJ5eHBwcmRzbnlqcHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTkwODIsImV4cCI6MjEwNDA5NTA4Mn0.1WJdBD5Ho_oFezTOnActxVjZ_O7_6999wIPZ2imilzk';
         
-        // ሱፓቤዝን በሌላ ስም እናስጀምራለን
         const dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let allBooks = [];
-        let cartCount = 0;
+        let cart = []; // የተመረጡ መጻሕፍትን ዝርዝር ለመያዝ
 
         async function fetchBooks() {
             const { data, error } = await dbClient.from('books').select('*');
@@ -97,7 +133,7 @@
                         <div class="rating">⭐ ${book.rating || '4.5'}</div>
                         <div class="price">${book.price} ብር</div>
                     </div>
-                    <button class="buy-btn" onclick="addToCart('${book.title}')">ግዛ / ወደ ቅርጫት ጨምር</button>
+                    <button class="buy-btn" onclick='addToCart(${JSON.stringify(book)})'>ግዛ / ወደ ቅርጫት ጨምር</button>
                 `;
                 grid.appendChild(card);
             });
@@ -117,13 +153,45 @@
             }
         }
 
-        function addToCart(bookTitle) {
-            cartCount++;
-            document.getElementById('cart-count').innerText = cartCount;
-            alert(`"${bookTitle}" ወደ ቅርጫትዎ ተጨምሯል!`);
+        // መጽሐፍ ወደ ቅርጫት ሲጨመር
+        function addToCart(book) {
+            cart.push(book);
+            document.getElementById('cart-count').innerText = cart.length;
+            alert(`"${book.title}" ወደ ቅርጫትዎ ተጨምሯል። ግዢውን ለመጨመር ከላይ የሚገኘውን የቅርጫት አዝራር ይጫኑ!`);
         }
 
-        // ፋይሉ ሲጫን መረጃዎችን መጥራት
+        // የክፍያ መስኮቱን መክፈት
+        function openCheckout() {
+            if (cart.length === 0) {
+                alert('እባክዎ መጀመሪያ የሚፈልጉትን መጽሐፍ ይምረጡ!');
+                return;
+            }
+            document.getElementById('modal-cart-count').innerText = cart.length;
+            document.getElementById('checkoutModal').style.display = 'flex';
+        }
+
+        // የክፍያ መስኮቱን መዝጋት
+        function closeCheckout() {
+            document.getElementById('checkoutModal').style.display = 'none';
+        }
+
+        // ክፍያውን ማጠናቀቅ
+        function completePurchase() {
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const method = document.getElementById('payment-method').value;
+
+            if (!name || !phone) {
+                alert('እባክዎ ስምዎን እና ስልክ ቁጥርዎን ያስገቡ!');
+                return;
+            }
+
+            alert(`መዝገብዎ ተይዟል ${name}! በትዕዛዝዎ መሠረት በክፍያ አማራጭ (${method}) እናረጋግጣለን። እናመሰግናለን!`);
+            cart = [];
+            document.getElementById('cart-count').innerText = 0;
+            closeCheckout();
+        }
+
         fetchBooks();
     </script>
 </body>
