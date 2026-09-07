@@ -9,7 +9,7 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; background-color: #f9f9f9; color: #333; }
         header { background: #3f51b5; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-        .cart-info { background: #ff9800; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+        .cart-info { background: #ff9800; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; color: white; }
         
         .hero { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f') center/cover; color: white; text-align: center; padding: 60px 20px; }
         .hero h1 { font-size: 2.2rem; margin-bottom: 10px; }
@@ -101,7 +101,7 @@
         const dbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let allBooks = [];
-        let cart = []; // የተመረጡ መጻሕፍትን ዝርዝር ለመያዝ
+        let cart = []; 
 
         async function fetchBooks() {
             const { data, error } = await dbClient.from('books').select('*');
@@ -122,7 +122,7 @@
                 return;
             }
 
-            books.forEach(book => {
+            books.forEach((book, index) => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
@@ -133,9 +133,16 @@
                         <div class="rating">⭐ ${book.rating || '4.5'}</div>
                         <div class="price">${book.price} ብር</div>
                     </div>
-                    <button class="buy-btn" onclick='addToCart(${JSON.stringify(book)})'>ግዛ / ወደ ቅርጫት ጨምር</button>
+                    <button class="buy-btn" id="btn-${index}">ግዛ / ወደ ቅርጫት ጨምር</button>
                 `;
+                
                 grid.appendChild(card);
+
+                // አዝራሩ በትክክል እንዲሰራ በ JavaScript Event Listener ማገናኘት
+                const btn = card.querySelector(`#btn-${index}`);
+                btn.onclick = function() {
+                    addToCart(book);
+                };
             });
         }
 
@@ -153,14 +160,12 @@
             }
         }
 
-        // መጽሐፍ ወደ ቅርጫት ሲጨመር
         function addToCart(book) {
             cart.push(book);
             document.getElementById('cart-count').innerText = cart.length;
-            alert(`"${book.title}" ወደ ቅርጫትዎ ተጨምሯል። ግዢውን ለመጨመር ከላይ የሚገኘውን የቅርጫት አዝራር ይጫኑ!`);
+            alert(`"${book.title}" ወደ ቅርጫትዎ ተጨምሯል!`);
         }
 
-        // የክፍያ መስኮቱን መክፈት
         function openCheckout() {
             if (cart.length === 0) {
                 alert('እባክዎ መጀመሪያ የሚፈልጉትን መጽሐፍ ይምረጡ!');
@@ -170,12 +175,10 @@
             document.getElementById('checkoutModal').style.display = 'flex';
         }
 
-        // የክፍያ መስኮቱን መዝጋት
         function closeCheckout() {
             document.getElementById('checkoutModal').style.display = 'none';
         }
 
-        // ክፍያውን ማጠናቀቅ
         function completePurchase() {
             const name = document.getElementById('cust-name').value;
             const phone = document.getElementById('cust-phone').value;
