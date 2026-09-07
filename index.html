@@ -4,557 +4,364 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ብርሃኑ መጽሐፍት መደብር | Birhanu Bookstore</title>
-    <!-- የጉግል ፊደላት (Google Fonts) ለግዕዝ እና ላቲን ውበት -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Ethiopic:wght@400;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Supabase CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Ethiopic:wght@400;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #1e3d59;
-            --secondary: #17b978;
-            --accent: #ff6e40;
-            --bg-color: #f8f9fa;
-            --text-color: #333333;
-            --white: #ffffff;
-            --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
-        }
-
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Plus Jakarta Sans', 'Noto Serif Ethiopic', sans-serif;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Ethiopic', sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
+            color: #f8fafc;
+            min-height: 100vh;
+            line-height: 1.4;
+            position: relative;
+            overflow-x: hidden;
+            background-color: #0f172a;
         }
 
-        /* setHeader & Navigation */
-        header {
-            background: var(--white);
-            box-shadow: var(--shadow);
-            position: sticky;
+        /* የዘመናዊ ላይብረሪ መደርደሪያዎች የሚቀያየሩበት ስላይድ ባክግራውንድ */
+        .bg-slideshow {
+            position: fixed;
             top: 0;
-            z-index: 1000;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
         }
 
-        .navbar {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
+        .bg-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.8s ease-in-out, transform 6s ease;
+            transform: scale(1);
+        }
+
+        .bg-slide.active {
+            opacity: 1;
+            transform: scale(1.05); /* ለስላሳ የማጉላት (Zoom) ውጤት */
+        }
+
+        /* ዳራውን ጨለማ እና ጽሁፍ በግልጽ የሚታይ ለማድረግ የሚረዳ የተሻሻለ ከቨር */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.92));
+            z-index: -1;
+        }
+
+        header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 22px 6%;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 700;
-            color: var(--primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            color: #fbbf24;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 10px rgba(251, 191, 36, 0.3);
         }
 
-        .logo span {
-            color: var(--accent);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-            align-items: center;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-color);
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .nav-links a:hover {
-            color: var(--secondary);
-        }
-
-        .cart-btn {
-            background: var(--primary);
-            color: var(--white);
+        .admin-btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
             border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 50px;
+            padding: 10px 20px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
         }
 
-        .cart-btn:hover {
-            background: var(--secondary);
+        .admin-btn:hover {
+            background: linear-gradient(135deg, #2563eb, #1e40af);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
         }
 
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, var(--primary), #112233);
-            color: var(--white);
-            padding: 4rem 2rem;
+        .hero-section {
             text-align: center;
-            border-bottom-left-radius: 40px;
-            border-bottom-right-radius: 40px;
+            padding: 50px 20px 20px;
+            position: relative;
+            z-index: 2;
         }
 
-        .hero h1 {
+        .hero-section h1 {
             font-size: 2.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 12px;
+            color: #ffffff;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
         }
 
-        .hero p {
-            font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto 2rem;
-            opacity: 0.9;
-        }
-
-        .search-box {
-            max-width: 500px;
+        .hero-section p {
+            font-size: 1.15rem;
+            color: #cbd5e1;
+            max-width: 650px;
             margin: 0 auto;
-            display: flex;
-            background: var(--white);
-            border-radius: 50px;
+        }
+
+        /* አንባቢዎች እያነበቡ የሚያልፉት የሀሳብ ስላይደር */
+        .quotes-slider {
+            max-width: 750px;
+            margin: 25px auto;
+            text-align: center;
+            height: 55px;
+            position: relative;
             overflow: hidden;
-            box-shadow: var(--shadow);
+            z-index: 2;
         }
 
-        .search-box input {
-            flex: 1;
-            padding: 1rem 1.5rem;
-            border: none;
-            outline: none;
-            font-size: 1rem;
+        .quote-item {
+            position: absolute;
+            width: 100%;
+            font-style: italic;
+            color: #38bdf8;
+            font-size: 1.05rem;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+            transform: translateY(10px);
         }
 
-        .search-box button {
-            background: var(--accent);
-            color: var(--white);
-            border: none;
-            padding: 0 1.5rem;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
+        .quote-item.active {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        .search-box button:hover {
-            opacity: 0.9;
-        }
-
-        /* Main Container */
         .container {
             max-width: 1200px;
-            margin: 3rem auto;
-            padding: 0 2rem;
+            margin: 30px auto;
+            padding: 0 20px;
+            position: relative;
+            z-index: 2;
         }
 
         .section-title {
-            font-size: 1.8rem;
-            color: var(--primary);
-            margin-bottom: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            font-size: 1.6rem;
+            margin-bottom: 25px;
+            border-left: 5px solid #fbbf24;
+            padding-left: 12px;
+            color: #f8fafc;
         }
 
-        /* Books Grid */
         .books-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 30px;
         }
 
         .book-card {
-            background: var(--white);
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(10px);
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
         .book-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            border-color: rgba(251, 191, 36, 0.3);
         }
 
-        .book-img-container {
-            height: 220px;
-            background: #e1e8ed;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .book-img-container img {
+        .book-img {
             width: 100%;
-            height: 100%;
+            height: 220px;
             object-fit: cover;
-            transition: var(--transition);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: transform 0.5s ease;
         }
 
-        .book-card:hover .book-img-container img {
-            transform: scale(1.05);
+        .book-card:hover .book-img {
+            transform: scale(1.03);
         }
 
         .book-info {
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-        .book-category {
-            font-size: 0.8rem;
-            color: var(--secondary);
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 0.4rem;
+            padding: 22px;
         }
 
         .book-title {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 0.3rem;
+            margin-bottom: 8px;
+            color: #ffffff;
         }
 
         .book-author {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: #94a3b8;
+            margin-bottom: 15px;
         }
 
         .book-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-top: auto;
-            padding-top: 1rem;
-            border-top: 1px solid #eee;
+            margin-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 15px;
         }
 
-        .book-price {
-            font-size: 1.1rem;
+        .price {
+            font-size: 1.2rem;
             font-weight: 700;
-            color: var(--accent);
+            color: #34d399;
         }
 
         .buy-btn {
-            background: var(--secondary);
-            color: var(--white);
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
             border: none;
-            padding: 0.5rem 1rem;
+            padding: 10px 18px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            transition: all 0.3s ease;
         }
 
         .buy-btn:hover {
-            background: #109c62;
+            background: linear-gradient(135deg, #d97706, #b45309);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
         }
 
-        /* Cart Sidebar / Drawer */
-        .cart-sidebar {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 380px;
-            height: 100%;
-            background: var(--white);
-            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
-            z-index: 1100;
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .cart-sidebar.open {
-            right: 0;
-        }
-
-        .cart-header {
-            padding: 1.5rem;
-            background: var(--primary);
-            color: var(--white);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .close-cart {
-            background: none;
-            border: none;
-            color: var(--white);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .cart-items {
-            flex: 1;
-            padding: 1.5rem;
-            overflow-y: auto;
-        }
-
-        .cart-item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 1px solid #eee;
-            font-size: 0.95rem;
-        }
-
-        .cart-footer {
-            padding: 1.5rem;
-            background: #f8f9fa;
-            border-top: 1px solid #eee;
-        }
-
-        .total-section {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--primary);
-        }
-
-        .checkout-btn {
-            width: 100%;
-            background: var(--accent);
-            color: var(--white);
-            border: none;
-            padding: 1rem;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .checkout-btn:hover {
-            opacity: 0.9;
-        }
-
-        /* Footer */
         footer {
-            background: var(--primary);
-            color: var(--white);
             text-align: center;
-            padding: 2rem;
-            margin-top: 4rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2rem; }
-            .nav-links { display: none; }
-            .cart-sidebar { width: 100%; right: -100%; }
+            padding: 25px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(15, 23, 42, 0.9);
+            color: #94a3b8;
+            font-size: 0.95rem;
+            position: relative;
+            z-index: 2;
         }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
+    <!-- የተስተካከሉ የዘመናዊ ላይብረሪ መደርደሪያዎች (Library Shelves) የዳራ ስላይዶች -->
+    <div class="bg-slideshow">
+        <div class="bg-slide active" style="background-image: url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=1920&q=80');"></div>
+        <div class="bg-slide" style="background-image: url('https://images.unsplash.com/photo-1568667256549-094345857637?auto=format&fit=crop&w=1920&q=80');"></div>
+        <div class="bg-slide" style="background-image: url('https://images.unsplash.com/photo-1507842217343-583bb7270b67?auto=format&fit=crop&w=1920&q=80');"></div>
+        <div class="bg-slide" style="background-image: url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1920&q=80');"></div>
+    </div>
+    <div class="overlay"></div>
+
     <header>
-        <div class="navbar">
-            <a href="#" class="logo">📚 ብርሃኑ <span>መደብር</span></a>
-            <ul class="nav-links">
-                <li><a href="#">ዋና ገጽ</a></li>
-                <li><a href="#books-section">መጽሐፍት</a></li>
-                <li><a href="#news">ዜናዎች</a></li>
-                <li><a href="#announcements">ማስታወቂያ</a></li>
-            </ul>
-            <button class="cart-btn" onclick="toggleCartSidebar()">
-                🛒 ቅርጫት (<span id="cart-count">0</span>)
-            </button>
-        </div>
+        <div class="logo">ብርሃኑ መጽሐፍት መደብር</div>
+        <button class="admin-btn" onclick="alert('ወደ አድሚን ዳሽቦርድ ለመግባት ያስችላል (Admin Panel Integration)')">የአድሚን ማስተካከያ</button>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <h1>እውቀት ብርሃን ነው</h1>
-        <p>የተመረጡ ጥንታዊና ዘመናዊ መጽሐፍትን በቀላሉ ይዘዙ፤ እኛም ያሉበት እናደርሳለን።</p>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="የመጽሐፍ ወይም ደራሲ ስም ይፈልጉ..." oninput="filterBooks()">
-            <button>ፈልግ</button>
+    <section class="hero-section">
+        <h1>እውቀት ለሁሉም — በእርሶ እጅ ላይ ይገኛል</h1>
+        <p>ከዚህ በታች ከሚገኙት እውነተኛ መጽሐፍት ውስጥ ይምረጡ፤ የዕውቀት ገጾችን በማንበብ ይጀምሩ።</p>
+        
+        <!-- አንባቢዎች እያነበቡ የሚያልፉት የሀሳብ ስላይደር -->
+        <div class="quotes-slider">
+            <div class="quote-item active">"መጽሐፍን ማንበብ ማለት ካለፉት ዘመናት ከሚኖሩ ምርጥ ሰዎች ጋር መነጋገር ማለት ነው።"</div>
+            <div class="quote-item">"አንድ ጥሩ መጽሐፍ ሙሉ ዓለምን ከማየት ጋር እኩል ነው።"</div>
+            <div class="quote-item">"እውቀት ማከማቻው መጽሐፍ ነው፤ ማንበብ ደግሞ አዕምሮን ማልማት ነው።"</div>
         </div>
     </section>
 
-    <!-- Main Content: Books -->
-    <div class="container" id="books-section">
-        <div class="section-title">
-            <span>የመጽሐፍት መደርደሪያ</span>
-        </div>
-        <div class="books-grid" id="booksGrid">
-            <!-- ጃቫስክሪፕት በዳታቤዝ ያሉትን መጽሐፍት እዚህ ይጭናል -->
-            <p style="text-align: center; grid-column: 1 / -1; color: #777;">መጽሐፍት በመጫን ላይ...</p>
-        </div>
-    </div>
-
-    <!-- Cart Sidebar -->
-    <div class="cart-sidebar" id="cartSidebar">
-        <div class="cart-header">
-            <h3>የእርስዎ የገበያ ቅርጫት</h3>
-            <button class="close-cart" onclick="toggleCartSidebar()">✕</button>
-        </div>
-        <div class="cart-items" id="sidebar-items">
-            <p style="color: #888; text-align: center;">ቅርጫቱ ባዶ ነው።</p>
-        </div>
-        <div class="cart-footer">
-            <div class="total-section">
-                <span>ድምር:</span>
-                <span><span id="sidebar-total-price">0</span> ብር</span>
+    <div class="container">
+        <h2 class="section-title">ተወዳጅ አዳዲስ መጽሐፍት</h2>
+        
+        <div class="books-grid">
+            <!-- መጽሐፍ 1 -->
+            <div class="book-card">
+                <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=600&q=80" alt="የመጽሐፍ ሽፋን" class="book-img">
+                <div class="book-info">
+                    <div class="book-title">ስኬት እና ጥበብ</div>
+                    <div class="book-author">ደራሲ፡ ከበደ ሚካኤል</div>
+                    <div class="book-footer">
+                        <span class="price">400 ብር</span>
+                        <button class="buy-btn">ይግዙ</button>
+                    </div>
+                </div>
             </div>
-            <button class="checkout-btn" onclick="openCheckout()">ግዢውን ጨርስ</button>
+
+            <!-- መጽሐፍ 2 -->
+            <div class="book-card">
+                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=600&q=80" alt="የመጽሐፍ ሽፋን" class="book-img">
+                <div class="book-info">
+                    <div class="book-title">የህይወት ጎዳና</div>
+                    <div class="book-author">ደራሲ፡ ሀዲስ አለማየሁ</div>
+                    <div class="book-footer">
+                        <span class="price">350 ብር</span>
+                        <button class="buy-btn">ይግዙ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- መጽሐፍ 3 -->
+            <div class="book-card">
+                <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=600&q=80" alt="የመጽሐፍ ሽፋን" class="book-img">
+                <div class="book-info">
+                    <div class="book-title">የባህል ምሥጢር</div>
+                    <div class="book-author">ደራሲ፡ ማዕረጉ አበበ</div>
+                    <div class="book-footer">
+                        <span class="price">500 ብር</span>
+                        <button class="buy-btn">ይግዙ</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer>
         <p>&copy; 2026 ብርሃኑ መጽሐፍት መደብር። መብቱ በህግ የተጠበቀ ነው።</p>
     </footer>
 
-    <!-- JavaScript ሎጂክ -->
+    <!-- የዳራ ምስሎችን እና የንባብ ጥቅሶችን በራስ-ሰር የሚያቀያይር ጃቫስክሪፕት -->
     <script>
-        // የሱፓቤዝ (Supabase) ማዋቀሪያ (እባክዎ ትክክለኛውን ዩአርኤል እና ኪይ ያስገቡ)
-        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
-        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
-        const dbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // 1. የላይብረሪ መደርደሪያዎች ዳራ ስላይደር
+        const bgSlides = document.querySelectorAll('.bg-slide');
+        let currentBgIndex = 0;
 
-        let cart = [];
-        let allBooks = [];
-
-        async function initApp() {
-            await fetchBooks();
+        function nextBackground() {
+            bgSlides[currentBgIndex].classList.remove('active');
+            currentBgIndex = (currentBgIndex + 1) % bgSlides.length;
+            bgSlides[currentBgIndex].classList.add('active');
         }
+        setInterval(nextBackground, 6000); // በየ 6 ሰኮንዱ እየተቀያየረ ያሳያል
 
-        async function fetchBooks() {
-            const { data, error } = await dbClient.from('books').select('*');
-            if (error) {
-                console.error('መጽሐፍትን ማምጣት አልተቻለም:', error.message);
-                document.getElementById('booksGrid').innerHTML = '<p style="text-align: center; color: red; grid-column: 1 / -1;">መረጃውን መጫን አልተቻለም። እባክዎ እንደገና ይሞክሩ።</p>';
-                return;
-            }
-            allBooks = data || [];
-            displayBooks(allBooks);
+        // 2. የንባብ ጥቅሶች ስላይደር
+        const quoteItems = document.querySelectorAll('.quote-item');
+        let currentQuoteIndex = 0;
+
+        function nextQuote() {
+            quoteItems[currentQuoteIndex].classList.remove('active');
+            currentQuoteIndex = (currentQuoteIndex + 1) % quoteItems.length;
+            quoteItems[currentQuoteIndex].classList.add('active');
         }
-
-        function displayBooks(books) {
-            const grid = document.getElementById('booksGrid');
-            if (books.length === 0) {
-                grid.innerHTML = '<p style="text-align: center; grid-column: 1 / -1; color: #777;">ምንም መጽሐፍ አልተገኘም።</p>';
-                return;
-            }
-
-            grid.innerHTML = books.map(book => `
-                <div class="book-card">
-                    <div class="book-img-container">
-                        <img src="${book.image_url || 'https://via.placeholder.com/300x220?text=No+Image'}" alt="${book.title}">
-                    </div>
-                    <div class="book-info">
-                        <span class="book-category">${book.category || 'አጠቃላይ'}</span>
-                        <h3 class="book-title">${book.title}</h3>
-                        <p class="book-author">ከአዘጋጅ/ደራሲ: ${book.author || 'ያልታወቀ'}</p>
-                        <div class="book-footer">
-                            <span class="book-price">${book.price} ብር</span>
-                            <button class="buy-btn" onclick='addToCart(${JSON.stringify(book)})'>ይግዙ</button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function filterBooks() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allBooks.filter(book => 
-                book.title.toLowerCase().includes(query) || 
-                (book.author && book.author.toLowerCase().includes(query))
-            );
-            displayBooks(filtered);
-        }
-
-        function toggleCartSidebar() {
-            document.getElementById('cartSidebar').classList.toggle('open');
-        }
-
-        function addToCart(book) {
-            const existing = cart.find(item => item.id === book.id);
-            if (existing) {
-                existing.quantity = (existing.quantity || 1) + 1;
-            } else {
-                cart.push({ ...book, quantity: 1 });
-            }
-            updateCartUI();
-            toggleCartSidebar();
-        }
-
-        function removeFromCart(bookId) {
-            cart = cart.filter(item => item.id !== bookId);
-            updateCartUI();
-        }
-
-        function updateCartUI() {
-            const countSpan = document.getElementById('cart-count');
-            const sidebarItems = document.getElementById('sidebar-items');
-            const sidebarTotalPrice = document.getElementById('sidebar-total-price');
-
-            let totalCount = 0;
-            let totalPrice = 0;
-
-            if (cart.length === 0) {
-                sidebarItems.innerHTML = '<p style="color: #888; text-align: center;">ቅርጫቱ ባዶ ነው።</p>';
-            } else {
-                sidebarItems.innerHTML = '';
-                cart.forEach(item => {
-                    const qty = item.quantity || 1;
-                    totalCount += qty;
-                    totalPrice += item.price * qty;
-
-                    const row = document.createElement('div');
-                    row.className = 'cart-item-row';
-                    row.innerHTML = `
-                        <span><b>${item.title}</b> (${qty})</span>
-                        <span>${item.price * qty} ብር <button onclick="removeFromCart('${item.id}')" style="background:none; border:none; color:red; cursor:pointer; margin-left: 8px; font-weight:bold;">✕</button></span>
-                    `;
-                    sidebarItems.appendChild(row);
-                });
-            }
-
-            countSpan.innerText = totalCount;
-            sidebarTotalPrice.innerText = totalPrice;
-        }
-
-        function openCheckout() {
-            if (cart.length === 0) {
-                alert('ቅርጫቱ ባዶ ነው! እባክዎ መጀመሪያ መጽሐፍ ይምረጡ።');
-                return;
-            }
-            let totalPrice = cart.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
-            alert(`ጠቅላላ ዋጋ: ${totalPrice} ብር። ግዢዎን ለመፈጸም እናመሰግናለን!`);
-            cart = [];
-            updateCartUI();
-            toggleCartSidebar();
-        }
-
-        window.onload = initApp;
+        setInterval(nextQuote, 4000); // በየ 4 ሰኮንዱ ይቀያየራል
     </script>
 </body>
 </html>
