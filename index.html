@@ -1023,36 +1023,48 @@
             document.getElementById(sectionId).classList.toggle('show');
             document.getElementById(btnId).classList.toggle('active');
         }
-// የቴሌግራም ማሳወቂያ መላኪያ ፋንክሽን
-async function sendTelegramNotification(bookTitle, buyerName, price) {
-    const BOT_TOKEN = '8974106277:AAFBx7uWcQjHT_s0vBRuaLqa8n1lMYprXXw';
-    const CHAT_ID = '1088785278'; 
-    
-    const message = `📚 አዲስ መጽሐፍ ግዥ ተፈጽሟል!\n\n` +
-                    `📖 የመጽሐፉ ርዕስ: ${bookTitle}\n` +
-                    `👤 ገዢው/ተጠቃሚው: ${buyerName || 'ያልታወቀ'}\n` +
-                    `💰 ዋጋው: ${price} ብር\n` +
-                    `⏰ ሰዓት: ${new Date().toLocaleString()}`;
+<script>
+    // --- የቴሌግራም ማሳወቂያ መላኪያ ፋንክሽን እዚህ ጋር ይቀመጣል ---
+    async function sendTelegramNotification(bookTitle, buyerName, price) {
+        const BOT_TOKEN = '8974106277:AAFBx7uWcQjHT_s0vBRuaLqa8n1lMYprXXw';
+        const CHAT_ID = '1088785278'; 
+        
+        const message = `📚 አዲስ መጽሐፍ ግዥ ተፈጽሟል!\n\n` +
+                        `📖 የመጽሐፉ ርዕስ: ${bookTitle}\n` +
+                        `👤 ገዢው/ተጠቃሚው: ${buyerName || 'ያልታወቀ'}\n` +
+                        `💰 ዋጋው: ${price} ብር\n` +
+                        `⏰ ሰዓት: ${new Date().toLocaleString()}`;
 
-    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
-    try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: CHAT_ID, text: message })
-        });
-
-        const data = await response.json();
-        if (data.ok) {
-            console.log("የቴሌግራም ማሳወቂያው በተሳካ ሁኔታ ተልኳል!");
-        } else {
-            console.error("ቴሌግራም ላይ መልእክት መላክ አልተቻለም:", data.description);
+        try {
+            await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: CHAT_ID, text: message })
+            });
+        } catch (error) {
+            console.error("የቴሌግራም ኔትወርክ ስህተት:", error);
         }
-    } catch (error) {
-        console.error("የቴሌግራም ኔትወርክ ስህተት አጋጥሟል:", error);
     }
-}
+
+    // --- የግዥ ማጠናቀቂያ ፋንክሽን (እዚህ ውስጥ ነው sendTelegramNotification የሚጠራው) ---
+    async function handlePurchase(title, price) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+            alert("እባክዎ መጽሐፉን ለመግዛት መጀመሪያ ይግቡ (Login)!");
+            return;
+        }
+
+        const confirmBuy = confirm(`"${title}" መጽሐፍን በ ${price} ብር ለመግዛት እርግጠኛ ነዎት?`);
+        
+        if (confirmBuy) {
+            alert("ግዥዎ በተሳካ ሁኔታ ተጠናቋል!");
+            
+            // ቴሌግራም ማሳወቂያ የሚልከው እዚህ ጋር ነው
+            await sendTelegramNotification(title, session.user.email, price);
+        }
+    }
         initApp();
     </script>
 </body>
