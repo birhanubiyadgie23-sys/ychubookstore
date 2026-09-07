@@ -25,6 +25,17 @@ async function testConnection() {
         statusEl.style.color = "#c62828"; // ቀይ
         statusEl.style.background = "#ffebee";
         console.error(err);
+        async function addBook(title, author, price, category, imageUrl, content) {
+    const { data, error } = await supabaseClient
+        .from('books')
+        .insert([
+            { title: title, author: author, price: price, category: category, image_url: imageUrl, content: content }
+        ]);
+
+    if (error) {
+        alert("መጽሐፍ ማስገባት አልተቻለም: " + error.message);
+    } else {
+        alert("መጽሐፉ በተሳካ ሁኔታ ተመዝግቧል!");
     }
 }
 
