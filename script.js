@@ -45,8 +45,10 @@ async function loginAdmin(email, password) {
         return false;
     } else {
         currentUser = data.user;
-        await updateAuthUI();
         alert("በተሳካ ሁኔታ ገብተዋል!");
+        
+        // ገብቶ ሲጨርስ ዩአይ (UI) እንዲያስተካክል እና አድሚን አዝራር እንዲያሳይ ይህንን እንጠራዋለን
+        await updateAuthUI(); 
         return true;
     }
 }
