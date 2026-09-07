@@ -1,4 +1,4 @@
-// የ Supabase ቁልፎች (በተለመደው ሁኔታ ከ Environment variables ወይም ከሰርቨር ይነበባሉ)
+ // የ Supabase ቁልፎች
 const SUPABASE_URL = 'https://csaqipbyxpprdsnyjpsc.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzYXFpcGJ5eHBwcmRzbnlqcHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTkwODIsImV4cCI6MjEwNDA5NTA4Mn0.1WJdBD5Ho_oFezTOnActxVjZ_O7_6999wIPZ2imilzk';
 
@@ -9,15 +9,16 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 async function testConnection() {
     const statusEl = document.getElementById('status');
     try {
-        const { data, error } = await supabase.from('vehicles').select('*').limit(1);
+        // ማስታወሻ፡ በመጀመሪያ የፈጠርነው ቴብል 'books' ስለሆነ ከ 'vehicles' ወደ 'books' ቀይሬዋለሁ
+        const { data, error } = await supabase.from('books').select('*').limit(1);
         
         if (error) {
-            statusEl.innerText = "ግንኙነቱ ተሳክቷል! (ዳታቤዙ ጋር ተገናኝቷል)";
-            statusEl.style.color = "#2e7d32"; // አረንጓዴ
-            statusEl.style.background = "#e8f5e9";
+            statusEl.innerText = "የግንኙነት ስህተት አጋጥሟል: " + error.message;
+            statusEl.style.color = "#c62828"; // ቀይ
+            statusEl.style.background = "#ffebee";
         } else {
             statusEl.innerText = "ግንኙነቱ እና መረጃው በትክክል ሰርቷል!";
-            statusEl.style.color = "#2e7d32";
+            statusEl.style.color = "#2e7d32"; // አረንጓዴ
             statusEl.style.background = "#e8f5e9";
         }
     } catch (err) {
@@ -25,11 +26,22 @@ async function testConnection() {
         statusEl.style.color = "#c62828"; // ቀይ
         statusEl.style.background = "#ffebee";
         console.error(err);
-        async function addBook(title, author, price, category, imageUrl, content) {
-    const { data, error } = await supabaseClient
+    }
+}
+
+// መጽሐፍ መዝጋቢው ፋንክሽን (በትክክለኛው የ supabase ስም ተስተካክሏል)
+async function addBook(title, author, price, category, imageUrl, content) {
+    const { data, error } = await supabase
         .from('books')
         .insert([
-            { title: title, author: author, price: price, category: category, image_url: imageUrl, content: content }
+            { 
+                title: title, 
+                author: author, 
+                price: price, 
+                category: category, 
+                image_url: imageUrl, 
+                content: content 
+            }
         ]);
 
     if (error) {
@@ -39,4 +51,5 @@ async function testConnection() {
     }
 }
 
+// ፋይሉ ሲከፈት የግንኙነት ምርመራውን ማቀጣጠር
 testConnection();
