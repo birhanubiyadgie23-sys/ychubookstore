@@ -48,11 +48,13 @@
         .hero h1 { font-size: 2.2rem; margin-bottom: 10px; }
         .hero p { font-size: 1.1rem; color: #ddd; }
 
-        .filters-container { display: flex; justify-content: center; gap: 10px; padding: 20px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-wrap: wrap; }
+        .filters-container { display: flex; justify-content: center; gap: 10px; padding: 20px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-wrap: wrap; align-items: center; }
         .filter-btn, .news-toggle-btn { padding: 8px 18px; border: 1px solid #3f51b5; background: white; color: #3f51b5; border-radius: 20px; cursor: pointer; font-weight: bold; }
         .filter-btn.active, .filter-btn:hover, .news-toggle-btn:hover { background: #3f51b5; color: white; }
         .news-toggle-btn { border-color: #ff9800; color: #ff9800; }
         .news-toggle-btn.active { background: #ff9800; color: white; }
+        
+        .search-box { padding: 8px 15px; border: 1px solid #ccc; border-radius: 20px; width: 220px; outline: none; font-size: 0.9rem; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
         .card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.08); display: flex; flex-direction: column; justify-content: space-between; }
@@ -110,6 +112,7 @@
         <button class="filter-btn" onclick="filterBooks('history', event)">ታሪክ</button>
         <button class="filter-btn" onclick="filterBooks('philosophy', event)">ፍልስፍና</button>
         <button class="filter-btn" onclick="filterBooks('poetry', event)">ግጥም</button>
+        <input type="text" id="searchInput" class="search-box" placeholder=" መጽሐፍ ወይም ደራሲ ይፈልጉ..." onkeyup="searchBooks()">
         <button class="news-toggle-btn" id="newsToggleBtn" onclick="toggleNews()">📢 ማስታወቂያዎች</button>
     </div>
 
@@ -242,12 +245,11 @@
         let cart = [];
         let isSignUpMode = false;
         let activeReadingBook = null;
+        let currentCategory = 'all';
 
-        // የአድሚን ኢሜይል (በዚህ ኢሜይል የሚገባ አካውንት ብቻ ነው መጽሐፍ እና ዜና መመዝገብ የሚችለው)
         const ADMIN_EMAIL = "admin@birhanu.com";
 
         async function initApp() {
-            // የሎገን ሁኔታን ማረጋገጥ
             const { data: { session } } = await dbClient.auth.getSession();
             if (session) {
                 currentUser = session.user;
@@ -270,7 +272,7 @@
 
         function displayBooks(books) {
             const grid = document.getElementById('books-grid');
-            grid.innerHTML = books.length ? '' : '<p style="text-align:center; color:#777;">ምንም መጽሐፍ የለም።</p>';
+            grid.innerHTML = books.length ? '' : '<p style="text-align:center; color:#777;">ምንም መጽሐፍ አልተገኘም።</p>';
 
             books.forEach(book => {
                 const card = document.createElement('div');
@@ -284,7 +286,7 @@
                     </div>
                     <div class="card-actions">
                         <button class="action-btn read-free-btn" onclick="openReader('${book.id}')">📖 አንብብ (ናሙና)</button>
-                        <button class="action-btn buy-card-btn" onclick="addToCart(${JSON.stringify(book).replace(/"/g, '&quot;')})">🛒 ግዛ</button>
+                        <button class="action-btn buy-card-btn" onclick='addToCart(${JSON.stringify(book)})'>🛒 ግዛ</button>
                     </div>
                 `;
                 grid.appendChild(card);
@@ -302,6 +304,23 @@
             });
         }
 
+        // --- የፍለጋ ስራ (Search Functionality) ---
+        function searchBooks() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = allBooks.filter(b => 
+                (currentCategory === 'all' || b.category?.toLowerCase() === currentCategory) &&
+                (b.title.toLowerCase().includes(query) || (b.author && b.author.toLowerCase().includes(query)))
+            );
+            displayBooks(filtered);
+        }
+
+        function filterBooks(cat, evt) {
+            currentCategory = cat;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            if (evt) evt.target.classList.add('active');
+            searchBooks();
+        }
+
         // --- የነጻ ንባብ እና የ Paywall ስርዓት ---
         async function openReader(bookId) {
             const book = allBooks.find(b => b.id == bookId);
@@ -314,10 +333,8 @@
             const contentBox = document.getElementById('reader-content-box');
             const paywallSection = document.getElementById('paywall-section');
 
-            // ሙሉውን ይዘት ማምጣት (ከሌለ ነባሪ ጽሁፍ ይሰጣል)
             const fullText = book.content || "ይህ መጽሐፍ ገና ሙሉ ይዘት አልተጫነለትም። ሆኖም የናሙና ንባብ እዚህ አለ፤ ተጨማሪ መረጃዎችን ማግኘት ይችላሉ። እውቀት የሰው ልጅ የዕድገት መሰረት ነው። በተለያዩ ዘርፎች ላይ የተጻፉ ጠቃሚ መጽሐፍትን በማንበብ አእምሮዎን ማሳደግ ይችላሉ። የንባብ ልምድ ማዳበር ለግል እና ለሀገር እድገት ትልቅ አስተዋጽኦ አለው።";
             
-            // የነጻ ናሙና ገደብ (ለምሳሌ የመጀመሪያዎቹን 250 ፊደላት ብቻ በነጻ እናሳይ)
             const freeLimit = 250;
             
             if (fullText.length > freeLimit) {
@@ -360,7 +377,8 @@
             data.forEach(c => {
                 const item = document.createElement('div');
                 item.className = 'comment-item';
-                item.innerHTML = `<strong>${c.user_email || 'अንባብ'}:</strong> ${c.comment_text}`;
+                const displayName = c.user_email ? c.user_email.split('@')[0] : 'አንባብ';
+                item.innerHTML = `<strong>${displayName}:</strong> ${c.comment_text}`;
                 list.appendChild(item);
             });
         }
@@ -406,7 +424,7 @@
             }
 
             if (isSignUpMode) {
-                const { data, error } = await dbClient.auth.signUp({ email, password });
+                const { error } = await dbClient.auth.signUp({ email, password });
                 if (error) { alert('ምዝገባው አልተሳካም: ' + error.message); return; }
                 alert('ምዝገባው ተሳክቷል! ኢሜይልዎትን አረጋግጠው ይግቡ።');
                 isSignUpMode = false;
@@ -429,7 +447,6 @@
                 authBtn.innerText = 'ውጣ (Logout)';
                 authBtn.onclick = handleLogout;
 
-                // አድሚን መሆኑን ማረጋገጥ
                 if (currentUser.email === ADMIN_EMAIL) {
                     adminBookBtn.style.display = 'inline-block';
                     adminNewsBtn.style.display = 'inline-block';
@@ -528,12 +545,6 @@
         function toggleNews() {
             document.getElementById('newsSection').classList.toggle('show');
             document.getElementById('newsToggleBtn').classList.toggle('active');
-        }
-
-        function filterBooks(cat, evt) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            if (evt) evt.target.classList.add('active');
-            displayBooks(cat === 'all' ? allBooks : allBooks.filter(b => b.category?.toLowerCase() === cat));
         }
 
         initApp();
