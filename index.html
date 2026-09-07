@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ብርሃኑ መጻሕፍት መደብር</title>
+    <title>ብርሃኑ መጻሕፍት መደብር እና ቤተ-መጻሕፍት</title>
     <!-- Supabase CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -24,59 +24,35 @@
         }
         
         .header-right { display: flex; gap: 15px; align-items: center; }
-        .admin-action-btn { background: #e91e63; color: white; border: none; padding: 8px 14px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 0.9rem; transition: 0.2s; }
-        .admin-action-btn:hover { background: #c2185b; }
-
-        .cart-info { background: #ff9800; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; color: white; transition: 0.2s; }
-        .cart-info:hover { background: #f57c00; }
+        .btn-auth { background: #fff; color: #3f51b5; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-auth:hover { background: #f0f0f0; }
         
-        /* የገጹ አጠቃላይ አቀማመጥ */
+        .admin-action-btn { background: #e91e63; color: white; border: none; padding: 8px 14px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 0.9rem; display: none; }
+        .cart-info { background: #ff9800; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; color: white; }
+        
         .main-layout { display: flex; max-width: 1200px; margin: 30px auto; padding: 0 20px; gap: 30px; }
         .content-area { flex: 1; }
 
-        /* የጎን ተንሳፋፊ የቅርጫት ሳጥን */
         .sidebar-cart {
-            width: 300px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            padding: 20px;
-            position: sticky;
-            top: 90px;
-            height: fit-content;
+            width: 300px; background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            padding: 20px; position: sticky; top: 90px; height: fit-content;
         }
         .sidebar-cart h3 { margin-top: 0; color: #3f51b5; border-bottom: 2px solid #f1f2f6; padding-bottom: 10px; }
         .cart-items-list { max-height: 200px; overflow-y: auto; margin-bottom: 15px; font-size: 0.95rem; }
         .cart-item-row { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed #eee; padding-bottom: 5px; }
         
         .sidebar-total { font-size: 1.1rem; font-weight: bold; color: #e91e63; margin-bottom: 15px; text-align: center; background: #fdf2f4; padding: 8px; border-radius: 5px; }
-        
-        .side-checkout-btn {
-            width: 100%;
-            background: #27ae60;
-            color: white;
-            border: none;
-            padding: 12px;
-            cursor: pointer;
-            font-weight: bold;
-            border-radius: 6px;
-            font-size: 1rem;
-            transition: 0.2s;
-        }
-        .side-checkout-btn:hover { background: #219653; }
-        .instruction-text { font-size: 0.85rem; color: #666; text-align: center; margin-top: 8px; }
+        .side-checkout-btn { width: 100%; background: #27ae60; color: white; border: none; padding: 12px; cursor: pointer; font-weight: bold; border-radius: 6px; font-size: 1rem; }
 
         .hero { background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f') center/cover; color: white; text-align: center; padding: 60px 20px; }
         .hero h1 { font-size: 2.2rem; margin-bottom: 10px; }
         .hero p { font-size: 1.1rem; color: #ddd; }
 
-        /* የማጣሪያ እና የዜና አዝራሮች አቀማመጥ */
-        .filters-container { display: flex; justify-content: center; gap: 10px; padding: 20px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-wrap: wrap; align-items: center; }
-        .filter-btn { padding: 8px 18px; border: 1px solid #3f51b5; background: white; color: #3f51b5; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .filter-btn.active, .filter-btn:hover { background: #3f51b5; color: white; }
-
-        .news-toggle-btn { padding: 8px 18px; border: 1px solid #ff9800; background: white; color: #ff9800; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .news-toggle-btn.active, .news-toggle-btn:hover { background: #ff9800; color: white; }
+        .filters-container { display: flex; justify-content: center; gap: 10px; padding: 20px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-wrap: wrap; }
+        .filter-btn, .news-toggle-btn { padding: 8px 18px; border: 1px solid #3f51b5; background: white; color: #3f51b5; border-radius: 20px; cursor: pointer; font-weight: bold; }
+        .filter-btn.active, .filter-btn:hover, .news-toggle-btn:hover { background: #3f51b5; color: white; }
+        .news-toggle-btn { border-color: #ff9800; color: #ff9800; }
+        .news-toggle-btn.active { background: #ff9800; color: white; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
         .card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.08); display: flex; flex-direction: column; justify-content: space-between; }
@@ -84,78 +60,65 @@
         .card-body { padding: 15px; }
         .card-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 5px; }
         .card-author { color: #666; font-size: 0.9rem; margin-bottom: 8px; }
-        .rating { color: #f39c12; font-size: 0.9rem; margin-bottom: 10px; }
-        .price { color: #e91e63; font-weight: bold; font-size: 1.1rem; }
-        .buy-btn { width: 100%; background: #3f51b5; color: white; border: none; padding: 10px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        .buy-btn:hover { background: #303f9f; }
+        .price { color: #e91e63; font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; }
+        
+        .card-actions { display: flex; gap: 5px; padding: 0 15px 15px 15px; }
+        .action-btn { flex: 1; padding: 8px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.85rem; }
+        .read-free-btn { background: #00bcd4; color: white; }
+        .buy-card-btn { background: #3f51b5; color: white; }
 
-        /* የዜናዎች (News) ሴክሽን */
         .news-section { display: none; max-width: 1200px; margin: 30px auto; padding: 0 20px; }
         .news-section.show { display: block; }
-        
-        .news-header-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #ff9800; padding-bottom: 8px; margin-bottom: 20px; }
-        .news-header-row h2 { color: #ff9800; margin: 0; }
-        .add-news-btn { background: #ff9800; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .add-news-btn:hover { background: #f57c00; }
-
         .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .news-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); border-left: 4px solid #ff9800; }
-        .news-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 8px; color: #333; }
-        .news-date { font-size: 0.8rem; color: #888; margin-bottom: 10px; }
-        .news-content { font-size: 0.95rem; color: #555; line-height: 1.5; }
+        .news-card { background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #ff9800; box-shadow: 0 3px 10px rgba(0,0,0,0.05); }
 
-        /* የሞዳል መስኮቶች (Modal) አጠቃላይ ስታይል */
+        /* ሞዳሎች */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
-        .modal-content { background: white; padding: 30px; border-radius: 10px; width: 400px; max-width: 90%; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .modal-content h3 { margin-top: 0; color: #3f51b5; }
+        .modal-content { background: white; padding: 30px; border-radius: 10px; width: 450px; max-width: 90%; box-shadow: 0 5px 15px rgba(0,0,0,0.3); max-height: 85vh; overflow-y: auto; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; }
-        
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
         .submit-btn { width: 100%; background: #27ae60; color: white; border: none; padding: 10px; cursor: pointer; font-weight: bold; border-radius: 4px; }
-        .submit-btn:hover { background: #219653; }
         .close-btn { background: #e74c3c; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; float: right; }
 
-        @media (max-width: 768px) {
-            .main-layout { flex-direction: column; }
-            .sidebar-cart { width: 100%; position: static; margin-bottom: 20px; }
-        }
+        /* አንብቦ የመገደብ እና ኮሜንት ማዕቀፍ */
+        .reader-box { line-height: 1.8; font-size: 1.05rem; color: #444; margin-bottom: 20px; }
+        .paywall-overlay { background: #fff3f3; border: 1px dashed #e91e63; padding: 20px; text-align: center; border-radius: 8px; margin-top: 15px; }
+        .comments-section { margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px; }
+        .comment-item { background: #f4f6f8; padding: 10px; border-radius: 5px; margin-bottom: 8px; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
     <header>
-        <h2>ብርሃኑ መጻሕፍት መደብር</h2>
+        <h2>ብርሃኑ ቤተ-መጻሕፍት</h2>
         <div class="header-right">
-            <button class="admin-action-btn" onclick="promptAddBook()">+ መጽሐፍ መዝግብ (Admin)</button>
+            <button class="admin-action-btn" id="adminBookBtn" onclick="openBookModal()">+ መጽሐፍ መዝግብ</button>
             <div class="cart-info" onclick="openCheckout()">🛒 ቅርጫት (<span id="cart-count">0</span>)</div>
+            <button class="btn-auth" id="authBtn" onclick="openAuthModal()">ግባ / ተመዝገብ</button>
         </div>
     </header>
 
     <section class="hero">
-        <h1>እንኳን ወደ ብርሃኑ መጻሕፍት መደብር በደህና መጡ</h1>
-        <p>የእውቀት ማዕድ - የሚፈልጉትን መጽሐፍ ይምረጡ፣ ያንብቡ፣ ሕይወትዎን ያበልጽጉ!</p>
+        <h1>እውቀት ለሁሉም - በነጻ አንብቡ፣ ይግዙ፣ ያሻሽሉ</h1>
+        <p>ነጻ የናሙና ገጾችን በማንበብ ይጀምሩ፤ ተጨማሪ ለማንበብ ወይም ለመግዛት የኛ አካል ይሁኑ።</p>
     </section>
 
-    <!-- የካታጎሪ እና የዜና ማሳያ አዝራሮች -->
     <div class="filters-container">
         <button class="filter-btn active" onclick="filterBooks('all', event)">ሁሉም</button>
         <button class="filter-btn" onclick="filterBooks('fiction', event)">ልቦለድ</button>
         <button class="filter-btn" onclick="filterBooks('history', event)">ታሪክ</button>
         <button class="filter-btn" onclick="filterBooks('philosophy', event)">ፍልስፍና</button>
         <button class="filter-btn" onclick="filterBooks('poetry', event)">ግጥም</button>
-        <button class="news-toggle-btn" id="newsToggleBtn" onclick="toggleNews()">📢 ማስታወቂያዎች እና ዜናዎች</button>
+        <button class="news-toggle-btn" id="newsToggleBtn" onclick="toggleNews()">📢 ማስታወቂያዎች</button>
     </div>
 
-    <!-- ዜናዎች የሚታዩበት ክፍል -->
     <section id="newsSection" class="news-section">
-        <div class="news-header-row">
-            <h2>የመደብሩ ማስታወቂያዎች እና ዜናዎች</h2>
-            <button class="add-news-btn" onclick="promptAddNews()">+ ዜና መዝግብ (Admin)</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h2 style="color: #ff9800; margin:0;">ማስታወቂያዎች</h2>
+            <button class="admin-action-btn" id="adminNewsBtn" style="display:none;" onclick="openNewsModal()">+ ዜና መዝግብ</button>
         </div>
-        <div id="news-grid" class="news-grid">
-            <p style="color: #888;">ዜናዎች በመጫን ላይ...</p>
-        </div>
+        <div id="news-grid" class="news-grid"></div>
     </section>
 
     <div class="main-layout">
@@ -166,100 +129,106 @@
         <div class="sidebar-cart">
             <h3>የእርስዎ ቅርጫት</h3>
             <div id="sidebar-items" class="cart-items-list">
-                <p style="color: #888; text-align: center; margin: 20px 0;">እንዳይጠፋ ቅርጫቱ ባዶ ነው።</p>
+                <p style="color: #888; text-align: center;">ቅርጫቱ ባዶ ነው።</p>
             </div>
-            
-            <div class="sidebar-total">
-                ጠቅላላ: <span id="sidebar-total-price">0</span> ብር
-            </div>
-
-            <button class="side-checkout-btn" onclick="openCheckout()">እዚህ ይክፈሉ (Checkout)</button>
-            <div class="instruction-text">መጻሕፍቱን መርጠው ሲጨርሱ ይህንን በመንካት ግዢውን ይፈጽሙ!</div>
+            <div class="sidebar-total">ጠቅላላ: <span id="sidebar-total-price">0</span> ብር</div>
+            <button class="side-checkout-btn" onclick="openCheckout()">ግዢውን አጠናቅ</button>
         </div>
     </div>
 
-    <!-- አዲስ መጽሐፍ ማስገቢያ ሞዳል (ለአድሚን) -->
+    <!-- ሎጊን እና ሳይን አፕ ሞዳል -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeAuthModal()">✕</button>
+            <h3 id="auth-title" style="color: #3f51b5;">ወደ አካውንትዎ ይግቡ</h3>
+            <div class="form-group">
+                <label>ኢሜይል:</label>
+                <input type="email" id="auth-email" placeholder="example@gmail.com">
+            </div>
+            <div class="form-group">
+                <label>ሚስጥራዊ ቃል (Password):</label>
+                <input type="password" id="auth-password" placeholder="******">
+            </div>
+            <button class="submit-btn" id="auth-submit-btn" onclick="handleLogin()">ግባ (Login)</button>
+            <p style="text-align: center; margin-top: 15px; font-size: 0.9rem;">
+                አካውንት የለዎትም? <a href="#" id="toggle-auth-mode" onclick="switchAuthMode(event)" style="color: #3f51b5; font-weight: bold;">እዚህ ይመዝገቡ</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- መጽሐፍ ማንበቢያ እና ነጻ ናሙና ሞዳል -->
+    <div id="readerModal" class="modal">
+        <div class="modal-content" style="width: 600px;">
+            <button class="close-btn" onclick="closeReaderModal()">✕</button>
+            <h2 id="reader-book-title" style="color: #3f51b5; margin-top:0;"></h2>
+            <p style="color: #666; font-size: 0.9rem;">ደራሲ፡ <span id="reader-book-author"></span></p>
+            
+            <div id="reader-content-box" class="reader-box"></div>
+            
+            <div id="paywall-section" style="display:none;" class="paywall-overlay">
+                <h3 style="color: #e91e63; margin-top:0;">የነጻው የናሙና ንባብ አብቅቷል!</h3>
+                <p>ይህንን ሙሉ መጽሐፍ ለማንበብ ወይም በቋሚነት ባለቤት ለመሆን መግዛት ይኖርብዎታል።</p>
+                <button class="submit-btn" style="background: #e91e63;" onclick="buyCurrentBookFromReader()">አሁን ይግዙ (<span id="paywall-book-price"></span> ብር)</button>
+            </div>
+
+            <!-- የአስተያየት መስጫ ክፍል -->
+            <div class="comments-section">
+                <h4>የአንባብያን አስተያየቶች</h4>
+                <div id="comments-list" style="max-height: 120px; overflow-y: auto; margin-bottom: 10px;"></div>
+                <div style="display: flex; gap: 5px;">
+                    <input type="text" id="comment-input" placeholder="ሀሳብዎን እዚህ ይጻፉ..." style="flex:1; padding: 6px; border:1px solid #ccc; border-radius:4px;">
+                    <button onclick="postComment()" style="background: #3f51b5; color:white; border:none; padding: 6px 12px; border-radius:4px; cursor:pointer;">ላክ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- አድሚን መጽሐፍ መመዝገቢያ ሞዳል -->
     <div id="bookModal" class="modal">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeBookModal()">✕ ዝጋ</button>
+            <button class="close-btn" onclick="closeBookModal()">✕</button>
             <h3 style="color: #3f51b5;">አዲስ መጽሐፍ መዝግብ</h3>
-            
-            <div class="form-group">
-                <label>የመጽሐፉ ርዕስ (Title):</label>
-                <input type="text" id="book-title-input" placeholder="ርዕስ ያስገቡ">
-            </div>
-            <div class="form-group">
-                <label>ደራሲ (Author):</label>
-                <input type="text" id="book-author-input" placeholder="የደራሲው ስም">
-            </div>
-            <div class="form-group">
-                <label>ዋጋ በብር (Price):</label>
-                <input type="number" id="book-price-input" placeholder="ለምሳሌ፦ 350">
-            </div>
-            <div class="form-group">
-                <label>ካታጎሪ (Category) ይምረጡ:</label>
-                <select id="book-category-input">
-                    <option value="fiction">ልቦለድ (Fiction)</option>
-                    <option value="history">ታሪክ (History)</option>
-                    <option value="philosophy">ፍልስፍና (Philosophy)</option>
-                    <option value="poetry">ግጥም (Poetry)</option>
+            <div class="form-group"><label>ርዕስ:</label><input type="text" id="b-title"></div>
+            <div class="form-group"><label>ደራሲ:</label><input type="text" id="b-author"></div>
+            <div class="form-group"><label>ዋጋ (ብር):</label><input type="number" id="b-price"></div>
+            <div class="form-group"><label>ካታጎሪ:</label>
+                <select id="b-category">
+                    <option value="fiction">ልቦለድ</option>
+                    <option value="history">ታሪክ</option>
+                    <option value="philosophy">ፍልስፍና</option>
+                    <option value="poetry">ግጥም</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label>የምስል ሊንክ (Image URL):</label>
-                <input type="text" id="book-image-input" placeholder="https://... (ከተወው ነባሪ ምስል ይኖረዋል)">
-            </div>
-            <button class="submit-btn" onclick="submitNewBook()">መጽሐፉን ወደ ዳታቤዝ ላክ</button>
+            <div class="form-group"><label>የምስል ሊንክ (URL):</label><input type="text" id="b-image"></div>
+            <div class="form-group"><label>የመጽሐፉ ሙሉ ይዘት (ወይም የናሙና ጽሁፍ):</label><textarea id="b-content" rows="4"></textarea></div>
+            <button class="submit-btn" onclick="submitBook()">መዝግብ</button>
         </div>
     </div>
 
-    <!-- አዲስ ዜና/ማስታወቂያ ማስገቢያ ሞዳል (ለአድሚን) -->
+    <!-- አድሚን ዜና መመዝገቢያ ሞዳል -->
     <div id="newsModal" class="modal">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeNewsModal()">✕ ዝጋ</button>
-            <h3 style="color: #ff9800;">አዲስ ዜና ወይም ማስታወቂያ መዝግብ</h3>
-            
-            <div class="form-group">
-                <label>የዜናው ርዕስ (Title):</label>
-                <input type="text" id="news-title-input" placeholder="ርዕስ ያስገቡ">
-            </div>
-            <div class="form-group">
-                <label>ቀን (Date):</label>
-                <input type="text" id="news-date-input" placeholder="ለምሳሌ፦ መስከረም 1፣ 2019">
-            </div>
-            <div class="form-group">
-                <label>ይዘት (Content):</label>
-                <textarea id="news-content-input" rows="4" placeholder="የዜናውን ዝርዝር ጽሁፍ እዚህ ይጻፉ..."></textarea>
-            </div>
-            <button class="submit-btn" style="background: #ff9800;" onclick="submitNewNews()">ማስታወቂያውን መዝግብ</button>
+            <button class="close-btn" onclick="closeNewsModal()">✕</button>
+            <h3 style="color: #ff9800;">ማስታወቂያ መዝግብ</h3>
+            <div class="form-group"><label>ርዕስ:</label><input type="text" id="n-title"></div>
+            <div class="form-group"><label>ቀን:</label><input type="text" id="n-date" placeholder="መስከረም 1, 2019"></div>
+            <div class="form-group"><label>ይዘት:</label><textarea id="n-content" rows="3"></textarea></div>
+            <button class="submit-btn" style="background:#ff9800;" onclick="submitNews()">ማስታወቂያውን ላክ</button>
         </div>
     </div>
 
-    <!-- የክፍያ ማጠናቀቂያ መስኮት -->
+    <!-- የክፍያ ማጠናቀቂያ ሞዳል -->
     <div id="checkoutModal" class="modal">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeCheckout()">✕ ዝጋ</button>
-            <h3>የግዢ እና የክፍያ ማጠናቀቂያ</h3>
-            <p>የተመረጡ መጻሕፍት ብዛት: <strong id="modal-cart-count">0</strong></p>
+            <button class="close-btn" onclick="closeCheckout()">✕</button>
+            <h3>ክፍያ ማጠናቀቂያ</h3>
             <p>ጠቅላላ ዋጋ: <strong id="modal-total-price" style="color: #e91e63;">0</strong> ብር</p>
-            
-            <div class="form-group">
-                <label>ሙሉ ስምዎ:</label>
-                <input type="text" id="cust-name" placeholder="ስምዎን ያስገቡ">
+            <div class="form-group"><label>ስምዎ:</label><input type="text" id="c-name"></div>
+            <div class="form-group"><label>ስልክ ቁጥር:</label><input type="text" id="c-phone"></div>
+            <div class="form-group"><label>ባንክ / ቴሌብር:</label>
+                <select id="c-method"><option value="telebirr">ቴሌብር</option><option value="cbe">ንግድ ባንክ</option></select>
             </div>
-            <div class="form-group">
-                <label>ስልክ ቁጥር:</label>
-                <input type="text" id="cust-phone" placeholder="09xxxxxxxx">
-            </div>
-            <div class="form-group">
-                <label>የክፍያ አማራጭ ይምረጡ:</label>
-                <select id="payment-method">
-                    <option value="telebirr">ቴሌብር (Telebirr)</option>
-                    <option value="cbe">የኢትዮጵያ ንግድ ባንክ (CBE)</option>
-                    <option value="cash">በእጅ ሲረከቡ (Cash on Delivery)</option>
-                </select>
-            </div>
-            <button class="submit-btn" onclick="completePurchase()">ክፍያውን አጠናቅ (Order)</button>
+            <button class="submit-btn" onclick="completeOrder()">ግዢውን አረጋግጥ</button>
         </div>
     </div>
 
@@ -268,215 +237,256 @@
         const activeKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzYXFpcGJ5eHBwcmRzbnlqcHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTkwODIsImV4cCI6MjEwNDA5NTA4Mn0.1WJdBD5Ho_oFezTOnActxVjZ_O7_6999wIPZ2imilzk';
         const dbClient = window.supabase.createClient(SUPABASE_URL, activeKey);
 
-        // ቀላል የአድሚን ሚስጥራዊ ቃል (እዚህ ጋር የሚፈልጉትን መቀየር ይችላሉ)
-        const ADMIN_PASSWORD = "birhanu123";
-
+        let currentUser = null;
         let allBooks = [];
-        let cart = []; 
+        let cart = [];
+        let isSignUpMode = false;
+        let activeReadingBook = null;
 
-        async function fetchData() {
-            await fetchBooks();
-            await fetchNews();
+        // የአድሚን ኢሜይል (በዚህ ኢሜይል የሚገባ አካውንት ብቻ ነው መጽሐፍ እና ዜና መመዝገብ የሚችለው)
+        const ADMIN_EMAIL = "admin@birhanu.com";
+
+        async function initApp() {
+            // የሎገን ሁኔታን ማረጋገጥ
+            const { data: { session } } = await dbClient.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                updateAuthUI();
+            }
+            fetchBooks();
+            fetchNews();
         }
 
         async function fetchBooks() {
-            const { data, error } = await dbClient.from('books').select('*');
-            if (error) {
-                console.error('መጻሕፍትን ማምጣት አልተቻለም:', error.message);
-                return;
-            }
+            const { data } = await dbClient.from('books').select('*');
             allBooks = data || [];
             displayBooks(allBooks);
         }
 
         async function fetchNews() {
-            const { data, error } = await dbClient.from('news').select('*');
-            if (error) {
-                console.error('ዜናዎችን ማምጣት አልተቻለም:', error.message);
-                return;
-            }
+            const { data } = await dbClient.from('news').select('*');
             displayNews(data || []);
         }
 
         function displayBooks(books) {
             const grid = document.getElementById('books-grid');
-            grid.innerHTML = '';
+            grid.innerHTML = books.length ? '' : '<p style="text-align:center; color:#777;">ምንም መጽሐፍ የለም።</p>';
 
-            if (books.length === 0) {
-                grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #777;">ምንም መጽሐፍ አልተገኘምም።</p>';
-                return;
-            }
-
-            books.forEach((book) => {
+            books.forEach(book => {
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
-                    <img src="${book.image_url || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c'}" alt="${book.title}">
+                    <img src="${book.image_url || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c'}" alt="">
                     <div class="card-body">
                         <div class="card-title">${book.title}</div>
                         <div class="card-author">ደራሲ፡ ${book.author || 'ያልታወቀ'}</div>
-                        <div class="rating">⭐ ${book.rating || '4.5'}</div>
                         <div class="price">${book.price} ብር</div>
                     </div>
-                    <button class="buy-btn">ግዛ / ወደ ቅርጫት ጨምር</button>
+                    <div class="card-actions">
+                        <button class="action-btn read-free-btn" onclick="openReader('${book.id}')">📖 አንብብ (ናሙና)</button>
+                        <button class="action-btn buy-card-btn" onclick="addToCart(${JSON.stringify(book).replace(/"/g, '&quot;')})">🛒 ግዛ</button>
+                    </div>
                 `;
-                
-                const btn = card.querySelector('.buy-btn');
-                btn.onclick = function() {
-                    addToCart(book);
-                };
-                
                 grid.appendChild(card);
             });
         }
 
         function displayNews(newsList) {
-            const newsGrid = document.getElementById('news-grid');
-            newsGrid.innerHTML = '';
-
-            if (newsList.length === 0) {
-                newsGrid.innerHTML = '<p style="color: #777;">ምንም ማስታወቂያ የለም።</p>';
-                return;
-            }
-
-            newsList.forEach((item) => {
-                const newsCard = document.createElement('div');
-                newsCard.className = 'news-card';
-                newsCard.innerHTML = `
-                    <div class="news-title">${item.title || 'ያለ ርዕስ'}</div>
-                    <div class="news-date">📅 ${item.date || 'ቀን አልተጻፈም'}</div>
-                    <div class="news-content">${item.content || ''}</div>
-                `;
-                newsGrid.appendChild(newsCard);
+            const grid = document.getElementById('news-grid');
+            grid.innerHTML = newsList.length ? '' : '<p style="color:#777;">ማስታወቂያ የለም።</p>';
+            newsList.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'news-card';
+                div.innerHTML = `<div style="font-weight:bold; font-size:1.1rem;">${item.title}</div><div style="font-size:0.8rem; color:#888; margin:5px 0;">${item.date}</div><div>${item.content}</div>`;
+                grid.appendChild(div);
             });
         }
 
-        // የአድሚን ፓስዎርድ ማረጋገጫ ለ መጽሐፍ ምዝገባ
-        function promptAddBook() {
-            const pass = prompt("እባክዎ የአድሚን ሚስጥራዊ ቃል (Password) ያስገቡ:");
-            if (pass === ADMIN_PASSWORD) {
-                document.getElementById('bookModal').style.display = 'flex';
-            } else if (pass !== null) {
-                alert('የገባው ሚስጥራዊ ቃል ትክክል አይደለም!');
-            }
-        }
+        // --- የነጻ ንባብ እና የ Paywall ስርዓት ---
+        async function openReader(bookId) {
+            const book = allBooks.find(b => b.id == bookId);
+            if (!book) return;
+            activeReadingBook = book;
 
-        // የአድሚን ፓስዎርድ ማረጋገጫ ለ ዜና ምዝገባ
-        function promptAddNews() {
-            const pass = prompt("እባክዎ የአድሚን ሚስጥራዊ ቃል (Password) ያስገቡ:");
-            if (pass === ADMIN_PASSWORD) {
-                document.getElementById('newsModal').style.display = 'flex';
-            } else if (pass !== null) {
-                alert('የገባው ሚስጥራዊ ቃል ትክክል አይደለም!');
-            }
-        }
-
-        // አዲስ መጽሐፍ ወደ Supabase 'books' ቴብል መዝገብ
-        async function submitNewBook() {
-            const title = document.getElementById('book-title-input').value;
-            const author = document.getElementById('book-author-input').value;
-            const price = document.getElementById('book-price-input').value;
-            const category = document.getElementById('book-category-input').value;
-            const image_url = document.getElementById('book-image-input').value;
-
-            if (!title || !price) {
-                alert('እባክዎ የመጽሐፉን ርዕስ እና ዋጋ ይሙሉ!');
-                return;
-            }
-
-            const { data, error } = await dbClient
-                .from('books')
-                .insert([{ 
-                    title: title, 
-                    author: author, 
-                    price: Number(price), 
-                    category: category, 
-                    image_url: image_url || null,
-                    rating: 5.0
-                }]);
-
-            if (error) {
-                alert('መጽሐፉን ማስቀመጥ አልተቻለም: ' + error.message);
-                console.error(error);
-                return;
-            }
-
-            alert('መጽሐፉ በሳኬት ወደ ዳታቤዝ ተመዝግቧል!');
+            document.getElementById('reader-book-title').innerText = book.title;
+            document.getElementById('reader-book-author').innerText = book.author || 'ያልታወቀ';
             
-            // ፎርሙን ባዶ ማድረግ እና መዝጋት
-            document.getElementById('book-title-input').value = '';
-            document.getElementById('book-author-input').value = '';
-            document.getElementById('book-price-input').value = '';
-            document.getElementById('book-image-input').value = '';
-            closeBookModal();
+            const contentBox = document.getElementById('reader-content-box');
+            const paywallSection = document.getElementById('paywall-section');
 
-            // መጻሕፍትን እንደገና በማምጣት በገጹ ላይ ማሳየት
+            // ሙሉውን ይዘት ማምጣት (ከሌለ ነባሪ ጽሁፍ ይሰጣል)
+            const fullText = book.content || "ይህ መጽሐፍ ገና ሙሉ ይዘት አልተጫነለትም። ሆኖም የናሙና ንባብ እዚህ አለ፤ ተጨማሪ መረጃዎችን ማግኘት ይችላሉ። እውቀት የሰው ልጅ የዕድገት መሰረት ነው። በተለያዩ ዘርፎች ላይ የተጻፉ ጠቃሚ መጽሐፍትን በማንበብ አእምሮዎን ማሳደግ ይችላሉ። የንባብ ልምድ ማዳበር ለግል እና ለሀገር እድገት ትልቅ አስተዋጽኦ አለው።";
+            
+            // የነጻ ናሙና ገደብ (ለምሳሌ የመጀመሪያዎቹን 250 ፊደላት ብቻ በነጻ እናሳይ)
+            const freeLimit = 250;
+            
+            if (fullText.length > freeLimit) {
+                const freePart = fullText.substring(0, freeLimit) + "...";
+                contentBox.innerHTML = `<p>${freePart}</p>`;
+                paywallSection.style.display = 'block';
+                document.getElementById('paywall-book-price').innerText = book.price;
+            } else {
+                contentBox.innerHTML = `<p>${fullText}</p>`;
+                paywallSection.style.display = 'none';
+            }
+
+            loadComments(book.id);
+            document.getElementById('readerModal').style.display = 'flex';
+        }
+
+        function closeReaderModal() {
+            document.getElementById('readerModal').style.display = 'none';
+        }
+
+        function buyCurrentBookFromReader() {
+            if (activeReadingBook) {
+                addToCart(activeReadingBook);
+                closeReaderModal();
+                openCheckout();
+            }
+        }
+
+        // --- ኮሜንት እና አስተያየት መስጫ ---
+        async function loadComments(bookId) {
+            const list = document.getElementById('comments-list');
+            list.innerHTML = 'ሀሳቦች በመጫን ላይ...';
+            const { data } = await dbClient.from('comments').select('*').eq('book_id', bookId);
+            
+            if (!data || data.length === 0) {
+                list.innerHTML = '<p style="font-size:0.85rem; color:#888;">እስካሁን የተሰጠ አስተያየት የለም። የመጀመሪያው ይሁኑ!</p>';
+                return;
+            }
+            list.innerHTML = '';
+            data.forEach(c => {
+                const item = document.createElement('div');
+                item.className = 'comment-item';
+                item.innerHTML = `<strong>${c.user_email || 'अንባብ'}:</strong> ${c.comment_text}`;
+                list.appendChild(item);
+            });
+        }
+
+        async function postComment() {
+            if (!currentUser) {
+                alert('እባክዎ አስተያየት ለመስጠት መጀመሪያ ይግቡ (Login)!');
+                openAuthModal();
+                return;
+            }
+            const text = document.getElementById('comment-input').value;
+            if (!text || !activeReadingBook) return;
+
+            await dbClient.from('comments').insert([{
+                book_id: activeReadingBook.id,
+                user_email: currentUser.email,
+                comment_text: text
+            }]);
+
+            document.getElementById('comment-input').value = '';
+            loadComments(activeReadingBook.id);
+        }
+
+        // --- ሎጊን እና ሳይን አፕ ስራዎች ---
+        function openAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
+        function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
+
+        function switchAuthMode(e) {
+            e.preventDefault();
+            isSignUpMode = !isSignUpMode;
+            document.getElementById('auth-title').innerText = isSignUpMode ? 'አዲስ አካውንት ይፍጠሩ' : 'ወደ አካውንትዎ ይግቡ';
+            document.getElementById('auth-submit-btn').innerText = isSignUpMode ? 'ተመዝገብ (Sign Up)' : 'ግባ (Login)';
+            document.getElementById('toggle-auth-mode').innerText = isSignUpMode ? 'უკვე አካውንት አለኝ? ግባ' : 'እዚህ ይመዝገቡ';
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+
+            if (!email || !password) {
+                alert('እባክዎ ኢሜይል እና ሚስጥራዊ ቃል ያስገቡ!');
+                return;
+            }
+
+            if (isSignUpMode) {
+                const { data, error } = await dbClient.auth.signUp({ email, password });
+                if (error) { alert('ምዝገባው አልተሳካም: ' + error.message); return; }
+                alert('ምዝገባው ተሳክቷል! ኢሜይልዎትን አረጋግጠው ይግቡ።');
+                isSignUpMode = false;
+            } else {
+                const { data, error } = await dbClient.auth.signInWithPassword({ email, password });
+                if (error) { alert('መግባት አልተቻለም: ' + error.message); return; }
+                currentUser = data.user;
+                updateAuthUI();
+                closeAuthModal();
+                alert('እንኳን ደህና መጡ!');
+            }
+        }
+
+        function updateAuthUI() {
+            const authBtn = document.getElementById('authBtn');
+            const adminBookBtn = document.getElementById('adminBookBtn');
+            const adminNewsBtn = document.getElementById('adminNewsBtn');
+
+            if (currentUser) {
+                authBtn.innerText = 'ውጣ (Logout)';
+                authBtn.onclick = handleLogout;
+
+                // አድሚን መሆኑን ማረጋገጥ
+                if (currentUser.email === ADMIN_EMAIL) {
+                    adminBookBtn.style.display = 'inline-block';
+                    adminNewsBtn.style.display = 'inline-block';
+                }
+            } else {
+                authBtn.innerText = 'ግባ / ተመዝገብ';
+                authBtn.onclick = openAuthModal;
+                adminBookBtn.style.display = 'none';
+                adminNewsBtn.style.display = 'none';
+            }
+        }
+
+        async function handleLogout() {
+            await dbClient.auth.signOut();
+            currentUser = null;
+            updateAuthUI();
+            alert('ከአካውንትዎ ወጥተዋል!');
+            window.location.reload();
+        }
+
+        // --- አድሚን ማስገቢያዎች ---
+        function openBookModal() { document.getElementById('bookModal').style.display = 'flex'; }
+        function closeBookModal() { document.getElementById('bookModal').style.display = 'none'; }
+        function openNewsModal() { document.getElementById('newsModal').style.display = 'flex'; }
+        function closeNewsModal() { document.getElementById('newsModal').style.display = 'none'; }
+
+        async function submitBook() {
+            const title = document.getElementById('b-title').value;
+            const author = document.getElementById('b-author').value;
+            const price = document.getElementById('b-price').value;
+            const category = document.getElementById('b-category').value;
+            const image_url = document.getElementById('b-image').value;
+            const content = document.getElementById('b-content').value;
+
+            if (!title || !price) { alert('ርዕስ እና ዋጋ አስፈላጊ ናቸው!'); return; }
+
+            const { error } = await dbClient.from('books').insert([{ title, author, price: Number(price), category, image_url, content }]);
+            if (error) { alert('ስህተት ተፈጥሯል: ' + error.message); return; }
+            alert('መጽሐፉ ተመዝግቧል!');
+            closeBookModal();
             fetchBooks();
         }
 
-        // ዜናዎችን ወደ Supabase 'news' ቴብል መዝገብ
-        async function submitNewNews() {
-            const title = document.getElementById('news-title-input').value;
-            const date = document.getElementById('news-date-input').value;
-            const content = document.getElementById('news-content-input').value;
+        async function submitNews() {
+            const title = document.getElementById('n-title').value;
+            const date = document.getElementById('n-date').value;
+            const content = document.getElementById('n-content').value;
 
-            if (!title || !content) {
-                alert('እባክዎ የዜናውን ርዕስ እና ይዘት ይሙሉ!');
-                return;
-            }
-
-            const { data, error } = await dbClient
-                .from('news')
-                .insert([{ title: title, date: date, content: content }]);
-
-            if (error) {
-                alert('ማስታወቂያውን ማስቀመጥ አልተቻለም: ' + error.message);
-                console.error(error);
-                return;
-            }
-
-            alert('ማስታወቂያው/ዜናው በሰኬት ወደ ዳታቤዝ ተመዝግቧል!');
-            
-            document.getElementById('news-title-input').value = '';
-            document.getElementById('news-date-input').value = '';
-            document.getElementById('news-content-input').value = '';
+            if (!title || !content) { alert('ርዕስ እና ይዘት ይሙሉ!'); return; }
+            const { error } = await dbClient.from('news').insert([{ title, date, content }]);
+            if (error) { alert('ስህተት ተፈጥሯል: ' + error.message); return; }
+            alert('ማስታወቂያው ተመዝግቧል!');
             closeNewsModal();
-
             fetchNews();
         }
 
-        function toggleNews() {
-            const newsSection = document.getElementById('newsSection');
-            const newsToggleBtn = document.getElementById('newsToggleBtn');
-            newsSection.classList.toggle('show');
-            newsToggleBtn.classList.toggle('active');
-        }
-
-        function closeBookModal() {
-            document.getElementById('bookModal').style.display = 'none';
-        }
-
-        function closeNewsModal() {
-            document.getElementById('newsModal').style.display = 'none';
-        }
-
-        function filterBooks(category, evt) {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            if (evt && evt.target) {
-                evt.target.classList.add('active');
-            }
-
-            if (category === 'all') {
-                displayBooks(allBooks);
-            } else {
-                const filtered = allBooks.filter(book => {
-                    if (!book.category) return false;
-                    return book.category.trim().toLowerCase() === category.toLowerCase();
-                });
-                displayBooks(filtered);
-            }
-        }
-
+        // --- ግዢ እና ቅርጫት ---
         function addToCart(book) {
             cart.push(book);
             document.getElementById('cart-count').innerText = cart.length;
@@ -486,65 +496,47 @@
         function updateSidebarCart() {
             const container = document.getElementById('sidebar-items');
             const totalElement = document.getElementById('sidebar-total-price');
-            
             if (cart.length === 0) {
-                container.innerHTML = '<p style="color: #888; text-align: center; margin: 20px 0;">እንዳይጠፋ ቅርጫቱ ባዶ ነው።</p>';
+                container.innerHTML = '<p style="color: #888; text-align: center;">ቅርጫቱ ባዶ ነው።</p>';
                 totalElement.innerText = '0';
                 return;
             }
-
             container.innerHTML = '';
-            let totalPrice = 0;
-
+            let total = 0;
             cart.forEach((item, idx) => {
-                totalPrice += Number(item.price || 0);
-                const row = document.createElement('div');
-                row.className = 'cart-item-row';
-                row.innerHTML = `
-                    <span>${idx + 1}. ${item.title}</span>
-                    <strong style="color: #e91e63;">${item.price} ብር</strong>
-                `;
-                container.appendChild(row);
+                total += Number(item.price || 0);
+                container.innerHTML += `<div class="cart-item-row"><span>${idx+1}. ${item.title}</span><strong>${item.price} ብር</strong></div>`;
             });
-
-            totalElement.innerText = totalPrice;
+            totalElement.innerText = total;
         }
 
         function openCheckout() {
-            if (cart.length === 0) {
-                alert('እባክዎ መጀመሪያ የሚፈልጉትን መጽሐፍ ይምረጡ!');
-                return;
-            }
-
-            document.getElementById('modal-cart-count').innerText = cart.length;
-            const totalPrice = cart.reduce((sum, item) => sum + Number(item.price || 0), 0);
-            document.getElementById('modal-total-price').innerText = totalPrice;
-
+            if (cart.length === 0) { alert('እባክዎ መጀመሪያ መጽሐፍ ይምረጡ!'); return; }
+            document.getElementById('modal-total-price').innerText = cart.reduce((s, i) => s + Number(i.price), 0);
             document.getElementById('checkoutModal').style.display = 'flex';
         }
+        function closeCheckout() { document.getElementById('checkoutModal').style.display = 'none'; }
 
-        function closeCheckout() {
-            document.getElementById('checkoutModal').style.display = 'none';
-        }
-
-        function completePurchase() {
-            const name = document.getElementById('cust-name').value;
-            const phone = document.getElementById('cust-phone').value;
-            const method = document.getElementById('payment-method').value;
-
-            if (!name || !phone) {
-                alert('እባክዎ ስምዎን እና ስልክ ቁጥርዎን ያስገቡ!');
-                return;
-            }
-
-            alert(`መዝገብዎ ተይዟል ${name}! በትዕዛዝዎ መሠረት በክፍያ አማራጭ (${method}) እናረጋግጣለን። እናመሰግናለን!`);
+        function completeOrder() {
+            alert('ትዕዛዝዎ ተመዝግቧል! እናመሰግናለን።');
             cart = [];
             document.getElementById('cart-count').innerText = 0;
             updateSidebarCart();
             closeCheckout();
         }
 
-        fetchData();
+        function toggleNews() {
+            document.getElementById('newsSection').classList.toggle('show');
+            document.getElementById('newsToggleBtn').classList.toggle('active');
+        }
+
+        function filterBooks(cat, evt) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            if (evt) evt.target.classList.add('active');
+            displayBooks(cat === 'all' ? allBooks : allBooks.filter(b => b.category?.toLowerCase() === cat));
+        }
+
+        initApp();
     </script>
 </body>
 </html>
