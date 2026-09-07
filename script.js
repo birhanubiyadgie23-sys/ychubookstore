@@ -163,6 +163,10 @@ function handleFormSubmit() {
     addBook(title, author, price, category, imageUrl, content);
 }
 
-// ፋይሉ ሲከፈት የግንኙነት ምርመራውን ማቀጣጠር እና የዩዘርን ሁኔታ ማጣራት
+// 1. Supabase የዩዘሩን ሎግ-ኢን ሁኔታ በራሱ እንዲከታተል ማድረግ (በጣም አስተማማኝ መንገድ)
+supabase.auth.onAuthStateChange(async (event, session) => {
+    currentUser = session?.user || null;
+    await updateAuthUI();
+});
+// 2. ፋይሉ ሲከፈት የግንኙነት ምርመራውን ማቀጣጠር
 testConnection();
-updateAuthUI(); // ገጹ ሲከፈት ወዲያውኑ ዩዘሩ አድሚን መሆኑን እንዲያጣራ
