@@ -73,10 +73,10 @@
         }
         
         header { 
-            background: rgba(15, 23, 42, 0.85); 
+            background: rgba(15, 23, 42, 0.9); 
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            padding: 18px 40px; 
+            padding: 12px 20px; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
@@ -88,23 +88,24 @@
         }
 
         .logo {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--accent);
             text-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
             cursor: pointer;
         }
         
-        .header-right { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .header-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
         
         .btn-auth { 
             background: var(--primary); 
             color: white; 
             border: none; 
-            padding: 9px 18px; 
+            padding: 7px 14px; 
             border-radius: 30px; 
             cursor: pointer; 
             font-weight: 600; 
+            font-size: 0.85rem;
             transition: var(--transition); 
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
@@ -114,37 +115,40 @@
             background: linear-gradient(135deg, #f43f5e, #e11d48); 
             color: white; 
             border: none; 
-            padding: 8px 15px; 
+            padding: 7px 12px; 
             border-radius: 30px; 
             cursor: pointer; 
             font-weight: 600; 
-            font-size: 0.85rem; 
+            font-size: 0.8rem; 
             display: none; 
             box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
             transition: var(--transition);
         }
         .admin-action-btn:hover { transform: translateY(-2px); }
 
-        .my-library-btn {
+        .my-library-btn, .about-btn, .complaint-btn, .wishlist-btn {
             background: linear-gradient(135deg, #8b5cf6, #7c3aed);
             color: white;
             border: none;
-            padding: 8px 15px;
+            padding: 7px 12px;
             border-radius: 30px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.85rem;
-            display: none;
+            font-size: 0.8rem;
             box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
             transition: var(--transition);
         }
-        .my-library-btn:hover { transform: translateY(-2px); }
+        .about-btn { background: linear-gradient(135deg, #06b6d4, #0891b2); box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3); }
+        .complaint-btn { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
+        .wishlist-btn { background: linear-gradient(135deg, #ec4899, #db2777); box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3); }
+        .my-library-btn:hover, .about-btn:hover, .complaint-btn:hover, .wishlist-btn:hover { transform: translateY(-2px); }
 
         .cart-info { 
             background: linear-gradient(135deg, #f59e0b, #d97706); 
-            padding: 8px 15px; 
+            padding: 7px 12px; 
             border-radius: 30px; 
             font-weight: 600; 
+            font-size: 0.85rem;
             cursor: pointer; 
             color: white; 
             transition: var(--transition); 
@@ -154,41 +158,43 @@
         
         .hero { 
             text-align: center; 
-            padding: 50px 20px 20px 20px; 
+            padding: 35px 15px 15px 15px; 
             position: relative;
             z-index: 2;
         }
 
         .hero h1 { 
-            font-size: 2.3rem; 
-            margin-bottom: 12px; 
+            font-size: 1.7rem; 
+            margin-bottom: 10px; 
             font-weight: 700;
             color: #ffffff;
             text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
         .hero p { 
-            font-size: 1.1rem; 
+            font-size: 0.95rem; 
             color: #cbd5e1; 
             max-width: 650px;
-            margin: 0 auto 20px;
+            margin: 0 auto 15px;
         }
 
         .quotes-slider {
-            max-width: 750px;
-            margin: 15px auto 25px;
+            max-width: 100%;
+            margin: 10px auto 20px;
             text-align: center;
-            height: 45px;
+            height: 50px;
             position: relative;
             overflow: hidden;
+            padding: 0 10px;
         }
 
         .quote-item {
             position: absolute;
             width: 100%;
+            left: 0;
             font-style: italic;
             color: #38bdf8;
-            font-size: 1.02rem;
+            font-size: 0.9rem;
             opacity: 0;
             transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
             transform: translateY(8px);
@@ -202,28 +208,28 @@
         .filters-container { 
             display: flex; 
             justify-content: center; 
-            gap: 10px; 
-            padding: 18px 30px; 
-            background: rgba(15, 23, 42, 0.85); 
+            gap: 8px; 
+            padding: 12px 15px; 
+            background: rgba(15, 23, 42, 0.9); 
             backdrop-filter: blur(10px);
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             flex-wrap: wrap; 
             align-items: center; 
             position: sticky;
-            top: 73px;
+            top: 61px;
             z-index: 990;
         }
 
         .filter-btn, .toggle-btn { 
-            padding: 8px 18px; 
+            padding: 6px 14px; 
             border: 1px solid rgba(255, 255, 255, 0.15); 
             background: rgba(30, 41, 59, 0.6); 
             color: #cbd5e1; 
             border-radius: 30px; 
             cursor: pointer; 
             font-weight: 600; 
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             transition: var(--transition); 
         }
 
@@ -238,49 +244,75 @@
         .announcement-toggle-btn.active, .announcement-toggle-btn:hover { background: #0d9488; color: white; border-color: #0d9488; }
         
         .search-box { 
-            padding: 8px 18px; 
+            padding: 6px 14px; 
             border: 1px solid rgba(255, 255, 255, 0.15); 
             border-radius: 30px; 
-            width: 200px; 
+            width: 100%; 
+            max-width: 220px;
             outline: none; 
-            font-size: 0.9rem; 
+            font-size: 0.85rem; 
             color: white;
             background: rgba(30, 41, 59, 0.6); 
             transition: var(--transition); 
         }
         .search-box:focus { border-color: var(--primary); background: rgba(30, 41, 59, 0.9); }
 
-        .main-layout { display: flex; max-width: 1200px; margin: 35px auto; padding: 0 20px; gap: 25px; position: relative; z-index: 2; }
+        .main-layout { 
+            display: flex; 
+            flex-direction: column;
+            max-width: 1200px; 
+            margin: 20px auto; 
+            padding: 0 15px; 
+            gap: 20px; 
+            position: relative; 
+            z-index: 2; 
+        }
+
+        @media (min-width: 900px) {
+            .main-layout { flex-direction: row; }
+            header { padding: 18px 40px; }
+            .logo { font-size: 1.5rem; }
+            .hero h1 { font-size: 2.3rem; }
+            .quote-item { font-size: 1.02rem; }
+        }
+
         .content-area { flex: 1; }
 
         .sidebar-cart {
-            width: 300px; 
+            width: 100%; 
             background: var(--card-bg); 
             backdrop-filter: blur(12px);
             border-radius: 14px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            padding: 22px; 
-            position: sticky; 
-            top: 145px; 
+            padding: 18px; 
+            position: relative; 
             height: fit-content;
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        .sidebar-cart h3 { margin-top: 0; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 10px; font-size: 1.15rem; }
-        .cart-items-list { max-height: 200px; overflow-y: auto; margin-bottom: 15px; font-size: 0.92rem; padding-right: 5px; }
-        .cart-item-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); padding-bottom: 8px; color: #cbd5e1; }
-        
-        .sidebar-total { font-size: 1.1rem; font-weight: bold; color: #34d399; margin-bottom: 15px; text-align: center; background: rgba(15, 23, 42, 0.6); padding: 10px; border-radius: 8px; }
-        .side-checkout-btn { width: 100%; background: #10b981; color: white; border: none; padding: 12px; cursor: pointer; font-weight: 600; border-radius: 8px; font-size: 0.95rem; transition: var(--transition); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
-        .side-checkout-btn:hover { background: #059669; transform: translateY(-1px); }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
+        @media (min-width: 900px) {
+            .sidebar-cart { width: 300px; position: sticky; top: 130px; }
+        }
+
+        .sidebar-cart h3 { margin-top: 0; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 8px; font-size: 1.1rem; }
+        .cart-items-list { max-height: 180px; overflow-y: auto; margin-bottom: 12px; font-size: 0.9rem; padding-right: 5px; }
+        .cart-item-row { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); padding-bottom: 6px; color: #cbd5e1; }
+        
+        .sidebar-total { font-size: 1.05rem; font-weight: bold; color: #34d399; margin-bottom: 12px; text-align: center; background: rgba(15, 23, 42, 0.6); padding: 8px; border-radius: 8px; }
+        .side-checkout-btn { width: 100%; background: #10b981; color: white; border: none; padding: 10px; cursor: pointer; font-weight: 600; border-radius: 8px; font-size: 0.9rem; transition: var(--transition); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+        .side-checkout-btn:hover { background: #059669; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+        @media (min-width: 600px) {
+            .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        }
         
         .card { 
             background: var(--card-bg); 
             backdrop-filter: blur(10px);
-            border-radius: 14px; 
+            border-radius: 12px; 
             overflow: hidden; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4); 
             display: flex; 
             flex-direction: column; 
             justify-content: space-between; 
@@ -288,63 +320,101 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             position: relative;
         }
-        .card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.6); border-color: rgba(251, 191, 36, 0.3); }
-        .card img { width: 100%; height: 210px; object-fit: cover; transition: transform 0.5s ease; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .card:hover img { transform: scale(1.03); }
-        .card-body { padding: 20px; }
-        .card-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 6px; color: #ffffff; }
-        .card-author { color: #94a3b8; font-size: 0.9rem; margin-bottom: 8px; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(0,0,0,0.6); border-color: rgba(251, 191, 36, 0.3); }
         
-        .rating-stars { color: #fbbf24; font-size: 0.88rem; margin-bottom: 8px; }
+        .card-img-container { position: relative; width: 100%; height: 160px; }
+        @media (min-width: 600px) { .card-img-container { height: 200px; } }
+        .card img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .card:hover img { transform: scale(1.03); }
+
+        .wishlist-heart-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(15, 23, 42, 0.6);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #cbd5e1;
+            transition: var(--transition);
+            backdrop-filter: blur(4px);
+        }
+        .wishlist-heart-btn.active { color: #f43f5e; background: rgba(244, 63, 94, 0.2); }
+        .wishlist-heart-btn:hover { transform: scale(1.1); }
+
+        .card-body { padding: 12px; }
+        @media (min-width: 600px) { .card-body { padding: 16px; } }
+        .card-title { font-size: 1rem; font-weight: 700; margin-bottom: 4px; color: #ffffff; }
+        .card-author { color: #94a3b8; font-size: 0.8rem; margin-bottom: 6px; }
+        
+        .rating-stars { color: #fbbf24; font-size: 0.8rem; margin-bottom: 6px; }
         
         .price-row { display: flex; justify-content: space-between; align-items: center; }
-        .price { color: #34d399; font-weight: 700; font-size: 1.15rem; }
+        .price { color: #34d399; font-weight: 700; font-size: 1.05rem; }
         
-        .card-actions { display: flex; gap: 8px; padding: 0 20px 20px 20px; flex-wrap: wrap; }
-        .action-btn { flex: 1; padding: 9px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: var(--transition); text-align: center; }
-        .read-free-btn { background: #06b6d4; color: white; box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3); }
+        .card-actions { display: flex; gap: 6px; padding: 0 12px 12px 12px; flex-wrap: wrap; }
+        @media (min-width: 600px) { .card-actions { padding: 0 16px 16px 16px; gap: 8px; } }
+        .action-btn { flex: 1; padding: 7px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.78rem; transition: var(--transition); text-align: center; }
+        .read-free-btn { background: #06b6d4; color: white; font-size: 0.8rem; box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3); }
         .read-free-btn:hover { background: #0891b2; }
-        .buy-card-btn { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); }
+        .buy-card-btn { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-size: 0.8rem; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); }
         .buy-card-btn:hover { background: linear-gradient(135deg, #d97706, #b45309); }
-        .edit-card-btn { background: #8b5cf6; color: white; width: 100%; margin-top: 5px; display: none; }
+        .edit-card-btn { background: #8b5cf6; color: white; width: 100%; margin-top: 4px; font-size: 0.78rem; display: none; }
         .edit-card-btn:hover { background: #7c3aed; }
 
-        .info-section { display: none; max-width: 1200px; margin: 30px auto; padding: 0 20px; position: relative; z-index: 2; }
+        .info-section { display: none; max-width: 1200px; margin: 20px auto; padding: 0 15px; position: relative; z-index: 2; }
         .info-section.show { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .info-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .info-card { background: var(--card-bg); backdrop-filter: blur(10px); padding: 22px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .news-card { border-left: 5px solid #f59e0b; }
-        .announcement-card { border-left: 5px solid #0d9488; }
+        .info-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media (min-width: 600px) { .info-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); } }
+        .info-card { background: var(--card-bg); backdrop-filter: blur(10px); padding: 16px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .news-card { border-left: 4px solid #f59e0b; }
+        .announcement-card { border-left: 4px solid #0d9488; }
 
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); justify-content: center; align-items: center; }
-        .modal-content { background: #1e293b; color: #f8fafc; padding: 30px; border-radius: 16px; width: 460px; max-width: 90%; box-shadow: 0 25px 50px rgba(0,0,0,0.5); max-height: 85vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); justify-content: center; align-items: center; padding: 15px; }
+        .modal-content { background: #1e293b; color: #f8fafc; padding: 20px; border-radius: 14px; width: 100%; max-width: 480px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); max-height: 90vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); }
+        @media (min-width: 600px) { .modal-content { padding: 30px; } }
         
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; color: #cbd5e1; font-size: 0.9rem; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 14px; box-sizing: border-box; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; font-family: inherit; font-size: 0.92rem; background: rgba(15, 23, 42, 0.6); color: white; outline: none; }
+        .form-group { margin-bottom: 12px; }
+        @media (min-width: 600px) { .form-group { margin-bottom: 16px; } }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #cbd5e1; font-size: 0.85rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 9px 12px; box-sizing: border-box; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; font-family: inherit; font-size: 0.9rem; background: rgba(15, 23, 42, 0.6); color: white; outline: none; }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
         
-        .submit-btn { width: 100%; background: #10b981; color: white; border: none; padding: 12px; cursor: pointer; font-weight: 600; border-radius: 8px; transition: var(--transition); font-size: 0.95rem; }
+        .submit-btn { width: 100%; background: #10b981; color: white; border: none; padding: 11px; cursor: pointer; font-weight: 600; border-radius: 8px; transition: var(--transition); font-size: 0.9rem; }
         .submit-btn:hover { background: #059669; }
         
-        .close-btn { background: rgba(239, 68, 68, 0.2); color: #f87171; border: none; width: 30px; height: 30px; cursor: pointer; border-radius: 50%; float: right; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
+        .close-btn { background: rgba(239, 68, 68, 0.2); color: #f87171; border: none; width: 28px; height: 28px; cursor: pointer; border-radius: 50%; float: right; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: var(--transition); }
         .close-btn:hover { background: #ef4444; color: white; }
 
-        .reader-box { line-height: 1.8; font-size: 1rem; color: #cbd5e1; margin-bottom: 20px; }
-        .paywall-overlay { background: rgba(225, 29, 72, 0.15); border: 1px dashed rgba(225, 29, 72, 0.4); padding: 20px; text-align: center; border-radius: 10px; margin-top: 15px; }
-        .comments-section { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
-        .comment-item { background: rgba(15, 23, 42, 0.5); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; font-size: 0.88rem; border: 1px solid rgba(255,255,255,0.05); }
+        .reader-toolbar { display: flex; gap: 8px; margin-bottom: 12px; align-items: center; flex-wrap: wrap; background: rgba(15,23,42,0.6); padding: 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        .reader-tool-btn { background: #334155; color: #f8fafc; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600; transition: var(--transition); }
+        .reader-tool-btn:hover { background: var(--primary); }
+
+        .reader-box { line-height: 1.7; font-size: 0.95rem; color: #cbd5e1; margin-bottom: 15px; padding: 10px; border-radius: 8px; transition: var(--transition); }
+        .paywall-overlay { background: rgba(225, 29, 72, 0.15); border: 1px dashed rgba(225, 29, 72, 0.4); padding: 15px; text-align: center; border-radius: 10px; margin-top: 12px; }
+
+        .share-container { display: flex; gap: 8px; margin-top: 10px; }
+        .share-btn { flex: 1; background: #334155; color: white; border: none; padding: 6px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 600; text-align: center; text-decoration: none; transition: var(--transition); }
+        .share-btn.telegram { background: #0088cc; }
+        .share-btn.facebook { background: #3b5998; }
+        .share-btn:hover { opacity: 0.85; transform: translateY(-1px); }
 
         footer {
             text-align: center;
-            padding: 25px;
-            margin-top: 50px;
+            padding: 20px;
+            margin-top: 35px;
             border-top: 1px solid rgba(255, 255, 255, 0.08);
             background: rgba(15, 23, 42, 0.9);
             color: #94a3b8;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             position: relative;
             z-index: 2;
         }
@@ -362,18 +432,22 @@
     <div class="overlay"></div>
 
     <header>
-        <div class="logo" onclick="filterBooks('all', null)">ብርሃኑ መጽሐፍት መደብር</div>
+        <div class="logo" onclick="filterBooks('all', null)">ብርሃኑ መደብር</div>
         <div class="header-right">
-            <button class="my-library-btn" id="myLibraryBtn" onclick="openMyLibraryModal()">📚 የእኔ መጻሕፍት</button>
-            <button class="admin-action-btn" id="adminBookBtn" onclick="openBookModal()">+ መጽሐፍ መዝግብ</button>
-            <button class="admin-action-btn" id="adminSettingsBtn" style="background: linear-gradient(135deg, #0d9488, #0f766e);" onclick="openSettingsModal()">⚙️ ክፍያና ጀርባ (BG)</button>
-            <div class="cart-info" onclick="openCheckout()">🛒 ቅርጫት (<span id="cart-count">0</span>)</div>
-            <button class="btn-auth" id="authBtn" onclick="openAuthModal()">ግባ / ተመዝገብ</button>
+            <button class="about-btn" onclick="openAboutModal()">ℹ️ ስለኛ</button>
+            <button class="wishlist-btn" onclick="openWishlistModal()">❤️ ተወዳጆች (<span id="wishlist-count">0</span>)</button>
+            <button class="complaint-btn" onclick="openComplaintModal()">⚠️ ቅሬታ</button>
+            <button class="my-library-btn" id="myLibraryBtn" onclick="openMyLibraryModal()">📚 መጻሕፍቴ</button>
+            <button class="admin-action-btn" id="adminBookBtn" onclick="openBookModal()">+ መጽሐፍ</button>
+            <button class="admin-action-btn" id="adminDashboardBtn" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);" onclick="openAdminDashboardModal()">📊 ዳሽቦርድ</button>
+            <button class="admin-action-btn" id="adminSettingsBtn" style="background: linear-gradient(135deg, #0d9488, #0f766e);" onclick="openSettingsModal()">⚙️ ቅንብር</button>
+            <div class="cart-info" onclick="openCheckout()">🛒 (<span id="cart-count">0</span>)</div>
+            <button class="btn-auth" id="authBtn" onclick="openAuthModal()">ግባ</button>
         </div>
     </header>
 
     <section class="hero">
-        <h1>እውቀት ለሁሉም — በእርሶ እጅ ላይ ይገኛል</h1>
+        <h1>እውቀት ለሁሉም — በእርሶ እጅ ላይ</h1>
         <p>ከዚህ በታች ከሚገኙት እውነተኛ መጽሐፍት ውስጥ ይምረጡ፤ የዕውቀት ገጾችን በማንበብ ይጀምሩ።</p>
         
         <div class="quotes-slider">
@@ -389,24 +463,24 @@
         <button class="filter-btn" onclick="filterBooks('history', event)">ታሪክ</button>
         <button class="filter-btn" onclick="filterBooks('philosophy', event)">ፍልስፍና</button>
         <button class="filter-btn" onclick="filterBooks('poetry', event)">ግጥም</button>
-        <button class="filter-btn" onclick="filterBooks('bestseller', event)">🔥 የተወደዱ</button>
-        <button class="filter-btn" onclick="filterBooks('new', event)">✨ አዳዲስ</button>
+        <button class="filter-btn" onclick="filterBooks('bestseller', event)">🔥 ተወዳጅ</button>
+        <button class="filter-btn" onclick="filterBooks('new', event)">✨ አዲስ</button>
         <input type="text" id="searchInput" class="search-box" placeholder="መጽሐፍ ወይም ደራሲ..." onkeyup="searchBooks()">
-        <button class="toggle-btn news-toggle-btn" id="newsToggleBtn" onclick="toggleSection('newsSection', 'newsToggleBtn')">📰 ዜናዎች</button>
-        <button class="toggle-btn announcement-toggle-btn" id="announcementToggleBtn" onclick="toggleSection('announcementSection', 'announcementToggleBtn')">📢 ማስታወቂያዎች</button>
+        <button class="toggle-btn news-toggle-btn" id="newsToggleBtn" onclick="toggleSection('newsSection', 'newsToggleBtn')">📰 ዜና</button>
+        <button class="toggle-btn announcement-toggle-btn" id="announcementToggleBtn" onclick="toggleSection('announcementSection', 'announcementToggleBtn')">📢 ማስታወቂያ</button>
     </div>
 
     <section id="newsSection" class="info-section">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h2 style="color: #f59e0b; margin:0; font-size: 1.3rem;">የቅርብ ጊዜ ዜናዎች</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h2 style="color: #f59e0b; margin:0; font-size: 1.15rem;">የቅርብ ጊዜ ዜናዎች</h2>
             <button class="admin-action-btn" id="adminNewsBtn" style="display:none;" onclick="openNewsModal()">+ ዜና መዝግብ</button>
         </div>
         <div id="news-grid" class="info-grid"></div>
     </section>
 
     <section id="announcementSection" class="info-section">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-            <h2 style="color: #0d9488; margin:0; font-size: 1.3rem;">ማስታወቂያዎች</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h2 style="color: #0d9488; margin:0; font-size: 1.15rem;">ማስታወቂያዎች</h2>
             <button class="admin-action-btn" id="adminAnnouncementBtn" style="display:none;" onclick="openAnnouncementModal()">+ ማስታወቂያ መዝግብ</button>
         </div>
         <div id="announcement-grid" class="info-grid"></div>
@@ -414,7 +488,7 @@
 
     <div class="main-layout">
         <div class="content-area">
-            <h2 style="font-size: 1.4rem; margin-bottom: 20px; border-left: 4px solid var(--accent); padding-left: 10px; color: #f8fafc;">መጻሕፍት ዝርዝር</h2>
+            <h2 style="font-size: 1.25rem; margin-bottom: 15px; border-left: 4px solid var(--accent); padding-left: 8px; color: #f8fafc;">መጻሕፍት ዝርዝር</h2>
             <div id="books-grid" class="grid"></div>
         </div>
 
@@ -428,48 +502,135 @@
         </div>
     </div>
 
-    <!-- ሞዳሎች -->
+    <!-- ሞዳሎች (Modals) -->
+    
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeAboutModal()">✕</button>
+            <h3 style="color: var(--accent); margin-top:0; font-size: 1.2rem;">ስለ ብርሃኑ መጽሐፍት መደብር</h3>
+            <p style="color: #cbd5e1; margin: 10px 0; line-height: 1.6; font-size: 0.9rem;">
+                <strong>ብርሃኑ መጽሐፍት መደብር እና ቤተ-መጻሕፍት</strong> ህብረተሰቡን በእውቀት ለማበልጸግ፣ ታሪካዊ፣ ልቦለድ፣ ፍልስፍናዊ እና አዳዲስ መጻሕፍትን በዲጂታል እና በጠንካራ መልኩ ተደራሽ የሚያደርግ ተቋም ነው።
+            </p>
+            <h4 style="color: #38bdf8; margin-top: 12px; font-size: 0.95rem;">ዋና ዓላማዎቻችን፡</h4>
+            <ul style="color: #cbd5e1; margin-left: 18px; margin-top: 5px; font-size: 0.88rem; line-height: 1.5;">
+                <li>የንባብ ባህልን በኅብረተሰቡ ውስጥ ማሳደግ</li>
+                <li>ጥራት ያላቸው የሀገር ውስጥ እና የውጭ መጻሕፍትን ማቅረብ</li>
+                <li>ዘመናዊ የዲጂታል ንባብ አማራጮችን ለተጠቃሚዎች ማስተዋወቅ</li>
+            </ul>
+            <div style="background: rgba(15,23,42,0.6); padding: 12px; border-radius: 8px; margin-top: 15px; border: 1px solid rgba(255,255,255,0.08);">
+                <p style="font-weight: 600; color: #fff; margin-bottom: 4px; font-size: 0.9rem;">📞 ቀጥተኛ የስልክ ግንኙነት:</p>
+                <p style="color: #cbd5e1; font-size: 0.85rem;">ለማናቸውም ጥያቄዎች እና ድጋፍ በቀጥታ ከስልኮዎ ይደውሉልን፦</p>
+                <a href="tel:+251930836065" style="display: inline-block; margin-top: 6px; background: #10b981; color: white; padding: 7px 14px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 0.88rem;">📱 +251 93 083 6065 (ይደውሉ)</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ተወዳጆች ሞዳል -->
+    <div id="wishlistModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="close-btn" onclick="closeWishlistModal()">✕</button>
+            <h3 style="color: var(--accent); margin-top:0; font-size: 1.2rem;">❤️ የእርስዎ ተወዳጅ መጻሕፍት</h3>
+            <div id="wishlist-books-list" style="max-height: 250px; overflow-y: auto;">
+                <p style="color: #94a3b8; text-align: center; padding: 15px; font-size: 0.88rem;">እስካሁን የተመረጠ ተወዳጅ መጽሐፍ የለም።</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="complaintModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeComplaintModal()">✕</button>
+            <h3 style="color: var(--accent); margin-top:0; font-size: 1.2rem;">⚠️ ቅሬታ ማቅረቢያ</h3>
+            <p style="color: #94a3b8; font-size: 0.82rem; margin-bottom: 10px;">ከግዥ ሂደት ወይም ከክፍያ ጋር የተያያዙ ማናቸውም ችግሮች ካሉዎት እዚህ ይጻፉልን።</p>
+            <div class="form-group"><label>ሙሉ ስምዎ:</label><input type="text" id="comp-name" placeholder="ስምዎን ያስገቡ"></div>
+            <div class="form-group"><label>ስልክ ቁጥርዎ:</label><input type="text" id="comp-phone" placeholder="09..."></div>
+            <div class="form-group"><label>የቅሬታው ዓይነት / ርዕስ:</label><input type="text" id="comp-title" placeholder="ምሳሌ፡ ክፍያ ፈጽሜ መጽሐፉ አልተከፈተም"></div>
+            <div class="form-group"><label>ዝርዝር መግለጫ:</label><textarea id="comp-message" rows="3" placeholder="ችግሩን በዝርዝር ይግለጹ..."></textarea></div>
+            <button class="submit-btn" onclick="submitComplaint()">ቅሬታውን ላክ</button>
+        </div>
+    </div>
+
+    <div id="adminDashboardModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <button class="close-btn" onclick="closeAdminDashboardModal()">✕</button>
+            <h3 style="color: var(--accent); margin-top:0; font-size: 1.2rem;">📊 የአስተዳዳሪ ዳሽቦርድ</h3>
+            <div style="margin-top: 12px;">
+                <h4 style="color: #38bdf8; font-size: 0.95rem; margin-bottom: 6px;">📥 የተቀበሉ ቅሬታዎች:</h4>
+                <div id="admin-complaints-list" style="max-height: 160px; overflow-y: auto; background: rgba(15,23,42,0.6); padding: 8px; border-radius: 8px; margin-bottom: 12px;">
+                    <p style="color: #94a3b8; text-align: center; font-size: 0.85rem;">ምንም ቅሬታ የለም።</p>
+                </div>
+
+                <h4 style="color: #f59e0b; font-size: 0.95rem; margin-bottom: 6px;">💬 የመጻሕፍት አስተያየቶች:</h4>
+                <div id="admin-comments-list" style="max-height: 160px; overflow-y: auto; background: rgba(15,23,42,0.6); padding: 8px; border-radius: 8px;">
+                    <p style="color: #94a3b8; text-align: center; font-size: 0.85rem;">ምንም አስተያየት የለም።</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="readerModal" class="modal">
+        <div class="modal-content" style="max-width: 550px;">
+            <button class="close-btn" onclick="closeReaderModal()">✕</button>
+            <h2 id="reader-book-title" style="color: var(--accent); margin-top:0; font-size: 1.2rem;"></h2>
+            <p style="color: #94a3b8; font-size: 0.82rem; margin-bottom: 8px;">ደራሲ፡ <span id="reader-book-author" style="font-weight: 600; color: #e2e8f0;"></span></p>
+            
+            <!-- የንባብ ማስተካከያ መሣሪያዎች (Reader Toolbar) -->
+            <div class="reader-toolbar">
+                <button class="reader-tool-btn" onclick="changeFontSize('small')">አነስተኛ</button>
+                <button class="reader-tool-btn" onclick="changeFontSize('normal')">መደበኛ</button>
+                <button class="reader-tool-btn" onclick="changeFontSize('large')">ትልቅ</button>
+                <button class="reader-tool-btn" style="background:#0d9488;" onclick="toggleReadAloud()">🔊 አድምጥ</button>
+                <button class="reader-tool-btn" style="background:#475569;" onclick="changeReaderTheme('dark')">🌙</button>
+                <button class="reader-tool-btn" style="background:#f8fafc; color:#0f172a;" onclick="changeReaderTheme('light')">☀️</button>
+            </div>
+
+            <div id="reader-content-box" class="reader-box"></div>
+            <div id="paywall-section" style="display:none;" class="paywall-overlay">
+                <h3 style="color: #f43f5e; margin-top:0; font-size: 0.98rem;">የነጻው የናሙና ንባብ አብቅቷል!</h3>
+                <button class="submit-btn" style="background: #f43f5e; margin-top: 8px; font-size: 0.88rem;" onclick="buyCurrentBookFromReader()">አሁን ይግዙ (<span id="paywall-book-price"></span> ብር)</button>
+            </div>
+
+            <!-- ማህበራዊ ሚዲያ ማጋራት -->
+            <div class="share-container">
+                <button class="share-btn telegram" onclick="shareOnSocial('telegram')">📤 በቴሌግራም አጋራ</button>
+                <button class="share-btn facebook" onclick="shareOnSocial('facebook')">📤 በፌስቡክ አጋራ</button>
+            </div>
+            
+            <hr style="border:0; border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;">
+            <h4 style="color: #38bdf8; font-size: 0.92rem; margin-bottom: 8px;">አስተያየት ይስጡ:</h4>
+            <div class="form-group"><input type="text" id="comment-user-name" placeholder="ስምዎ..."></div>
+            <div class="form-group"><textarea id="comment-text" rows="2" placeholder="ሀሳብዎን እዚህ ይጻፉ..."></textarea></div>
+            <button class="submit-btn" style="padding: 7px; font-size: 0.85rem;" onclick="submitBookComment()">አስተያየት ላክ</button>
+            <div id="book-comments-container" style="margin-top: 12px; max-height: 120px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
     <div id="authModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeAuthModal()">✕</button>
-            <h3 id="auth-title" style="color: var(--accent); margin-top:0;">ወደ አካውንትዎ ይግቡ</h3>
+            <h3 id="auth-title" style="color: var(--accent); margin-top:0; font-size: 1.2rem;">ወደ አካውንትዎ ይግቡ</h3>
             <div class="form-group"><label>ኢሜይል:</label><input type="email" id="auth-email" placeholder="example@gmail.com"></div>
-            <div class="form-group"><label>ሚስጥራዊ ቃል (Password):</label><input type="password" id="auth-password" placeholder="******"></div>
-            <button class="submit-btn" id="auth-submit-btn" onclick="handleLogin()">ግባ (Login)</button>
-            <p style="text-align: center; margin-top: 15px; font-size: 0.88rem; color: #94a3b8;">
+            <div class="form-group"><label>ሚስጥራዊ ቃል:</label><input type="password" id="auth-password" placeholder="******"></div>
+            <button class="submit-btn" id="auth-submit-btn" onclick="handleLogin()">ግባ</button>
+            <p style="text-align: center; margin-top: 12px; font-size: 0.82rem; color: #94a3b8;">
                 አካውንት የለዎትም? <a href="#" id="toggle-auth-mode" onclick="switchAuthMode(event)" style="color: var(--primary); font-weight: 600; text-decoration: none;">እዚህ ይመዝገቡ</a>
             </p>
         </div>
     </div>
 
     <div id="myLibraryModal" class="modal">
-        <div class="modal-content" style="width: 550px;">
+        <div class="modal-content" style="max-width: 500px;">
             <button class="close-btn" onclick="closeMyLibraryModal()">✕</button>
-            <h3 style="color: var(--accent); margin-top:0;">📚 የገዟቸው መጻሕፍት ቤተ-መጻሕፍት</h3>
-            <div id="purchased-books-list" style="max-height: 300px; overflow-y: auto;">
-                <p style="color: #94a3b8; text-align: center; padding: 20px;">እስካሁን የገዙት መጽሐፍ የለም።</p>
+            <h3 style="color: var(--accent); margin-top:0; font-size: 1.2rem;">📚 የገዟቸው መጻሕፍት</h3>
+            <div id="purchased-books-list" style="max-height: 250px; overflow-y: auto;">
+                <p style="color: #94a3b8; text-align: center; padding: 15px; font-size: 0.88rem;">እስካሁን የገዙት መጽሐፍ የለም።</p>
             </div>
         </div>
     </div>
 
-    <div id="readerModal" class="modal">
-        <div class="modal-content" style="width: 580px;">
-            <button class="close-btn" onclick="closeReaderModal()">✕</button>
-            <h2 id="reader-book-title" style="color: var(--accent); margin-top:0; font-size: 1.3rem;"></h2>
-            <p style="color: #94a3b8; font-size: 0.88rem; margin-bottom: 10px;">ደራሲ፡ <span id="reader-book-author" style="font-weight: 600; color: #e2e8f0;"></span></p>
-            <div id="reader-content-box" class="reader-box"></div>
-            <div id="paywall-section" style="display:none;" class="paywall-overlay">
-                <h3 style="color: #f43f5e; margin-top:0; font-size: 1.05rem;">የነጻው የናሙና ንባብ አብቅቷል!</h3>
-                <button class="submit-btn" style="background: #f43f5e; margin-top: 10px;" onclick="buyCurrentBookFromReader()">አሁን ይግዙ (<span id="paywall-book-price"></span> ብር)</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- አድሚን መጽሐፍ መመዝገቢያ ሞዳል -->
     <div id="bookModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeBookModal()">✕</button>
-            <h3 style="color: var(--accent); margin-top:0;">አዲስ መጽሐፍ መዝግብ</h3>
+            <h3 style="color: var(--accent); margin-top:0; font-size: 1.2rem;">አዲስ መጽሐፍ መዝግብ</h3>
             <div class="form-group"><label>ርዕስ:</label><input type="text" id="b-title"></div>
             <div class="form-group"><label>ደራሲ:</label><input type="text" id="b-author"></div>
             <div class="form-group"><label>ዋጋ (ብር):</label><input type="number" id="b-price"></div>
@@ -484,74 +645,105 @@
                 </select>
             </div>
             <div class="form-group"><label>የምስል ሊንክ (URL):</label><input type="text" id="b-image"></div>
-            <div class="form-group"><label>መጽሐፉ ሙሉ ይዘት:</label><textarea id="b-content" rows="3"></textarea></div>
+            <div class="form-group"><label>ይዘት:</label><textarea id="b-content" rows="2"></textarea></div>
             <button class="submit-btn" onclick="submitBook()">መዝግብ</button>
         </div>
     </div>
 
-    <!-- አድሚን መጽሐፍ ማስተካከያ ሞዳል (Edit Book) -->
     <div id="editBookModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeEditBookModal()">✕</button>
-            <h3 style="color: var(--accent); margin-top:0;">✏️ መጽሐፍ ማስተካከል (ዋጋ እና ዝርዝር)</h3>
+            <h3 style="color: var(--accent); margin-top:0; font-size: 1.2rem;">✏️ መጽሐፍ ማስተካከል</h3>
             <input type="hidden" id="edit-b-id">
             <div class="form-group"><label>ርዕስ:</label><input type="text" id="edit-b-title"></div>
             <div class="form-group"><label>ደራሲ:</label><input type="text" id="edit-b-author"></div>
             <div class="form-group"><label>ዋጋ (ብር):</label><input type="number" id="edit-b-price"></div>
+            <div class="form-group"><label>ካታጎሪ:</label>
+                <select id="edit-b-category">
+                    <option value="fiction">ልቦለድ</option>
+                    <option value="history">ታሪክ</option>
+                    <option value="philosophy">ፍልስፍና</option>
+                    <option value="poetry">ግጥም</option>
+                    <option value="bestseller">ተወዳጅ (Bestseller)</option>
+                    <option value="new">አዲስ (New)</option>
+                </select>
+            </div>
             <div class="form-group"><label>የምስል ሊንክ (URL):</label><input type="text" id="edit-b-image"></div>
-            <div class="form-group"><label>ይዘት:</label><textarea id="edit-b-content" rows="3"></textarea></div>
+            <div class="form-group"><label>ይዘት:</label><textarea id="edit-b-content" rows="2"></textarea></div>
             <button class="submit-btn" onclick="updateBookData()">ለውጦችን አስቀምጥ</button>
         </div>
     </div>
 
-    <!-- አድሚን የክፍያ እና የጀርባ ምስሎች (Backgrounds) ማስተካከያ ሞዳል -->
-    <div id="settingsModal" class="modal">
+    <!-- አዲስ የዜና መዝገቢያ ሞዳል -->
+    <div id="newsModal" class="modal">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeSettingsModal()">✕</button>
-            <h3 style="color: var(--accent); margin-top:0;">⚙️ የክፍያ እና የጀርባ ምስሎች (BG) ማስተካከያ</h3>
-            <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 12px;">የቴሌብር/ንግድ ባንክ ቁጥሮች እና የድረ-ገጹን ጀርባ ምስሎች መቀየር ይችላሉ።</p>
-            
-            <div class="form-group"><label>የቴሌብር ቁጥር:</label><input type="text" id="set-telebirr" value="0930836065"></div>
-            <div class="form-group"><label>የቴሌብር QR ኮድ ዩአርኤል:</label><input type="text" id="set-telebirr-qr" placeholder="https://..."></div>
-            <div class="form-group"><label>የንግድ ባንክ (CBE) ቁጥር:</label><input type="text" id="set-cbe" value="1000324406461"></div>
-            <div class="form-group"><label>የንግድ ባንክ QR ኮድ ዩአርኤል:</label><input type="text" id="set-cbe-qr" placeholder="https://..."></div>
-            
-            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;">
-            
-            <h4 style="color: #38bdf8; font-size: 0.95rem; margin-bottom: 8px;">የጀርባ ምስሎች ዩአርኤል (በኮማ , ይለዩዋቸው):</h4>
-            <div class="form-group"><textarea id="set-bg-images" rows="3" placeholder="https://image1.jpg, https://image2.jpg"></textarea></div>
-
-            <button class="submit-btn" onclick="saveSettingsData()">ሁሉንም ለውጦች አስቀምጥ</button>
+            <button class="close-btn" onclick="closeNewsModal()">✕</button>
+            <h3 style="color: var(--accent); margin-top:0; font-size: 1.2rem;">📰 አዲስ ዜና መዝግብ</h3>
+            <div class="form-group"><label>ርዕስ:</label><input type="text" id="n-title" placeholder="የዜናው ርዕስ..."></div>
+            <div class="form-group"><label>ቀን:</label><input type="text" id="n-date" placeholder="ምሳሌ፡ ጳጉሜን 1, 2018"></div>
+            <div class="form-group"><label>ይዘት:</label><textarea id="n-content" rows="3" placeholder="የዜናውን ዝርዝር እዚህ ይጻፉ..."></textarea></div>
+            <button class="submit-btn" onclick="submitNews()">ዜናውን መዝግብ</button>
         </div>
     </div>
 
-    <!-- የክፍያ ማጠናቀቂያ ሞዳል -->
+    <!-- አዲስ የማስታወቂያ መዝገቢያ ሞዳል -->
+    <div id="announcementModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeAnnouncementModal()">✕</button>
+            <h3 style="color: var(--accent); margin-top:0; font-size: 1.2rem;">📢 አዲስ ማስታወቂያ መዝግብ</h3>
+            <div class="form-group"><label>ርዕስ:</label><input type="text" id="ann-title" placeholder="የማስታወቂያው ርዕስ..."></div>
+            <div class="form-group"><label>ቀን:</label><input type="text" id="ann-date" placeholder="ምሳሌ፡ ጳጉሜን 2, 2018"></div>
+            <div class="form-group"><label>ይዘት:</label><textarea id="ann-content" rows="3" placeholder="የማስታወቂያውን ዝርዝር እዚህ ይጻፉ..."></textarea></div>
+            <button class="submit-btn" onclick="submitAnnouncement()">ማስታወቂያውን መዝግብ</button>
+        </div>
+    </div>
+
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeSettingsModal()">✕</button>
+            <h3 style="color: var(--accent); margin-top:0; font-size: 1.2rem;">⚙️ ቅንብሮች</h3>
+            <div class="form-group"><label>የቴሌብር ቁጥር:</label><input type="text" id="set-telebirr" value="0930836065"></div>
+            <div class="form-group"><label>ቴሌብር QR ዩአርኤል:</label><input type="text" id="set-telebirr-qr" placeholder="https://..."></div>
+            <div class="form-group"><label>የንግድ ባንክ ቁጥር:</label><input type="text" id="set-cbe" value="1000324406461"></div>
+            <div class="form-group"><label>ንግድ ባንክ QR ዩአርኤል:</label><input type="text" id="set-cbe-qr" placeholder="https://..."></div>
+            <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 12px 0;">
+            <h4 style="color: #38bdf8; font-size: 0.88rem; margin-bottom: 6px;">የጀርባ ምስሎች ዩአርኤል (በኮማ , ይለዩዋቸው):</h4>
+            <div class="form-group"><textarea id="set-bg-images" rows="2"></textarea></div>
+            <button class="submit-btn" onclick="saveSettingsData()">ለውጦችን አስቀምጥ</button>
+        </div>
+    </div>
+
     <div id="checkoutModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeCheckout()">✕</button>
-            <h3 style="margin-top:0; color: #f8fafc;">ክፍያ ማጠናቀቂያ</h3>
-            <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 12px;">ጠቅላላ ዋጋ: <strong id="modal-total-price" style="color: #34d399;">0</strong> ብር</p>
+            <h3 style="margin-top:0; color: #f8fafc; font-size: 1.2rem;">ክፍያ ማጠናቀቂያ</h3>
+            <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 10px;">ጠቅላላ ዋጋ: <strong id="modal-total-price" style="color: #34d399;">0</strong> ብር</p>
             
             <div class="form-group"><label>ስምዎ:</label><input type="text" id="c-name"></div>
             <div class="form-group"><label>ስልክ ቁጥር:</label><input type="text" id="c-phone"></div>
             
             <div class="form-group">
-                <label>ባንክ / ቴሌብር ይምረጡ:</label>
+                <label>የክፍያ አማራጭ:</label>
                 <select id="c-method" onchange="updatePaymentInstructions()">
-                    <option value="telebirr">ቴሌብር (Telebirr - 0930836065)</option>
-                    <option value="cbe">የኢትዮጵያ ንግድ ባንክ (CBE - 1000324406461)</option>
+                    <option value="telebirr">ቴሌብር (0930836065)</option>
+                    <option value="cbe">የኢትዮጵያ ንግድ ባንክ (1000324406461)</option>
                 </select>
             </div>
 
-            <div id="payment-instruction-box" style="background: rgba(15,23,42,0.6); padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.08); font-size: 0.9rem;">
+            <div id="payment-instruction-box" style="background: rgba(15,23,42,0.6); padding: 10px; border-radius: 8px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.08); font-size: 0.85rem;">
                 <div id="payment-details-text"></div>
-                <div id="desktop-qr-container" style="text-align: center; margin-top: 10px; display: none;">
-                    <p style="font-size: 0.8rem; color: #fbbf24; margin-bottom: 6px;">የዴስክቶፕ ተጠቃሚ በመሆንዎ በቀላሉ በስልክዎ ይቃኙ (Scan QR):</p>
-                    <img id="payment-qr-image" src="" alt="QR Code" style="width: 120px; height: 120px; border-radius: 6px; border: 1px solid white; object-fit: cover;">
+                <div id="desktop-qr-container" style="text-align: center; margin-top: 8px; display: none;">
+                    <p style="font-size: 0.75rem; color: #fbbf24; margin-bottom: 4px;">ስልክዎ ላይ በካሜራ ይቃኙ (Scan QR):</p>
+                    <img id="payment-qr-image" src="" alt="QR Code" style="width: 110px; height: 110px; border-radius: 6px; border: 1px solid white; object-fit: cover;">
                 </div>
             </div>
 
-            <button class="submit-btn" onclick="completeOrder()">ግዢውን አረጋግጥ</button>
+            <div class="form-group">
+                <label>የክፍያ ማረጋገጫ (ስክሪንሹት ፎቶ ጫን):</label>
+                <input type="file" id="c-screenshot" accept="image/*" style="padding: 5px; font-size: 0.82rem;">
+            </div>
+
+            <button class="submit-btn" onclick="completeOrder()">ግዢውን አረጋግጥ እና ላክ</button>
         </div>
     </div>
 
@@ -569,6 +761,7 @@
         let allBooks = [];
         let cart = [];
         let purchasedBooks = []; 
+        let wishlist = JSON.parse(localStorage.getItem('user_wishlist') || '[]');
         let isSignUpMode = false;
         let activeReadingBook = null;
         let currentCategory = 'all';
@@ -597,6 +790,7 @@
             fetchNews();
             fetchAnnouncements();
             setupBackgroundSlideshow();
+            updateWishlistCount();
         }
 
         async function checkAdminStatus(userId) {
@@ -631,7 +825,7 @@
                 alert('ማስቀመጥ አልተቻለም: ' + error.message);
                 return;
             }
-            alert('ቅንብሮች (የክፍያ ቁጥሮች እና የጀርባ ምስሎች) በተሳካ ሁኔታ ተስተካክለዋል!');
+            alert('ቅንብሮች በተሳካ ሁኔታ ተስተካክለዋል!');
             closeSettingsModal();
             setupBackgroundSlideshow();
         }
@@ -644,17 +838,21 @@
 
         function displayBooks(books) {
             const grid = document.getElementById('books-grid');
-            grid.innerHTML = books.length ? '' : '<p style="text-align:center; color:#94a3b8; grid-column: 1/-1; padding: 40px;">ምንም መጽሐፍ አልተገኘም።</p>';
+            grid.innerHTML = books.length ? '' : '<p style="text-align:center; color:#94a3b8; grid-column: 1/-1; padding: 30px;">ምንም መጽሐፍ አልተገኘም።</p>';
 
             books.forEach(book => {
+                const isWishlisted = wishlist.some(w => w.id == book.id);
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
-                    <img src="${book.image_url || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c'}" alt="">
+                    <div class="card-img-container">
+                        <img src="${book.image_url || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c'}" alt="">
+                        <button class="wishlist-heart-btn ${isWishlisted ? 'active' : ''}" onclick='toggleWishlist(${JSON.stringify(book)})'>❤️</button>
+                    </div>
                     <div class="card-body">
                         <div class="card-title">${book.title}</div>
                         <div class="card-author">ደራሲ፡ ${book.author || 'ያልታወቀ'}</div>
-                        <div class="rating-stars">★★★★☆ <span style="font-size: 0.75rem; color: #94a3b8;">(4.5)</span></div>
+                        <div class="rating-stars">★★★★☆</div>
                         <div class="price-row">
                             <div class="price">${book.price} ብር</div>
                         </div>
@@ -662,12 +860,49 @@
                     <div class="card-actions">
                         <button class="action-btn read-free-btn" onclick="openReader('${book.id}')">📖 አንብብ</button>
                         <button class="action-btn buy-card-btn" onclick='addToCart(${JSON.stringify(book)})'>🛒 ግዛ</button>
-                        <button class="action-btn edit-card-btn" id="edit-btn-${book.id}" style="display: ${isAdmin ? 'block' : 'none'};" onclick="openEditBookModal('${book.id}')">✏️ አስተካክል / ዋጋ ቀይር</button>
+                        <button class="action-btn edit-card-btn" id="edit-btn-${book.id}" style="display: ${isAdmin ? 'block' : 'none'};" onclick="openEditBookModal('${book.id}')">✏️ አስተካክል</button>
                     </div>
                 `;
                 grid.appendChild(card);
             });
         }
+
+        function toggleWishlist(book) {
+            const index = wishlist.findIndex(w => w.id == book.id);
+            if (index > -1) {
+                wishlist.splice(index, 1);
+            } else {
+                wishlist.push(book);
+            }
+            localStorage.setItem('user_wishlist', JSON.stringify(wishlist));
+            updateWishlistCount();
+            displayBooks(allBooks);
+        }
+
+        function updateWishlistCount() {
+            document.getElementById('wishlist-count').innerText = wishlist.length;
+        }
+
+        function openWishlistModal() {
+            const listContainer = document.getElementById('wishlist-books-list');
+            if (wishlist.length === 0) {
+                listContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 15px; font-size: 0.88rem;">እስካሁን የተመረጠ ተወዳጅ መጽሐፍ የለም።</p>';
+            } else {
+                listContainer.innerHTML = '';
+                wishlist.forEach(b => {
+                    listContainer.innerHTML += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(15,23,42,0.6); padding: 8px 10px; border-radius: 8px; margin-bottom: 6px; font-size: 0.85rem;">
+                            <div><div style="font-weight: 600; color: #fff;">${b.title}</div><div style="font-size: 0.75rem; color: #94a3b8;">${b.author || ''}</div></div>
+                            <div style="display: flex; gap: 5px;">
+                                <button onclick="openReader('${b.id}'); closeWishlistModal();" style="background: #06b6d4; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">አንብብ</button>
+                                <button onclick='addToCart(${JSON.stringify(b)}); closeWishlistModal();' style="background: #f59e0b; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">ግዛ</button>
+                            </div>
+                        </div>`;
+                });
+            }
+            document.getElementById('wishlistModal').style.display = 'flex';
+        }
+        function closeWishlistModal() { document.getElementById('wishlistModal').style.display = 'none'; }
 
         function openEditBookModal(bookId) {
             const book = allBooks.find(b => b.id == bookId);
@@ -676,6 +911,7 @@
             document.getElementById('edit-b-title').value = book.title;
             document.getElementById('edit-b-author').value = book.author || '';
             document.getElementById('edit-b-price').value = book.price;
+            document.getElementById('edit-b-category').value = book.category || 'fiction';
             document.getElementById('edit-b-image').value = book.image_url || '';
             document.getElementById('edit-b-content').value = book.content || '';
             document.getElementById('editBookModal').style.display = 'flex';
@@ -687,22 +923,22 @@
             const title = document.getElementById('edit-b-title').value;
             const author = document.getElementById('edit-b-author').value;
             const price = Number(document.getElementById('edit-b-price').value);
+            const category = document.getElementById('edit-b-category').value;
             const image_url = document.getElementById('edit-b-image').value;
             const content = document.getElementById('edit-b-content').value;
 
             if (!title || isNaN(price)) { alert('እባክዎ ርዕስ እና ትክክለኛ ዋጋ ያስገቡ!'); return; }
 
             const { error } = await dbClient.from('books').update({
-                title, author, price, image_url, content
+                title, author, price, category, image_url, content
             }).eq('id', id);
 
             if (error) { alert('ማስተካከል አልተቻለም: ' + error.message); return; }
-            alert('መጽሐፉ (ዋጋው እና ዝርዝሩ) በተሳካ ሁኔታ ተስተካክሏል!');
+            alert('መጽሐፉ በተሳካ ሁኔታ ተስተካክሏል!');
             closeEditBookModal();
             fetchBooks();
         }
 
-        // የጀርባ ምስሎችን በዲናሚክ ሁኔታ መቀየር (Background Slideshow Engine)
         function setupBackgroundSlideshow() {
             const container = document.getElementById('bgSlideshowContainer');
             container.innerHTML = '';
@@ -752,24 +988,60 @@
 
         function displayNews(newsList) {
             const grid = document.getElementById('news-grid');
-            grid.innerHTML = newsList.length ? '' : '<p style="color:#94a3b8;">ምንም ዜና የለም።</p>';
+            grid.innerHTML = newsList.length ? '' : '<p style="color:#94a3b8; font-size:0.85rem;">ምንም ዜና የለም።</p>';
             newsList.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'info-card news-card';
-                div.innerHTML = `<div style="font-weight:700; font-size:1.05rem; color:#ffffff;">${item.title}</div><div style="font-size:0.8rem; color:#94a3b8; margin:4px 0;">${item.date}</div><div style="color:#cbd5e1; font-size:0.9rem;">${item.content}</div>`;
+                div.innerHTML = `<div style="font-weight:700; font-size:1rem; color:#ffffff;">${item.title}</div><div style="font-size:0.75rem; color:#94a3b8; margin:3px 0;">${item.date}</div><div style="color:#cbd5e1; font-size:0.85rem;">${item.content}</div>`;
                 grid.appendChild(div);
             });
         }
 
         function displayAnnouncements(annList) {
             const grid = document.getElementById('announcement-grid');
-            grid.innerHTML = annList.length ? '' : '<p style="color:#94a3b8;">ምንም ማስታወቂያ የለም።</p>';
+            grid.innerHTML = annList.length ? '' : '<p style="color:#94a3b8; font-size:0.85rem;">ምንም ማስታወቂያ የለም።</p>';
             annList.forEach(item => {
                 const div = document.createElement('div');
                 div.className = 'info-card announcement-card';
-                div.innerHTML = `<div style="font-weight:700; font-size:1.05rem; color:#ffffff;">${item.title}</div><div style="font-size:0.8rem; color:#94a3b8; margin:4px 0;">${item.date}</div><div style="color:#cbd5e1; font-size:0.9rem;">${item.content}</div>`;
+                div.innerHTML = `<div style="font-weight:700; font-size:1rem; color:#ffffff;">${item.title}</div><div style="font-size:0.75rem; color:#94a3b8; margin:3px 0;">${item.date}</div><div style="color:#cbd5e1; font-size:0.85rem;">${item.content}</div>`;
                 grid.appendChild(div);
             });
+        }
+
+        async function submitNews() {
+            const title = document.getElementById('n-title').value;
+            const date = document.getElementById('n-date').value;
+            const content = document.getElementById('n-content').value;
+
+            if (!title || !content) { alert('እባክዎ የዜና ርዕስ እና ይዘት ያስገቡ!'); return; }
+
+            const { error } = await dbClient.from('news').insert([{ title, date: date || new Date().toLocaleDateString(), content }]);
+            if (error) { alert('ዜናውን መዝገብ ላይ ስህተት ተፈጥሯል: ' + error.message); return; }
+
+            alert('ዜናው በተሳካ ሁኔታ ተመዝግቧል!');
+            document.getElementById('n-title').value = '';
+            document.getElementById('n-date').value = '';
+            document.getElementById('n-content').value = '';
+            closeNewsModal();
+            fetchNews();
+        }
+
+        async function submitAnnouncement() {
+            const title = document.getElementById('ann-title').value;
+            const date = document.getElementById('ann-date').value;
+            const content = document.getElementById('ann-content').value;
+
+            if (!title || !content) { alert('እባክዎ የማስታወቂያ ርዕስ እና ይዘት ያስገቡ!'); return; }
+
+            const { error } = await dbClient.from('announcements').insert([{ title, date: date || new Date().toLocaleDateString(), content }]);
+            if (error) { alert('ማስታወቂያውን መዝገብ ላይ ስህተት ተፈጥሯል: ' + error.message); return; }
+
+            alert('ማስታወቂያው በተሳካ ሁኔታ ተመዝግቧል!');
+            document.getElementById('ann-title').value = '';
+            document.getElementById('ann-date').value = '';
+            document.getElementById('ann-content').value = '';
+            closeAnnouncementModal();
+            fetchAnnouncements();
         }
 
         function searchBooks() {
@@ -793,6 +1065,35 @@
             displayBooks(filtered);
         }
 
+        function openAboutModal() { document.getElementById('aboutModal').style.display = 'flex'; }
+        function closeAboutModal() { document.getElementById('aboutModal').style.display = 'none'; }
+
+        function openComplaintModal() { document.getElementById('complaintModal').style.display = 'flex'; }
+        function closeComplaintModal() { document.getElementById('complaintModal').style.display = 'none'; }
+
+        async function submitComplaint() {
+            const name = document.getElementById('comp-name').value;
+            const phone = document.getElementById('comp-phone').value;
+            const title = document.getElementById('comp-title').value;
+            const message = document.getElementById('comp-message').value;
+
+            if (!title || !message) { alert('እባክዎ የቅሬታ ርዕስ እና መግለጫ ያስገቡ!'); return; }
+
+            const { error } = await dbClient.from('complaints').insert([{ name, phone, title, message }]);
+            if (error) {
+                let localComplaints = JSON.parse(localStorage.getItem('local_complaints') || '[]');
+                localComplaints.push({ name, phone, title, message, date: new Date().toLocaleString() });
+                localStorage.setItem('local_complaints', JSON.stringify(localComplaints));
+            }
+            
+            alert('ቅሬታዎ በተሳካ ሁኔታ ተልኳል!');
+            document.getElementById('comp-name').value = '';
+            document.getElementById('comp-phone').value = '';
+            document.getElementById('comp-title').value = '';
+            document.getElementById('comp-message').value = '';
+            closeComplaintModal();
+        }
+
         async function openReader(bookId) {
             const book = allBooks.find(b => b.id == bookId);
             if (!book) return;
@@ -806,18 +1107,175 @@
             const fullText = book.content || "ይህ መጽሐፍ ገና ሙሉ ይዘት አልተጫነለትም።";
             const isPurchased = purchasedBooks.some(pb => pb.id == book.id);
 
-            if (isPurchased || !fullText || fullText.length <= 300) {
+            if (isPurchased || !fullText || fullText.length <= 250) {
                 contentBox.innerHTML = `<p>${fullText}</p>`;
                 paywallSection.style.display = 'none';
             } else {
-                contentBox.innerHTML = `<p>${fullText.substring(0, 250)}...</p>`;
+                contentBox.innerHTML = `<p>${fullText.substring(0, 200)}...</p>`;
                 paywallSection.style.display = 'block';
                 document.getElementById('paywall-book-price').innerText = book.price;
             }
+
+            fetchBookComments(book.id);
             document.getElementById('readerModal').style.display = 'flex';
         }
 
-        function closeReaderModal() { document.getElementById('readerModal').style.display = 'none'; }
+        function closeReaderModal() { 
+            if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); }
+            document.getElementById('readerModal').style.display = 'none'; 
+        }
+
+        // Font & Theme changer functions for reader
+        function changeFontSize(size) {
+            const box = document.getElementById('reader-content-box');
+            if (size === 'small') box.style.fontSize = '0.85rem';
+            else if (size === 'normal') box.style.fontSize = '0.95rem';
+            else if (size === 'large') box.style.fontSize = '1.15rem';
+        }
+
+        function changeReaderTheme(theme) {
+            const box = document.getElementById('reader-content-box');
+            if (theme === 'dark') {
+                box.style.background = '#0f172a';
+                box.style.color = '#f8fafc';
+            } else {
+                box.style.background = '#f1f5f9';
+                box.style.color = '#0f172a';
+            }
+        }
+
+        // Text to Speech
+        function toggleReadAloud() {
+            if (!('speechSynthesis' in window)) {
+                alert('የድር አሳሽዎ የድምፅ ንባብ ባህሪን አይደግፍም።');
+                return;
+            }
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                alert('ንባቡ ቆሟል።');
+                return;
+            }
+            const text = document.getElementById('reader-content-box').innerText;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'am-ET'; // አማርኛ ድምፅ ድጋፍ ካለ
+            window.speechSynthesis.speak(utterance);
+            alert('ንባብ ተጀምሯል...');
+        }
+
+        // Social Share function
+        function shareOnSocial(platform) {
+            if (!activeReadingBook) return;
+            const url = window.location.href;
+            const text = `ብርሃኑ መጽሐፍት መደብር ላይ "${activeReadingBook.title}" የተሰኘውን መጽሐፍ አንብብ!`;
+            
+            if (platform === 'telegram') {
+                window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+            } else if (platform === 'facebook') {
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+            }
+        }
+
+        async function fetchBookComments(bookId) {
+            const container = document.getElementById('book-comments-container');
+            container.innerHTML = '<p style="font-size: 0.8rem; color: #94a3b8;">አስተያየቶች እየተጫኑ ነው...</p>';
+            
+            let comments = [];
+            const { data } = await dbClient.from('comments').select('*').eq('book_id', bookId);
+            if (data && data.length > 0) {
+                comments = data;
+            } else {
+                let localComments = JSON.parse(localStorage.getItem('local_comments') || '{}');
+                comments = localComments[bookId] || [];
+            }
+
+            if (comments.length === 0) {
+                container.innerHTML = '<p style="font-size: 0.8rem; color: #94a3b8;">እስካሁን የተሰጠ አስተያየት የለም።</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            comments.forEach(c => {
+                container.innerHTML += `
+                    <div style="background: rgba(15,23,42,0.6); padding: 7px 10px; border-radius: 6px; margin-bottom: 5px; font-size: 0.82rem;">
+                        <div style="font-weight: 600; color: var(--accent);">${c.user_name || 'አንባቢ'}</div>
+                        <div style="color: #cbd5e1; margin-top: 2px;">${c.comment_text}</div>
+                    </div>`;
+            });
+        }
+
+        async function submitBookComment() {
+            if (!activeReadingBook) return;
+            const user_name = document.getElementById('comment-user-name').value || 'አንባቢ';
+            const comment_text = document.getElementById('comment-text').value;
+
+            if (!comment_text.trim()) { alert('እባክዎ አስተያየት ይጻፉ!'); return; }
+
+            const { error } = await dbClient.from('comments').insert([{
+                book_id: activeReadingBook.id,
+                book_title: activeReadingBook.title,
+                user_name,
+                comment_text
+            }]);
+
+            if (error) {
+                let localComments = JSON.parse(localStorage.getItem('local_comments') || '{}');
+                if (!localComments[activeReadingBook.id]) localComments[activeReadingBook.id] = [];
+                localComments[activeReadingBook.id].push({ user_name, comment_text, date: new Date().toLocaleString() });
+                localStorage.setItem('local_comments', JSON.stringify(localComments));
+            }
+
+            alert('አስተያየትዎ ተመዝግቧል!');
+            document.getElementById('comment-text').value = '';
+            fetchBookComments(activeReadingBook.id);
+        }
+
+        async function openAdminDashboardModal() {
+            const compContainer = document.getElementById('admin-complaints-list');
+            let complaints = [];
+            const { data: compData } = await dbClient.from('complaints').select('*');
+            if (compData && compData.length > 0) complaints = compData;
+            else complaints = JSON.parse(localStorage.getItem('local_complaints') || '[]');
+
+            if (complaints.length === 0) {
+                compContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; font-size: 0.85rem;">ምንም ቅሬታ የለም።</p>';
+            } else {
+                compContainer.innerHTML = '';
+                complaints.forEach(cp => {
+                    compContainer.innerHTML += `
+                        <div style="background: rgba(30,41,59,0.8); padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 0.82rem;">
+                            <div style="font-weight: 600; color: #f87171;">${cp.title} (${cp.name || 'ስም የሌለው'})</div>
+                            <div style="color: #cbd5e1; margin-top: 2px;">${cp.message}</div>
+                        </div>`;
+                });
+            }
+
+            const commContainer = document.getElementById('admin-comments-list');
+            let allComments = [];
+            const { data: commData } = await dbClient.from('comments').select('*');
+            if (commData && commData.length > 0) allComments = commData;
+            else {
+                let localCommsObj = JSON.parse(localStorage.getItem('local_comments') || '{}');
+                for (let bId in localCommsObj) {
+                    localCommsObj[bId].forEach(cm => allComments.push({ book_title: bId, ...cm }));
+                }
+            }
+
+            if (allComments.length === 0) {
+                commContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; font-size: 0.85rem;">ምንም አስተያየት የለም።</p>';
+            } else {
+                commContainer.innerHTML = '';
+                allComments.forEach(cm => {
+                    commContainer.innerHTML += `
+                        <div style="background: rgba(30,41,59,0.8); padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 0.82rem;">
+                            <div style="font-weight: 600; color: var(--accent);">${cm.user_name || 'አንባቢ'}</div>
+                            <div style="color: #cbd5e1; margin-top: 2px;">${cm.comment_text}</div>
+                        </div>`;
+                });
+            }
+
+            document.getElementById('adminDashboardModal').style.display = 'flex';
+        }
+        function closeAdminDashboardModal() { document.getElementById('adminDashboardModal').style.display = 'none'; }
 
         function buyCurrentBookFromReader() {
             if (activeReadingBook) {
@@ -833,14 +1291,14 @@
         function openMyLibraryModal() {
             const listContainer = document.getElementById('purchased-books-list');
             if (purchasedBooks.length === 0) {
-                listContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 20px;">እስካሁን የገዙት መጽሐፍ የለም።</p>';
+                listContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 15px; font-size: 0.88rem;">እስካሁን የገዙት መጽሐፍ የለም።</p>';
             } else {
                 listContainer.innerHTML = '';
                 purchasedBooks.forEach(b => {
                     listContainer.innerHTML += `
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(15,23,42,0.6); padding: 10px 14px; border-radius: 8px; margin-bottom: 8px;">
-                            <div><div style="font-weight: 600; color: #fff;">${b.title}</div><div style="font-size: 0.78rem; color: #94a3b8;">ደራሲ፡ ${b.author || 'ያልታወቀ'}</div></div>
-                            <button onclick="openReader('${b.id}'); closeMyLibraryModal();" style="background: #06b6d4; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer;">አንብብ</button>
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(15,23,42,0.6); padding: 8px 10px; border-radius: 8px; margin-bottom: 6px; font-size: 0.85rem;">
+                            <div><div style="font-weight: 600; color: #fff;">${b.title}</div><div style="font-size: 0.75rem; color: #94a3b8;">${b.author || ''}</div></div>
+                            <button onclick="openReader('${b.id}'); closeMyLibraryModal();" style="background: #06b6d4; color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">አንብብ</button>
                         </div>`;
                 });
             }
@@ -852,7 +1310,7 @@
             e.preventDefault();
             isSignUpMode = !isSignUpMode;
             document.getElementById('auth-title').innerText = isSignUpMode ? 'አዲስ አካውንት ይፍጠሩ' : 'ወደ አካውንትዎ ይግቡ';
-            document.getElementById('auth-submit-btn').innerText = isSignUpMode ? 'ተመዝገብ (Sign Up)' : 'ግባ (Login)';
+            document.getElementById('auth-submit-btn').innerText = isSignUpMode ? 'ተመዝገብ' : 'ግባ';
             document.getElementById('toggle-auth-mode').innerText = isSignUpMode ? 'უკვე አካውንት አለኝ? ግባ' : 'እዚህ ይመዝገቡ';
         }
 
@@ -883,9 +1341,10 @@
             const adminNewsBtn = document.getElementById('adminNewsBtn');
             const adminAnnouncementBtn = document.getElementById('adminAnnouncementBtn');
             const adminSettingsBtn = document.getElementById('adminSettingsBtn');
+            const adminDashboardBtn = document.getElementById('adminDashboardBtn');
 
             if (currentUser) {
-                authBtn.innerText = 'ውጣ (Logout)';
+                authBtn.innerText = 'ውጣ';
                 authBtn.onclick = handleLogout;
                 myLibraryBtn.style.display = 'inline-block';
 
@@ -894,16 +1353,18 @@
                     adminNewsBtn.style.display = 'inline-block';
                     adminAnnouncementBtn.style.display = 'inline-block';
                     adminSettingsBtn.style.display = 'inline-block';
+                    adminDashboardBtn.style.display = 'inline-block';
                     document.querySelectorAll('.edit-card-btn').forEach(btn => btn.style.display = 'block');
                 }
             } else {
-                authBtn.innerText = 'ግባ / ተመዝገብ';
+                authBtn.innerText = 'ግባ';
                 authBtn.onclick = openAuthModal;
                 myLibraryBtn.style.display = 'none';
                 adminBookBtn.style.display = 'none';
                 adminNewsBtn.style.display = 'none';
                 adminAnnouncementBtn.style.display = 'none';
                 adminSettingsBtn.style.display = 'none';
+                adminDashboardBtn.style.display = 'none';
                 document.querySelectorAll('.edit-card-btn').forEach(btn => btn.style.display = 'none');
             }
         }
@@ -959,7 +1420,7 @@
             const container = document.getElementById('sidebar-items');
             const totalElement = document.getElementById('sidebar-total-price');
             if (cart.length === 0) {
-                container.innerHTML = '<p style="color: #94a3b8; text-align: center;">ቅርጫቱ ባዶ ነው።</p>';
+                container.innerHTML = '<p style="color: #94a3b8; text-align: center; font-size: 0.85rem;">ቅርጫቱ ባዶ ነው።</p>';
                 totalElement.innerText = '0';
                 return;
             }
@@ -988,7 +1449,7 @@
             const isDesktop = window.innerWidth > 768;
 
             if (method === 'telebirr') {
-                detailsText.innerHTML = `የቴሌብር ቁጥር: <strong style="color:#34d399; font-size:1.05rem;">${paymentConfig.telebirr_phone}</strong><br>እባክዎ ከላይ ባለው ቁጥር ክፍያውን ይፈጽሙ።`;
+                detailsText.innerHTML = `ቴሌብር ቁጥር: <strong style="color:#34d399;">${paymentConfig.telebirr_phone}</strong><br>ክፍያውን ፈጽመው ስክሪንሹቱን ያያይዙ።`;
                 if (isDesktop) {
                     qrImage.src = paymentConfig.telebirr_qr;
                     qrContainer.style.display = 'block';
@@ -996,7 +1457,7 @@
                     qrContainer.style.display = 'none';
                 }
             } else {
-                detailsText.innerHTML = `የንግድ ባንክ (CBE) ቁጥር: <strong style="color:#34d399; font-size:1.05rem;">${paymentConfig.cbe_account}</strong><br>እባክዎ በንግድ ባንክ አካውንት ቁጥራችን ክፍያውን ይፈጽሙ።`;
+                detailsText.innerHTML = `ንግድ ባንክ ቁጥር: <strong style="color:#34d399;">${paymentConfig.cbe_account}</strong><br>ክፍያውን ፈጽመው ስክሪንሹቱን ያያይዙ።`;
                 if (isDesktop) {
                     qrImage.src = paymentConfig.cbe_qr;
                     qrContainer.style.display = 'block';
@@ -1006,13 +1467,59 @@
             }
         }
 
-        function completeOrder() {
-            cart.forEach(item => {
+        async function sendTelegramNotification(bookTitle, buyerName, price, screenshotFile) {
+            const BOT_TOKEN = '8974106277:AAFBx7uWcQjHT_s0vBRuaLqa8n1lMYprXXw';
+            const CHAT_ID = '1088785278'; 
+            
+            const caption = `📚 አዲስ መጽሐፍ ግዥ እና የክፍያ ስክሪንሹት ደርሷል!\n\n` +
+                            `📖 ርዕስ: ${bookTitle}\n` +
+                            `👤 ገዢ: ${buyerName || 'ያልታወቀ'}\n` +
+                            `💰 ዋጋ: ${price} ብር\n` +
+                            `⏰ ሰዓት: ${new Date().toLocaleString()}`;
+
+            if (screenshotFile) {
+                const formData = new FormData();
+                formData.append('chat_id', CHAT_ID);
+                formData.append('photo', screenshotFile);
+                formData.append('caption', caption);
+
+                try {
+                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                } catch (e) {
+                    console.error("Photo telegram error:", e);
+                }
+            } else {
+                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+                try {
+                    await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ chat_id: CHAT_ID, text: caption })
+                    });
+                } catch (error) {
+                    console.error("Telegram error:", error);
+                }
+            }
+        }
+
+        async function completeOrder() {
+            if (cart.length === 0) return;
+            
+            const buyerName = document.getElementById('c-name').value || (currentUser ? currentUser.email : 'እንግዳ ተጠቃሚ');
+            const screenshotInput = document.getElementById('c-screenshot');
+            const screenshotFile = screenshotInput.files[0] || null;
+
+            for (let item of cart) {
                 if (!purchasedBooks.some(p => p.id == item.id)) {
                     purchasedBooks.push(item);
                 }
-            });
-            alert('ትዕዛዝዎ ተመዝግቧል! ክፍያዎ ሲረጋገጥ መጽሐፎቹ ወደ "የእኔ መጻሕፍት" ይገባሉ። እናመሰግናለን።');
+                await sendTelegramNotification(item.title, buyerName, item.price, screenshotFile);
+            }
+
+            alert('ትዕዛዝዎ እና የክፍያ ማረጋገጫዎ ተልኳል! እናመሰግናለን።');
             cart = [];
             document.getElementById('cart-count').innerText = 0;
             updateSidebarCart();
@@ -1023,49 +1530,7 @@
             document.getElementById(sectionId).classList.toggle('show');
             document.getElementById(btnId).classList.toggle('active');
         }
-<script>
-    // --- የቴሌግራም ማሳወቂያ መላኪያ ፋንክሽን እዚህ ጋር ይቀመጣል ---
-    async function sendTelegramNotification(bookTitle, buyerName, price) {
-        const BOT_TOKEN = '8974106277:AAFBx7uWcQjHT_s0vBRuaLqa8n1lMYprXXw';
-        const CHAT_ID = '1088785278'; 
-        
-        const message = `📚 አዲስ መጽሐፍ ግዥ ተፈጽሟል!\n\n` +
-                        `📖 የመጽሐፉ ርዕስ: ${bookTitle}\n` +
-                        `👤 ገዢው/ተጠቃሚው: ${buyerName || 'ያልታወቀ'}\n` +
-                        `💰 ዋጋው: ${price} ብር\n` +
-                        `⏰ ሰዓት: ${new Date().toLocaleString()}`;
 
-        const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-
-        try {
-            await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: CHAT_ID, text: message })
-            });
-        } catch (error) {
-            console.error("የቴሌግራም ኔትወርክ ስህተት:", error);
-        }
-    }
-
-    // --- የግዥ ማጠናቀቂያ ፋንክሽን (እዚህ ውስጥ ነው sendTelegramNotification የሚጠራው) ---
-    async function handlePurchase(title, price) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-            alert("እባክዎ መጽሐፉን ለመግዛት መጀመሪያ ይግቡ (Login)!");
-            return;
-        }
-
-        const confirmBuy = confirm(`"${title}" መጽሐፍን በ ${price} ብር ለመግዛት እርግጠኛ ነዎት?`);
-        
-        if (confirmBuy) {
-            alert("ግዥዎ በተሳካ ሁኔታ ተጠናቋል!");
-            
-            // ቴሌግራም ማሳወቂያ የሚልከው እዚህ ጋር ነው
-            await sendTelegramNotification(title, session.user.email, price);
-        }
-    }
-</script>
         initApp();
     </script>
 </body>
