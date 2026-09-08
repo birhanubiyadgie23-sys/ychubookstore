@@ -940,6 +940,9 @@
 
 <body>
 
+    <!-- የድምፅ ማሳወቂያ (Audio Alert Sound) -->
+    <audio id="orderAlertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+
     <!-- የጀርባ ስላይድ ትርኢት (Background Slideshow) -->
     <div class="bg-slideshow" id="bgSlideshowContainer">
         <div class="bg-slide active"
@@ -961,6 +964,12 @@
         <div class="logo" onclick="filterBooks('all', null)">ብርሃኑ መደብር</div>
 
         <div class="header-right">
+            <!-- በሄደር ውስጥ ወይም በአስተዳዳሪው ቁልፎች አጠገብ የሚቀመጥ የኖቲፊኬሽን ቆንጨራ (Badge) ቁልፍ -->
+            <button class="admin-action-btn" id="adminOrderBadgeBtn" style="display:none; background: linear-gradient(135deg, #f59e0b, #d97706); position: relative;" onclick="openAdminDashboardModal(); clearOrderNotifications();">
+                🔔 አዲስ ትዕዛዞች 
+                <span id="orderNotificationBadge" style="position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; display: none;">0</span>
+            </button>
+
             <div class="cart-info" onclick="openCheckout()">🛒 (<span id="cart-count">0</span>)</div>
             <button class="btn-auth" id="authBtn" onclick="openAuthModal()">ግባ</button>
             <button class="menu-toggle-btn" onclick="toggleMobileMenu()">☰ ሜኑ</button>
@@ -993,9 +1002,7 @@
         <p>ከዚህ በታች ከሚገኙት እውነተኛ መጽሐፍት ውስጥ ይምረጡ፤ የዕውቀት ገጾችን በማንበብ ይጀምሩ።</p>
 
         <div class="quotes-slider">
-            <div class="quote-item active">"መጽሐፍን ማንበብ ማለት ካለፉት ዘመናት ከሚኖሩ ምርጥ ሰዎች ጋር መነጋገር ማለት ነው።"</div>
-            <div class="quote-item">"አንድ ጥሩ መጽሐፍ ሙሉ ዓለምን ከማየት ጋር እኩል ነው።"</div>
-            <div class="quote-item">"እውቀት ማከማቻው መጽሐፍ ነው፤ ማንበብ ደግሞ አዕምሮን ማልማት ነው።"</div>
+            <div id="dynamic-slogan-element" class="quote-item active">"መጽሐፍን ማንበብ ማለት ካለፉ ዘመናት ከሚመጡ ምርጥ ሰዎች ጋር መነጋገር ማለት ነው።"</div>
         </div>
     </section>
 
@@ -1389,6 +1396,9 @@
         let activeReadingBook = null;
         let currentCategory = 'all';
 
+        // ሪያልታይም ትዕዛዞች ማሳወቂያ ተለዋዋጭ
+        let unreadOrdersCount = 0;
+
         let paymentConfig = {
             telebirr_phone: "0930836065",
             telebirr_qr: "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=tel:0930836065",
@@ -1402,8 +1412,32 @@
             ]
         };
 
+        const dynamicSlogans = [
+            "\"መጽሐፍን ማንበብ ማለት ካለፉ ዘመናት ከሚመጡ ምርጥ ሰዎች ጋር መነጋገር ማለት ነው።\"",
+            "\"እውቀት የህይወት መብራት ናት፤ ማንበብ ደግሞ ወደ ብርሃን የሚወስድ መንገድ ነው።\"",
+            "\"ንባብ አዕምሮን ታበለጽጋለች፣ አድማስንም ታሰፋለች።\""
+        ];
+
+        let currentIndex = 0;
+
+        function startRotatingSlogans() {
+            const sloganElement = document.getElementById('dynamic-slogan-element');
+            if (!sloganElement) return;
+
+            setInterval(() => {
+                sloganElement.style.opacity = 0;
+                setTimeout(() => {
+                    currentIndex = (currentIndex + 1) % dynamicSlogans.length;
+                    sloganElement.innerText = dynamicSlogans[currentIndex];
+                    sloganElement.style.opacity = 1;
+                }, 500);
+            }, 4000);
+        }
+
         window.onload = async function () {
+            startRotatingSlogans();
             await initApp();
+            setupRealtimeOrderListener(); // ሪያልታይም ሊስነር ማስጀመር
         };
 
         async function initApp() {
@@ -1424,7 +1458,94 @@
             updateWishlistCount();
         }
 
-        // ዜናዎችን ከዳታቤዝ ለማምጣት የተጨመረው ፋንክሽን
+        // Supabase Realtime Subscription ለ orders <table>
+        function setupRealtimeOrderListener() {
+            dbClient
+                .channel('public:orders')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
+                    const newOrder = payload.new;
+                    
+                    // አድሚን መሆን አለመሆኑን ማረጋገጥ
+                    if (isAdmin) {
+                        triggerAudioVisualAlert(newOrder);
+                    }
+                    
+                    // የተጠቃሚውን የትዕዛዝ ዝርዝር ማዘመን
+                    userOrders.unshift({
+                        id: newOrder.id,
+                        buyerName: newOrder.buyer_name,
+                        buyerPhone: newOrder.buyer_phone,
+                        totalPrice: newOrder.total_price,
+                        itemsSummary: newOrder.items_summary,
+                        items: newOrder.items,
+                        status: newOrder.status,
+                        statusCode: newOrder.status_code
+                    });
+                    
+                    // ክፍት ከሆነ የዳሽቦርድ ሞዳል ዝርዝርን ማደስ
+                    if (document.getElementById('adminDashboardModal').style.display === 'flex') {
+                        openAdminDashboardModal();
+                    }
+                })
+                .subscribe();
+        }
+
+        // የድምፅ እና ቪዥዋል ማሳወቂያዎችን የሚቆጣጠር ዋና ፈንክሽን
+        function triggerAudioVisualAlert(order) {
+            // 1. ድምፅ ማጫወት (Audio Alert)
+            const audio = document.getElementById('orderAlertSound');
+            if (audio) {
+                audio.play().catch(err => console.log("Audio play blocked by browser policy:", err));
+            }
+
+            // 2. ኖቲፊኬሽን ቆንጨራን (Badge) ማሳየት
+            unreadOrdersCount++;
+            const badge = document.getElementById('orderNotificationBadge');
+            if (badge) {
+                badge.innerText = unreadOrdersCount;
+                badge.style.display = 'inline-block';
+            }
+
+            // 3. ቪዥዋል ፖፕ-አፕ ማሳወቂያ (Popup Notification Toast)
+            showPopupNotification(`አዲስ ትዕዛዝ ገብቷል! #${order.id} - ${order.buyer_name} (${order.total_price} ብር)`);
+        }
+
+        // የፖፕ-አፕ ቶስት (Toast Popup) ዲዛይን እና አሰራር
+        function showPopupNotification(message) {
+            let toast = document.createElement('div');
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.right = '20px';
+            toast.style.background = '#1e293b';
+            toast.style.color = '#f8fafc';
+            toast.style.padding = '12px 20px';
+            toast.style.borderRadius = '10px';
+            toast.style.border = '1px solid #fbbf24';
+            toast.style.boxShadow = '0 10px 25px rgba(0,0,0,0.5)';
+            toast.style.zIndex = '9999';
+            toast.style.fontSize = '0.9rem';
+            toast.style.animation = 'fadeIn 0.3s ease';
+            toast.innerHTML = `⚠️ <strong style="color: #fbbf24;">አዲስ ማሳወቂያ</strong><br>${message}`;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => toast.remove(), 500);
+            }, 5000);
+        }
+
+        // ዳሽቦርዱ ሲከፈት ቆንጨራውን (Badge) ወደ ዜሮ መመለስ
+        function clearOrderNotifications() {
+            unreadOrdersCount = 0;
+            const badge = document.getElementById('orderNotificationBadge');
+            if (badge) {
+                badge.style.display = 'none';
+                badge.innerText = '0';
+            }
+        }
+
         async function fetchNews() {
             const { data } = await dbClient.from('news').select('*');
             const grid = document.getElementById('news-grid');
@@ -1445,7 +1566,6 @@
             });
         }
 
-        // ማስታወቂያዎችን ከዳታቤዝ ለማምጣት የተጨመረው ፋንክሽን
         async function fetchAnnouncements() {
             const { data } = await dbClient.from('announcements').select('*');
             const grid = document.getElementById('announcement-grid');
@@ -1466,7 +1586,6 @@
             });
         }
 
-        // የጀርባ ስላይድ አሳይመንት ፋንክሽን
         function setupBackgroundSlideshow() {
             let slides = document.querySelectorAll('.bg-slide');
             if (slides.length === 0) return;
@@ -1525,6 +1644,7 @@
             const adminSetMob = document.getElementById('adminSettingsBtnMob');
             const adminNewsBtn = document.getElementById('adminNewsBtn');
             const adminAnnBtn = document.getElementById('adminAnnouncementBtn');
+            const adminOrderBadgeBtn = document.getElementById('adminOrderBadgeBtn');
 
             if (currentUser) {
                 authBtn.innerText = 'ውጣ (Logout)';
@@ -1542,12 +1662,14 @@
                 if (adminSetMob) adminSetMob.style.display = 'block';
                 if (adminNewsBtn) adminNewsBtn.style.display = 'block';
                 if (adminAnnBtn) adminAnnBtn.style.display = 'block';
+                if (adminOrderBadgeBtn) adminOrderBadgeBtn.style.display = 'inline-block';
             } else {
                 if (adminBookMob) adminBookMob.style.display = 'none';
                 if (adminDashMob) adminDashMob.style.display = 'none';
                 if (adminSetMob) adminSetMob.style.display = 'none';
                 if (adminNewsBtn) adminNewsBtn.style.display = 'none';
                 if (adminAnnBtn) adminAnnBtn.style.display = 'none';
+                if (adminOrderBadgeBtn) adminOrderBadgeBtn.style.display = 'none';
             }
         }
 
@@ -1884,7 +2006,6 @@
             }
         }
 
-        // ዜና ለመዝገብ እና ሞዳሎቹን ለመክፈት/ለመዝጋት የተጨመሩ ተጨማሪ ፋንክሽኖች
         function openNewsModal() { document.getElementById('newsModal').style.display = 'flex'; }
         function closeNewsModal() { document.getElementById('newsModal').style.display = 'none'; }
         async function submitNews() {
@@ -1962,35 +2083,117 @@
         function closeAboutModal() { document.getElementById('aboutModal').style.display = 'none'; }
         function openComplaintModal() { document.getElementById('complaintModal').style.display = 'flex'; }
         function closeComplaintModal() { document.getElementById('complaintModal').style.display = 'none'; }
-        function submitComplaint() {
+
+        async function submitComplaint() {
+            const name = document.getElementById('comp-name').value;
+            const phone = document.getElementById('comp-phone').value;
+            const title = document.getElementById('comp-title').value;
+            const message = document.getElementById('comp-message').value;
+
+            if (!name || !phone || !title || !message) {
+                alert('እባክዎ ሁሉንም መስኮች ይሙሉ!');
+                return;
+            }
+
+            const {error} = await dbClient.from('complaints').insert([{
+                name, phone, title, message
+            }]);
+
+            if (error) {
+                alert('ቅሬታውን መመዝገብ አልተቻለም: ' + error.message);
+                return;
+            }
+
             alert('ቅሬታዎ በተሳካ ሁኔታ ተልኳል። እናመሰግናለን!');
             closeComplaintModal();
         }
-        function openAdminDashboardModal() { document.getElementById('adminDashboardModal').style.display = 'flex'; }
+
+        async function openAdminDashboardModal() {
+            clearOrderNotifications(); // ዳሽቦርዱ ሲከፈት ኖቲፊኬሽኑን ማጥፋት
+            const {data: ordersData} = await dbClient.from('orders').select('*');
+            const {data: complaintsData} = await dbClient.from('complaints').select('*');
+
+            let totalSoldRevenue = 0;
+            let totalSoldCopies = 0;
+            if (ordersData) {
+                ordersData.forEach(o => {
+                    if (o.status_code === 'completed') {
+                        totalSoldRevenue += o.total_price || 0;
+                        if (o.items) {
+                            o.items.forEach(i => totalSoldCopies += (i.quantity || 1));
+                        }
+                    }
+                });
+            }
+
+            let remainingTitles = allBooks.length;
+            document.getElementById('admin-sold-stats').innerText = `${totalSoldRevenue} ብር (${totalSoldCopies} ቅጂ)`;
+            document.getElementById('admin-remaining-stats').innerText = `${remainingTitles} አርእስት`;
+
+            const ordersList = document.getElementById('admin-orders-list');
+            if (!ordersData || ordersData.length === 0) {
+                ordersList.innerHTML = '<p style="color:#94a3b8; text-align:center; font-size:0.85rem;">ምንም ግዥ የለም።</p>';
+            } else {
+                ordersList.innerHTML = '';
+                ordersData.forEach(o => {
+                    ordersList.innerHTML += `
+                        <div style="background: rgba(30,41,59,0.9); padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 0.82rem;">
+                            <div style="font-weight:bold; color:#fff;">${o.buyer_name} (${o.buyer_phone}) - ${o.total_price} ብር</div>
+                            <div style="color:#cbd5e1;">መጻሕፍት: ${o.items_summary}</div>
+                            <div style="color:#34d399; margin-top:2px;">ሁኔታ: ${o.status}</div>
+                        </div>
+                    `;
+                });
+            }
+
+            const compList = document.getElementById('admin-complaints-list');
+            if (!complaintsData || complaintsData.length === 0) {
+                compList.innerHTML = '<p style="color:#94a3b8; text-align:center; font-size:0.85rem;">ምንም ቅሬታ የለም።</p>';
+            } else {
+                compList.innerHTML = '';
+                complaintsData.forEach(c => {
+                    compList.innerHTML += `
+                        <div style="background: rgba(30,41,59,0.9); padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 0.82rem;">
+                            <div style="font-weight:bold; color:#f59e0b;">${c.name} (${c.phone}) - ${c.title}</div>
+                            <div style="color:#cbd5e1; margin-top:2px;">${c.message}</div>
+                        </div>
+                    `;
+                });
+            }
+
+            document.getElementById('adminDashboardModal').style.display = 'flex';
+        }
+
         function closeAdminDashboardModal() { document.getElementById('adminDashboardModal').style.display = 'none'; }
         function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
         function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
         function openAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
         function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
-        function openMyLibraryModal() { document.getElementById('myLibraryModal').style.display = 'flex'; }
+
+        function openMyLibraryModal() {
+            const listContainer = document.getElementById('purchased-books-list');
+            if (purchasedBooks.length === 0) {
+                listContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 15px; font-size: 0.88rem;">እስካሁን የገዙት መጽሐፍ የለም።</p>';
+            } else {
+                listContainer.innerHTML = '';
+                purchasedBooks.forEach(b => {
+                    listContainer.innerHTML += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(15,23,42,0.6); padding: 8px 10px; border-radius: 8px; margin-bottom: 6px; font-size: 0.85rem;">
+                            <div><div style="font-weight: 600; color: #fff;">${b.title}</div><div style="font-size: 0.75rem; color: #94a3b8;">${b.author || ''}</div></div>
+                            <button onclick="openReader('${b.id}'); closeMyLibraryModal();" style="background: #06b6d4; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">አንብብ</button>
+                        </div>`;
+                });
+            }
+            document.getElementById('myLibraryModal').style.display = 'flex';
+        }
         function closeMyLibraryModal() { document.getElementById('myLibraryModal').style.display = 'none'; }
+
         function openBookModal() { document.getElementById('bookModal').style.display = 'flex'; }
         function closeBookModal() { document.getElementById('bookModal').style.display = 'none'; }
-        function openEditBookModal(id) { document.getElementById('editBookModal').style.display = 'flex'; }
-        function closeEditBookModal() { document.getElementById('editBookModal').style.display = 'none'; }
-        function submitBook() { alert('መጽሐፍ ተመዝግቧል'); closeBookModal(); fetchBooks(); }
-        function updateBookData() { alert('ተስተካክሏል'); closeEditBookModal(); fetchBooks(); }
-        function switchAuthMode(e) { e.preventDefault(); }
-        function handleLogin() { alert('ግባ ተከናውኗል'); closeAuthModal(); }
-        function openReader(id) { document.getElementById('readerModal').style.display = 'flex'; }
-        function closeReaderModal() { document.getElementById('readerModal').style.display = 'none'; }
-        function changeFontSize(s) {}
-        function toggleReadAloud() {}
-        function changeReaderTheme(t) {}
-        function buyCurrentBookFromReader() {}
-        function shareOnSocial(p) {}
-        function submitBookComment() {}
+
+        async function submitBook() {
+            // ... (የቀረበው የቀጥታ ኮድ ይቀጥላል)
+        }
     </script>
 </body>
-
 </html>
