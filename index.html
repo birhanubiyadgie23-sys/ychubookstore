@@ -964,7 +964,6 @@
         <div class="logo" onclick="filterBooks('all', null)">ብርሃኑ መደብር</div>
 
         <div class="header-right">
-            <!-- በሄደር ውስጥ ወይም በአስተዳዳሪው ቁልፎች አጠገብ የሚቀመጥ የኖቲፊኬሽን ቆንጨራ (Badge) ቁልፍ -->
             <button class="admin-action-btn" id="adminOrderBadgeBtn" style="display:none; background: linear-gradient(135deg, #f59e0b, #d97706); position: relative;" onclick="openAdminDashboardModal(); clearOrderNotifications();">
                 🔔 አዲስ ትዕዛዞች 
                 <span id="orderNotificationBadge" style="position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; display: none;">0</span>
@@ -974,7 +973,6 @@
             <button class="btn-auth" id="authBtn" onclick="openAuthModal()">ግባ</button>
             <button class="menu-toggle-btn" onclick="toggleMobileMenu()">☰ ሜኑ</button>
 
-            <!-- የሞባይል ድሮፕዳውን ሜኑ -->
             <div class="mobile-dropdown-menu" id="mobileDropdownMenu">
                 <button class="about-btn" onclick="openAboutModal(); toggleMobileMenu();">ℹ️ ስለኛ</button>
                 <button class="wishlist-btn" onclick="openWishlistModal(); toggleMobileMenu();">❤️ ተወዳጆች (<span
@@ -1396,7 +1394,6 @@
         let activeReadingBook = null;
         let currentCategory = 'all';
 
-        // ሪያልታይም ትዕዛዞች ማሳወቂያ ተለዋዋጭ
         let unreadOrdersCount = 0;
 
         let paymentConfig = {
@@ -1437,7 +1434,7 @@
         window.onload = async function () {
             startRotatingSlogans();
             await initApp();
-            setupRealtimeOrderListener(); // ሪያልታይም ሊስነር ማስጀመር
+            setupRealtimeOrderListener();
         };
 
         async function initApp() {
@@ -1458,19 +1455,14 @@
             updateWishlistCount();
         }
 
-        // Supabase Realtime Subscription ለ orders <table>
         function setupRealtimeOrderListener() {
             dbClient
                 .channel('public:orders')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
                     const newOrder = payload.new;
-                    
-                    // አድሚን መሆን አለመሆኑን ማረጋገጥ
                     if (isAdmin) {
                         triggerAudioVisualAlert(newOrder);
                     }
-                    
-                    // የተጠቃሚውን የትዕዛዝ ዝርዝር ማዘመን
                     userOrders.unshift({
                         id: newOrder.id,
                         buyerName: newOrder.buyer_name,
@@ -1481,8 +1473,6 @@
                         status: newOrder.status,
                         statusCode: newOrder.status_code
                     });
-                    
-                    // ክፍት ከሆነ የዳሽቦርድ ሞዳል ዝርዝርን ማደስ
                     if (document.getElementById('adminDashboardModal').style.display === 'flex') {
                         openAdminDashboardModal();
                     }
@@ -1490,27 +1480,20 @@
                 .subscribe();
         }
 
-        // የድምፅ እና ቪዥዋል ማሳወቂያዎችን የሚቆጣጠር ዋና ፈንክሽን
         function triggerAudioVisualAlert(order) {
-            // 1. ድምፅ ማጫወት (Audio Alert)
             const audio = document.getElementById('orderAlertSound');
             if (audio) {
                 audio.play().catch(err => console.log("Audio play blocked by browser policy:", err));
             }
-
-            // 2. ኖቲፊኬሽን ቆንጨራን (Badge) ማሳየት
             unreadOrdersCount++;
             const badge = document.getElementById('orderNotificationBadge');
             if (badge) {
                 badge.innerText = unreadOrdersCount;
                 badge.style.display = 'inline-block';
             }
-
-            // 3. ቪዥዋል ፖፕ-አፕ ማሳወቂያ (Popup Notification Toast)
             showPopupNotification(`አዲስ ትዕዛዝ ገብቷል! #${order.id} - ${order.buyer_name} (${order.total_price} ብር)`);
         }
 
-        // የፖፕ-አፕ ቶስት (Toast Popup) ዲዛይን እና አሰራር
         function showPopupNotification(message) {
             let toast = document.createElement('div');
             toast.style.position = 'fixed';
@@ -1536,7 +1519,6 @@
             }, 5000);
         }
 
-        // ዳሽቦርዱ ሲከፈት ቆንጨራውን (Badge) ወደ ዜሮ መመለስ
         function clearOrderNotifications() {
             unreadOrdersCount = 0;
             const badge = document.getElementById('orderNotificationBadge');
@@ -2109,7 +2091,7 @@
         }
 
         async function openAdminDashboardModal() {
-            clearOrderNotifications(); // ዳሽቦርዱ ሲከፈት ኖቲፊኬሽኑን ማጥፋት
+            clearOrderNotifications();
             const {data: ordersData} = await dbClient.from('orders').select('*');
             const {data: complaintsData} = await dbClient.from('complaints').select('*');
 
@@ -2192,7 +2174,258 @@
         function closeBookModal() { document.getElementById('bookModal').style.display = 'none'; }
 
         async function submitBook() {
-            // ... (የቀረበው የቀጥታ ኮድ ይቀጥላል)
+            const title = document.getElementById('b-title').value;
+            const author = document.getElementById('b-author').value;
+            const price = parseFloat(document.getElementById('b-price').value);
+            const stock = parseInt(document.getElementById('b-stock').value) || 10;
+            const category = document.getElementById('b-category').value;
+            const image_url = document.getElementById('b-image').value;
+            const content = document.getElementById('b-content').value;
+
+            if (!title || isNaN(price)) {
+                alert('እባክዎ ርዕስ እና ትክክለኛ ዋጋ ያስገቡ!');
+                return;
+            }
+
+            const { error } = await dbClient.from('books').insert([{
+                title, author, price, stock, category, image_url, content
+            }]);
+
+            if (error) {
+                alert('መጽሐፉን መመዝገብ አልተቻለም: ' + error.message);
+                return;
+            }
+
+            alert('መጽሐፉ በተሳካ ሁኔታ ተመዝግቧል!');
+            closeBookModal();
+            fetchBooks();
+        }
+
+        function openEditBookModal(bookId) {
+            const book = allBooks.find(b => b.id == bookId);
+            if (!book) return;
+
+            document.getElementById('edit-b-id').value = book.id;
+            document.getElementById('edit-b-title').value = book.title || '';
+            document.getElementById('edit-b-author').value = book.author || '';
+            document.getElementById('edit-b-price').value = book.price || 0;
+            document.getElementById('edit-b-stock').value = book.stock || 10;
+            document.getElementById('edit-b-category').value = book.category || 'fiction';
+            document.getElementById('edit-b-image').value = book.image_url || '';
+            document.getElementById('edit-b-content').value = book.content || '';
+
+            document.getElementById('editBookModal').style.display = 'flex';
+        }
+
+        function closeEditBookModal() {
+            document.getElementById('editBookModal').style.display = 'none';
+        }
+
+        async function updateBookData() {
+            const id = document.getElementById('edit-b-id').value;
+            const title = document.getElementById('edit-b-title').value;
+            const author = document.getElementById('edit-b-author').value;
+            const price = parseFloat(document.getElementById('edit-b-price').value);
+            const stock = parseInt(document.getElementById('edit-b-stock').value) || 10;
+            const category = document.getElementById('edit-b-category').value;
+            const image_url = document.getElementById('edit-b-image').value;
+            const content = document.getElementById('edit-b-content').value;
+
+            const { error } = await dbClient.from('books').update({
+                title, author, price, stock, category, image_url, content
+            }).eq('id', id);
+
+            if (error) {
+                alert('ለውጡን ማስቀመጥ አልተቻለም: ' + error.message);
+                return;
+            }
+
+            alert('መጽሐፉ በተሳካ ሁኔታ ተስተካክሏል!');
+            closeEditBookModal();
+            fetchBooks();
+        }
+
+        function switchAuthMode(event) {
+            event.preventDefault();
+            isSignUpMode = !isSignUpMode;
+            const title = document.getElementById('auth-title');
+            const btn = document.getElementById('auth-submit-btn');
+            const toggleLink = document.getElementById('toggle-auth-mode');
+
+            if (isSignUpMode) {
+                title.innerText = 'አዲስ አካውንት ይፍጠሩ';
+                btn.innerText = 'ተመዝገብ';
+                toggleLink.innerText = 'አካውንት አለዎት? ይግቡ';
+            } else {
+                title.innerText = 'ወደ አካውንትዎ ይግቡ';
+                btn.innerText = 'ግባ';
+                toggleLink.innerText = 'እዚህ ይመዝገቡ';
+            }
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+
+            if (!email || !password) {
+                alert('እባክዎ ኢሜይል እና ሚስጥራዊ ቃል ያስገቡ!');
+                return;
+            }
+
+            if (isSignUpMode) {
+                const { data, error } = await dbClient.auth.signUp({ email, password });
+                if (error) {
+                    alert('ምዝገባ አልተሳካም: ' + error.message);
+                    return;
+                }
+                alert('ምዝገባው ተጠናቋል! ኢሜይልዎን በማረጋገጥ መግባት ይችላሉ።');
+                isSignUpMode = false;
+                switchAuthMode({ preventDefault: () => {} });
+            } else {
+                const { data, error } = await dbClient.auth.signInWithPassword({ email, password });
+                if (error) {
+                    alert('መግባት አልተቻለም: ' + error.message);
+                    return;
+                }
+                currentUser = data.user;
+                await checkAdminStatus(currentUser.id);
+                await loadUserDataFromDB(currentUser.id);
+                closeAuthModal();
+                alert('እንኳን ደህና መጡ!');
+                window.location.reload();
+            }
+        }
+
+        async function openReader(bookId) {
+            const book = allBooks.find(b => b.id == bookId);
+            if (!book) return;
+
+            activeReadingBook = book;
+            document.getElementById('reader-book-title').innerText = book.title;
+            document.getElementById('reader-book-author').innerText = book.author || 'ያልታወቀ';
+
+            const isPurchased = purchasedBooks.some(pb => pb.id == book.id);
+            const contentBox = document.getElementById('reader-content-box');
+            const paywallSection = document.getElementById('paywall-section');
+
+            if (isPurchased || isAdmin) {
+                contentBox.innerHTML = `<p>${book.content || 'ሙሉ ይዘቱ አልተገኘምም።'}</p>`;
+                paywallSection.style.display = 'none';
+            } else {
+                let sampleText = book.content ? book.content.substring(0, 300) + '...' : 'የናሙና ንባብ ገጽ...';
+                contentBox.innerHTML = `<p>${sampleText}</p>`;
+                paywallSection.style.display = 'block';
+                document.getElementById('paywall-book-price').innerText = book.price;
+            }
+
+            await loadBookComments(book.id);
+            document.getElementById('readerModal').style.display = 'flex';
+        }
+
+        function closeReaderModal() {
+            document.getElementById('readerModal').style.display = 'none';
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+        }
+
+        function changeFontSize(size) {
+            const box = document.getElementById('reader-content-box');
+            if (size === 'small') box.style.fontSize = '0.82rem';
+            else if (size === 'normal') box.style.fontSize = '0.95rem';
+            else if (size === 'large') box.style.fontSize = '1.15rem';
+        }
+
+        function changeReaderTheme(theme) {
+            const box = document.getElementById('reader-content-box');
+            if (theme === 'dark') {
+                box.style.background = '#0f172a';
+                box.style.color = '#cbd5e1';
+            } else {
+                box.style.background = '#f8fafc';
+                box.style.color = '#0f172a';
+            }
+        }
+
+        function toggleReadAloud() {
+            if (!('speechSynthesis' in window)) {
+                alert('ብሮውዘርዎ የድምፅ ንባብ (Text-to-Speech) አይደግፍም።');
+                return;
+            }
+            if (window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                return;
+            }
+            const text = document.getElementById('reader-content-box').innerText;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'am-ET'; // Amharic support or fallback
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function buyCurrentBookFromReader() {
+            if (!activeReadingBook) return;
+            closeReaderModal();
+            addToCart(activeReadingBook);
+            openCheckout();
+        }
+
+        async function loadBookComments(bookId) {
+            const container = document.getElementById('book-comments-container');
+            container.innerHTML = '<p style="color:#94a3b8; font-size:0.8rem;">አስተያየቶች በመጫን ላይ...</p>';
+
+            const { data, error } = await dbClient.from('comments').select('*').eq('book_id', bookId);
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p style="color:#94a3b8; font-size:0.8rem;">እስካሁን የተሰጠ አስተያየት የለም።</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            data.forEach(c => {
+                container.innerHTML += `
+                    <div style="background: rgba(15,23,42,0.6); padding: 6px 10px; border-radius: 6px; margin-bottom: 5px; font-size: 0.8rem;">
+                        <div style="font-weight:600; color:#38bdf8;">${c.user_name}</div>
+                        <div style="color:#cbd5e1; margin-top:2px;">${c.comment}</div>
+                    </div>
+                `;
+            });
+        }
+
+        async function submitBookComment() {
+            if (!activeReadingBook) return;
+            const userName = document.getElementById('comment-user-name').value;
+            const commentText = document.getElementById('comment-text').value;
+
+            if (!userName || !commentText) {
+                alert('እባክዎ ስምዎን እና አስተያየትዎን ይጻፉ!');
+                return;
+            }
+
+            const { error } = await dbClient.from('comments').insert([{
+                book_id: activeReadingBook.id,
+                user_name: userName,
+                comment: commentText
+            }]);
+
+            if (error) {
+                alert('አስተያየቱን መመዝገብ አልተቻለም: ' + error.message);
+                return;
+            }
+
+            document.getElementById('comment-user-name').value = '';
+            document.getElementById('comment-text').value = '';
+            loadBookComments(activeReadingBook.id);
+        }
+
+        function shareOnSocial(platform) {
+            if (!activeReadingBook) return;
+            const url = window.location.href;
+            const text = `ብርሃኑ መጽሐፍት መደብር — "${activeReadingBook.title}" በደራሲ ${activeReadingBook.author || 'ያልታወቀ'} 📖`;
+
+            if (platform === 'telegram') {
+                window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+            } else if (platform === 'facebook') {
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+            }
         }
     </script>
 </body>
