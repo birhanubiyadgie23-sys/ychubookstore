@@ -51,12 +51,12 @@ async function loginAdmin(email, password) {
     }
 }
 
-// 3. ሎግ ഔት (Logout) የሚያደርግበት ፋንክሽን
+// 3. ሎግ አውት (Logout) የሚያደርግበት ፋንክሽን
 async function handleLogout() {
     await supabase.auth.signOut();
     currentUser = null;
     await updateAuthUI();
-    alert("ከአካውንትዎ ውጥተዋል።");
+    alert("ከአካውንትዎ ወጥተዋል።");
 }
 
 // 4. የተጠቃሚውን ሚና (Role) ከ Supabase profiles ቴብል በማረጋገጥ አዝራሮችን መቆጣጠሪያ
