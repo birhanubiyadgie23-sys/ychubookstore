@@ -46,8 +46,6 @@ async function loginAdmin(email, password) {
     } else {
         currentUser = data.user;
         alert("በተሳካ ሁኔታ ገብተዋል!");
-        
-        // ገብቶ ሲጨርስ ዩአይ (UI) እንዲያስተካክል እና አድሚን አዝራር እንዲያሳይ ይህንን እንጠራዋለን
         await updateAuthUI(); 
         return true;
     }
@@ -61,11 +59,20 @@ async function handleLogout() {
     alert("ከአካውንትዎ ውጥተዋል።");
 }
 
-// 4. የተጠቃሚውን ሚና (Role) ከ Supabase profiles ቴብል በማረጋገጥ አድሚን አዝራሮችን መቆጣጠሪያ
+// 4. የተጠቃሚውን ሚና (Role) ከ Supabase profiles ቴብል በማረጋገጥ አዝራሮችን መቆጣጠሪያ
 async function updateAuthUI() {
+    // የዴስክቶፕ እና የሞባይል ሜኑ አዝራሮች
     const authBtn = document.getElementById('authBtn');
+    
+    // የኮምፒዩተር እና የሞባይል አድሚን አዝራሮች (በሁለቱም በኩል ያሉት እንዲስተካከሉ)
     const adminBookBtn = document.getElementById('adminBookBtn');
-    const adminNewsBtn = document.getElementById('adminNewsBtn');
+    const adminBookBtnMob = document.getElementById('adminBookBtnMob');
+    
+    const adminDashboardBtn = document.getElementById('adminDashboardBtn');
+    const adminDashboardBtnMob = document.getElementById('adminDashboardBtnMob');
+
+    const adminSettingsBtn = document.getElementById('adminSettingsBtn');
+    const adminSettingsBtnMob = document.getElementById('adminSettingsBtnMob');
 
     // አሁን የገባ ተጠቃሚ መኖሩን ማረጋገጥ
     const { data: { session } } = await supabase.auth.getSession();
@@ -84,37 +91,43 @@ async function updateAuthUI() {
             .eq('id', currentUser.id)
             .single();
 
-        // በኮንሶል ውስጥ ምን እያነበበ እንደሆነ ለማየት (F12 ተጭነው ማየት ይችላሉ)
         console.log("Profile Data:", profile);
         console.log("Error if any:", error);
 
-        // ተጠቃሚው አድሚን ሚና ካለው ብቻ አዝራሮቹን እናሳያለን
-        if (profile && profile.role === 'admin') {
-            if (adminBookBtn) adminBookBtn.style.display = 'inline-block';
-            if (adminNewsBtn) adminNewsBtn.style.display = 'inline-block';
-        } else {
-            if (adminBookBtn) adminBookBtn.style.display = 'none';
-            if (adminNewsBtn) adminNewsBtn.style.display = 'none';
-        }
+        // ተጠቃሚው አድሚን ሚና ካለው ብቻ አዝራሮቹን በሁለቱም ቦታዎች እናሳያለን
+        const displayStyle = (profile && profile.role === 'admin') ? 'inline-block' : 'none';
+        const displayFlexStyle = (profile && profile.role === 'admin') ? 'block' : 'none'; // ለሜኑ ውስጥ
+
+        if (adminBookBtn) adminBookBtn.style.display = displayStyle;
+        if (adminBookBtnMob) adminBookBtnMob.style.display = displayFlexStyle;
+
+        if (adminDashboardBtn) adminDashboardBtn.style.display = displayStyle;
+        if (adminDashboardBtnMob) adminDashboardBtnMob.style.display = displayFlexStyle;
+
+        if (adminSettingsBtn) adminSettingsBtn.style.display = displayStyle;
+        if (adminSettingsBtnMob) adminSettingsBtnMob.style.display = displayFlexStyle;
+
     } else {
         if (authBtn) {
-            authBtn.innerText = 'ግባ / ተመዝገብ';
+            authBtn.innerText = 'ግባ';
+            authBtn.onclick = openAuthModal; // የግባ ፊርማ ሲነካ ሞዳሉን እንዲከፍት
         }
-        if (adminBookBtn) adminBookBtn.style.display = 'none';
-        if (adminNewsBtn) adminNewsBtn.style.display = 'none';
+        
+        // ካልገባ አዝራሮቹ ይጠፋሉ
+        [adminBookBtn, adminBookBtnMob, adminDashboardBtn, adminDashboardBtnMob, adminSettingsBtn, adminSettingsBtnMob].forEach(btn => {
+            if (btn) btn.style.display = 'none';
+        });
     }
 }
 
-// 5. መጽሐፍ መዝጋቢው ፋንክሽን (በዳታቤዝ አድሚን ሚናው የተረጋገጠ)
+// 5. መጽሐፍ መዝጋቢው ፋንክሽን
 async function addBook(title, author, price, category, imageUrl, content) {
-    // መጀመሪያ ሎግ ኢን ማድረጉን ማረጋገጥ
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
         alert("እባክዎ መጀመሪያ ይግቡ (Login)!");
         return;
     }
 
-    // ከዳታቤዝ አድሚን መሆኑን ዳግም ማረጋገጥ (ለተጨማሪ ደህንነት)
     const { data: profile } = await supabase
         .from('profiles')
         .select('role')
@@ -163,10 +176,29 @@ function handleFormSubmit() {
     addBook(title, author, price, category, imageUrl, content);
 }
 
-// 1. Supabase የዩዘሩን ሎግ-ኢን ሁኔታ በራሱ እንዲከታተል ማድረግ (በጣም አስተማማኝ መንገድ)
+// 7. የሞባይል ሜኑ መክፈቻና መዘጋጃ ፋንክሽን (Hamburger Menu Toggle)
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobileDropdownMenu');
+    if (menu) {
+        menu.classList.toggle('show');
+    }
+}
+
+// ከሜኑ ውጪ ሲነካ ሜኑአቸው እንዲዘጋ ማድረግ
+window.onclick = function(event) {
+    if (!event.target.matches('.menu-toggle-btn') && !event.target.closest('.mobile-dropdown-menu')) {
+        const menu = document.getElementById('mobileDropdownMenu');
+        if (menu && menu.classList.contains('show')) {
+            menu.classList.remove('show');
+        }
+    }
+}
+
+// Supabase የዩዘሩን ሎግ-ኢን ሁኔታ በራሱ እንዲከታተል ማድረግ
 supabase.auth.onAuthStateChange(async (event, session) => {
     currentUser = session?.user || null;
     await updateAuthUI();
 });
-// 2. ፋይሉ ሲከፈት የግንኙነት ምርመራውን ማቀጣጠር
+
+// ፋይሉ ሲከፈት የግንኙነት ምርመራውን ማቀጣጠር
 testConnection();
