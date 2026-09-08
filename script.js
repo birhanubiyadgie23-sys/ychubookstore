@@ -449,4 +449,25 @@ function shareOnSocial(platform) {
     } else if (platform === 'facebook') {
         window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
     }
+    // ድምጽ ለማጫወት የሚረዳ የኦዲዮ ፋይል
+const notificationSound = new Audio('/path-to-your-sound/notification.mp3');
+
+// አዲስ ትዕዛዝ ሲመጣ የሚሰራ Fuction
+function handleNewOrder(orderData) {
+    // ሀ) የትዕዛዝ ብዛት ቁጥርን መጨመር
+    const badgeElement = document.getElementById('notification-badge');
+    let currentCount = parseInt(badgeElement.textContent) || 0;
+    currentCount += 1;
+    
+    badgeElement.textContent = currentCount;
+    badgeElement.style.display = 'inline-block'; // ቁጥር ሲኖር ማሳያውን ክፍት ማድረግ
+
+    // ለ) ድምጽ ማጫወት
+    notificationSound.play().catch(error => {
+        console.log("አሳሹ አቶፕሌይ (Autoplay) ስለከለከለ ድምጹ አልተጫወተም:", error);
+    });
+
+    // ሐ) ማሳወቂያን በ Screen ላይ ማሳየት (ከተፈለገ)
+    showToastNotification(orderData);
+}
 }
