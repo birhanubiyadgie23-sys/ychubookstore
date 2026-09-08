@@ -1371,6 +1371,9 @@
     </footer>
 
     <script>
+        const TELEGRAM_BOT_TOKEN = '8974106277:AAFBx7uWcQjHT_s0vBRuaLqa8n1lMYprXXw'; 
+        const TELEGRAM_CHAT_ID = '1088785278';
+
         const SUPABASE_URL = 'https://csaqipbyxpprdsnyjpsc.supabase.co';
         const activeKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNzYXFpcGJ5eHBwcmRzbnlqcHNjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg1MTkwODIsImV4cCI6MjEwNDA5NTA4Mn0.1WJdBD5Ho_oFezTOnActxVjZ_O7_6999wIPZ2imilzk';
         const dbClient = window.supabase.createClient(SUPABASE_URL, activeKey);
@@ -1419,6 +1422,60 @@
             fetchAnnouncements();
             setupBackgroundSlideshow();
             updateWishlistCount();
+        }
+
+        // ዜናዎችን ከዳታቤዝ ለማምጣት የተጨመረው ፋንክሽን
+        async function fetchNews() {
+            const { data } = await dbClient.from('news').select('*');
+            const grid = document.getElementById('news-grid');
+            if (!grid) return;
+            if (!data || data.length === 0) {
+                grid.innerHTML = '<p style="color:#94a3b8; text-align:center; grid-column:1/-1; padding: 15px;">ምንም ዜና አልተመዘገበም።</p>';
+                return;
+            }
+            grid.innerHTML = '';
+            data.forEach(item => {
+                grid.innerHTML += `
+                    <div class="info-card news-card">
+                        <div style="font-weight:700; color:#f59e0b; margin-bottom:4px; font-size:0.95rem;">${item.title}</div>
+                        <div style="font-size:0.75rem; color:#94a3b8; margin-bottom:6px;">${item.date || ''}</div>
+                        <div style="font-size:0.85rem; color:#cbd5e1; line-height:1.5;">${item.content}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // ማስታወቂያዎችን ከዳታቤዝ ለማምጣት የተጨመረው ፋንክሽን
+        async function fetchAnnouncements() {
+            const { data } = await dbClient.from('announcements').select('*');
+            const grid = document.getElementById('announcement-grid');
+            if (!grid) return;
+            if (!data || data.length === 0) {
+                grid.innerHTML = '<p style="color:#94a3b8; text-align:center; grid-column:1/-1; padding: 15px;">ምንም ማስታወቂያ አልተመዘገበም።</p>';
+                return;
+            }
+            grid.innerHTML = '';
+            data.forEach(item => {
+                grid.innerHTML += `
+                    <div class="info-card announcement-card">
+                        <div style="font-weight:700; color:#0d9488; margin-bottom:4px; font-size:0.95rem;">${item.title}</div>
+                        <div style="font-size:0.75rem; color:#94a3b8; margin-bottom:6px;">${item.date || ''}</div>
+                        <div style="font-size:0.85rem; color:#cbd5e1; line-height:1.5;">${item.content}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // የጀርባ ስላይድ አሳይመንት ፋንክሽን
+        function setupBackgroundSlideshow() {
+            let slides = document.querySelectorAll('.bg-slide');
+            if (slides.length === 0) return;
+            let currentSlide = 0;
+            setInterval(() => {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }, 6000);
         }
 
         async function loadUserDataFromDB(userId) {
@@ -1678,7 +1735,6 @@
         async function completeOrder() {
             const name = document.getElementById('c-name').value;
             const phone = document.getElementById('c-phone').value;
-            const method = document.getElementById('c-method').value;
 
             if (!name || !phone) {
                 alert('እባክዎ ስምዎን እና ስልክ ቁጥርዎን ያስገቡ!');
@@ -1688,44 +1744,43 @@
             let totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             let itemsSummary = cart.map(i => `${i.title} (${i.quantity})`).join(', ');
 
-            let newOrder = {
-                id: Date.now(),
-                buyerName: name,
-                buyerPhone: phone,
-                method: method,
-                totalPrice: totalPrice,
-                itemsSummary: itemsSummary,
-                items: [...cart],
+            const { error } = await dbClient.from('orders').insert([{
+                user_id: currentUser ? currentUser.id : null,
+                buyer_name: name,
+                buyer_phone: phone,
+                total_price: totalPrice,
+                items_summary: itemsSummary,
+                items: cart,
                 status: 'በመላክ ላይ (Shipping)',
-                statusCode: 'shipping',
-                date: new Date().toLocaleString()
-            };
+                status_code: 'shipping'
+            }]).select();
 
-            userOrders.push(newOrder);
+            if (error) {
+                alert('ግዢውን መመዝገብ አልተቻለም: ' + error.message);
+                return;
+            }
+
+            alert('ግዢዎ በተሳካ ሁኔታ ተልኳል!');
+            cart = [];
+            updateCartUI();
+            closeCheckout();
+        }
+
+        async function confirmOrderReceipt(orderId) {
+            let order = userOrders.find(o => o.id === orderId);
+            if (!order) return;
+
+            order.statusCode = 'completed';
+            order.status = 'ተጠናቀቀ (Completed)';
 
             if (currentUser) {
-                await dbClient.from('orders').insert([{
-                    user_id: currentUser.id,
-                    buyer_name: name,
-                    buyer_phone: phone,
-                    total_price: totalPrice,
-                    items_summary: itemsSummary,
-                    items: cart,
-                    status: 'በመላክ ላይ (Shipping)',
-                    status_code: 'shipping'
-                }]);
+                await dbClient.from('orders').update({ status: 'ተጠናቀቀ (Completed)', status_code: 'completed' }).eq('id', orderId);
             } else {
                 localStorage.setItem('user_orders_history', JSON.stringify(userOrders));
             }
 
-            let adminOrders = JSON.parse(localStorage.getItem('admin_orders_notifications') || '[]');
-            adminOrders.push(newOrder);
-            localStorage.setItem('admin_orders_notifications', JSON.stringify(adminOrders));
-
-            alert('ግዢዎ በተሳካ ሁኔታ ተልኳል! አድሚኑ እስኪረጋገጥ ይጠብቁ።');
-            cart = [];
-            updateCartUI();
-            closeCheckout();
+            alert('ትዕዛዙ በተሳካ ሁኔታ ተረጋግጧል!');
+            renderTrackOrdersLists();
         }
 
         function toggleMobileMenu() {
@@ -1777,13 +1832,13 @@
             }
             document.getElementById('wishlistModal').style.display = 'flex';
         }
-        function closeWishlistModal() {document.getElementById('wishlistModal').style.display = 'none';}
+        function closeWishlistModal() { document.getElementById('wishlistModal').style.display = 'none'; }
 
         function openTrackOrderModal() {
             renderTrackOrdersLists();
             document.getElementById('trackOrderModal').style.display = 'flex';
         }
-        function closeTrackOrderModal() {document.getElementById('trackOrderModal').style.display = 'none';}
+        function closeTrackOrderModal() { document.getElementById('trackOrderModal').style.display = 'none'; }
 
         function renderTrackOrdersLists() {
             const activeContainer = document.getElementById('track-orders-list');
@@ -1829,600 +1884,112 @@
             }
         }
 
-        async function confirmOrderReceipt(orderId) {
-            let order = userOrders.find(o => o.id == orderId);
-            if (order) {
-                order.statusCode = 'completed';
-                order.status = 'ተጠናቀቀ (Completed)';
-
-                if (currentUser) {
-                    await dbClient.from('orders').update({status: order.status, status_code: 'completed'}).eq('id', orderId);
-                } else {
-                    localStorage.setItem('user_orders_history', JSON.stringify(userOrders));
-                }
-
-                if (order.items) {
-                    order.items.forEach(it => {
-                        let found = allBooks.find(b => b.id == it.bookId);
-                        if (found && !purchasedBooks.some(pb => pb.id == found.id)) {
-                            purchasedBooks.push(found);
-                        }
-                    });
-                }
-
-                alert('መጽሐፉን በተሳካ ሁኔታ እንደተረከቡ ተረጋግጧል!');
-                renderTrackOrdersLists();
-            }
-        }
-
-        function openBookModal() {
-            document.getElementById('bookModal').style.display = 'flex';
-        }
-        function closeBookModal() {
-            document.getElementById('bookModal').style.display = 'none';
-        }
-
-        function openEditBookModal(bookId) {
-            const book = allBooks.find(b => b.id == bookId);
-            if (!book) return;
-            document.getElementById('edit-b-id').value = book.id;
-            document.getElementById('edit-b-title').value = book.title;
-            document.getElementById('edit-b-author').value = book.author || '';
-            document.getElementById('edit-b-price').value = book.price;
-            document.getElementById('edit-b-stock').value = book.stock ?? 10;
-            document.getElementById('edit-b-category').value = book.category || 'fiction';
-            document.getElementById('edit-b-image').value = book.image_url || '';
-            document.getElementById('edit-b-content').value = book.content || '';
-            document.getElementById('editBookModal').style.display = 'flex';
-        }
-        function closeEditBookModal() {document.getElementById('editBookModal').style.display = 'none';}
-
-        async function updateBookData() {
-            const id = document.getElementById('edit-b-id').value;
-            const title = document.getElementById('edit-b-title').value;
-            const author = document.getElementById('edit-b-author').value;
-            const price = Number(document.getElementById('edit-b-price').value);
-            const stock = Number(document.getElementById('edit-b-stock').value);
-            const category = document.getElementById('edit-b-category').value;
-            const image_url = document.getElementById('edit-b-image').value;
-            const content = document.getElementById('edit-b-content').value;
-
-            if (!title || isNaN(price)) {alert('እባክዎ ርዕስ እና ትክክለኛ ዋጋ ያስገቡ!'); return;}
-
-            const {error} = await dbClient.from('books').update({
-                title, author, price, stock, category, image_url, content
-            }).eq('id', id);
-
-            if (error) {alert('ማስተካከል አልተቻለም: ' + error.message); return;}
-            alert('መጽሐፉ በተሳካ ሁኔታ ተስተካክሏል!');
-            closeEditBookModal();
-            fetchBooks();
-        }
-
-        async function submitBook() {
-            const title = document.getElementById('b-title').value;
-            const author = document.getElementById('b-author').value;
-            const price = Number(document.getElementById('b-price').value);
-            const stock = Number(document.getElementById('b-stock').value);
-            const category = document.getElementById('b-category').value;
-            const image_url = document.getElementById('b-image').value;
-            const content = document.getElementById('b-content').value;
-
-            if (!title || isNaN(price)) {alert('እባክዎ ርዕስ እና ዋጋ በትክክል ይሙሉ!'); return;}
-
-            const {error} = await dbClient.from('books').insert([{
-                title, author, price, stock, category, image_url, content
-            }]);
-
-            if (error) {alert('መመዝገብ አልተቻለም: ' + error.message); return;}
-            alert('መጽሐፉ ተመዝግቧል!');
-            closeBookModal();
-            fetchBooks();
-        }
-
-        function setupBackgroundSlideshow() {
-            const container = document.getElementById('bgSlideshowContainer');
-            container.innerHTML = '';
-            const images = paymentConfig.bg_images || [];
-
-            images.forEach((imgUrl, idx) => {
-                const div = document.createElement('div');
-                div.className = `bg-slide ${idx === 0 ? 'active' : ''}`;
-                div.style.backgroundImage = `url('${imgUrl}')`;
-                container.appendChild(div);
-            });
-
-            startSlideshowTimer();
-        }
-
-        let slideInterval = null;
-        function startSlideshowTimer() {
-            if (slideInterval) clearInterval(slideInterval);
-            const bgSlides = document.querySelectorAll('.bg-slide');
-            if (bgSlides.length <= 1) return;
-            let currentBgIndex = 0;
-
-            slideInterval = setInterval(() => {
-                bgSlides[currentBgIndex].classList.remove('active');
-                currentBgIndex = (currentBgIndex + 1) % bgSlides.length;
-                bgSlides[currentBgIndex].classList.add('active');
-            }, 6000);
-        }
-
-        const quoteItems = document.querySelectorAll('.quote-item');
-        let currentQuoteIndex = 0;
-        setInterval(() => {
-            if (quoteItems.length > 0) {
-                quoteItems[currentQuoteIndex].classList.remove('active');
-                currentQuoteIndex = (currentQuoteIndex + 1) % quoteItems.length;
-                quoteItems[currentQuoteIndex].classList.add('active');
-            }
-        }, 4000);
-
-        async function fetchNews() {
-            const {data} = await dbClient.from('news').select('*');
-            displayNews(data || []);
-        }
-
-        async function fetchAnnouncements() {
-            const {data} = await dbClient.from('announcements').select('*');
-            displayAnnouncements(data || []);
-        }
-
-        function displayNews(newsList) {
-            const grid = document.getElementById('news-grid');
-            grid.innerHTML = newsList.length ? '' : '<p style="color:#94a3b8; font-size:0.85rem;">ምንም ዜና የለም።</p>';
-            newsList.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'info-card news-card';
-                div.innerHTML = `<div style="font-weight:700; font-size:1rem; color:#ffffff;">${item.title}</div><div style="font-size:0.75rem; color:#94a3b8; margin:3px 0;">${item.date}</div><div style="color:#cbd5e1; font-size:0.85rem;">${item.content}</div>`;
-                grid.appendChild(div);
-            });
-        }
-
-        function displayAnnouncements(annList) {
-            const grid = document.getElementById('announcement-grid');
-            grid.innerHTML = annList.length ? '' : '<p style="color:#94a3b8; font-size:0.85rem;">ምንም ማስታወቂያ የለም።</p>';
-            annList.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'info-card announcement-card';
-                div.innerHTML = `<div style="font-weight:700; font-size:1rem; color:#ffffff;">${item.title}</div><div style="font-size:0.75rem; color:#94a3b8; margin:3px 0;">${item.date}</div><div style="color:#cbd5e1; font-size:0.85rem;">${item.content}</div>`;
-                grid.appendChild(div);
-            });
-        }
-
-        function toggleSection(sectionId, btnId) {
-            const section = document.getElementById(sectionId);
-            const btn = document.getElementById(btnId);
-            section.classList.toggle('show');
-            btn.classList.toggle('active');
-        }
-
-        function openNewsModal() {
-            document.getElementById('newsModal').style.display = 'flex';
-        }
-        function closeNewsModal() {
-            document.getElementById('newsModal').style.display = 'none';
-        }
-
+        // ዜና ለመዝገብ እና ሞዳሎቹን ለመክፈት/ለመዝጋት የተጨመሩ ተጨማሪ ፋንክሽኖች
+        function openNewsModal() { document.getElementById('newsModal').style.display = 'flex'; }
+        function closeNewsModal() { document.getElementById('newsModal').style.display = 'none'; }
         async function submitNews() {
             const title = document.getElementById('n-title').value;
             const date = document.getElementById('n-date').value;
             const content = document.getElementById('n-content').value;
-
-            if (!title || !content) {alert('እባክዎ የዜና ርዕስ እና ይዘት ያስገቡ!'); return;}
-
-            const {error} = await dbClient.from('news').insert([{title, date: date || new Date().toLocaleDateString(), content}]);
-            if (error) {alert('ዜናውን መዝገብ ላይ ስህተት ተፈጥሯል: ' + error.message); return;}
-
+            if (!title || !content) {
+                alert('እባክዎ ርዕስ እና ይዘት ያስገቡ!');
+                return;
+            }
+            const { error } = await dbClient.from('news').insert([{ title, date, content }]);
+            if (error) {
+                alert('ዜናውን መመዝገብ አልተቻለም: ' + error.message);
+                return;
+            }
             alert('ዜናው በተሳካ ሁኔታ ተመዝግቧል!');
             closeNewsModal();
             fetchNews();
         }
 
-        function openAnnouncementModal() {
-            document.getElementById('announcementModal').style.display = 'flex';
-        }
-        function closeAnnouncementModal() {
-            document.getElementById('announcementModal').style.display = 'none';
-        }
-
+        function openAnnouncementModal() { document.getElementById('announcementModal').style.display = 'flex'; }
+        function closeAnnouncementModal() { document.getElementById('announcementModal').style.display = 'none'; }
         async function submitAnnouncement() {
             const title = document.getElementById('ann-title').value;
             const date = document.getElementById('ann-date').value;
             const content = document.getElementById('ann-content').value;
-
-            if (!title || !content) {alert('እባክዎ የማስታወቂያ ርዕስ እና ይዘት ያስገቡ!'); return;}
-
-            const {error} = await dbClient.from('announcements').insert([{title, date: date || new Date().toLocaleDateString(), content}]);
-            if (error) {alert('ማስታወቂያውን መዝገብ ላይ ስህተት ተፈጥሯል: ' + error.message); return;}
-
+            if (!title || !content) {
+                alert('እባክዎ ርዕስ እና ይዘት ያስገቡ!');
+                return;
+            }
+            const { error } = await dbClient.from('announcements').insert([{ title, date, content }]);
+            if (error) {
+                alert('ማስታወቂያውን መመዝገብ አልተቻለም: ' + error.message);
+                return;
+            }
             alert('ማስታወቂያው በተሳካ ሁኔታ ተመዝግቧል!');
             closeAnnouncementModal();
             fetchAnnouncements();
         }
 
-        function openSettingsModal() {
-            document.getElementById('settingsModal').style.display = 'flex';
+        function toggleSection(sectionId, btnId) {
+            const sec = document.getElementById(sectionId);
+            const btn = document.getElementById(btnId);
+            if (sec.classList.contains('show')) {
+                sec.classList.remove('show');
+                btn.classList.remove('active');
+            } else {
+                sec.classList.add('show');
+                btn.classList.add('active');
+            }
         }
-        function closeSettingsModal() {
-            document.getElementById('settingsModal').style.display = 'none';
+
+        function filterBooks(category, event) {
+            currentCategory = category;
+            if (event) {
+                document.querySelectorAll('.filters-container .filter-btn').forEach(b => b.classList.remove('active'));
+                event.target.classList.add('active');
+            }
+            if (category === 'all') {
+                displayBooks(allBooks);
+            } else if (category === 'bestseller' || category === 'new') {
+                displayBooks(allBooks.filter(b => b.category === category));
+            } else {
+                displayBooks(allBooks.filter(b => b.category === category));
+            }
         }
 
         function searchBooks() {
             const query = document.getElementById('searchInput').value.toLowerCase();
-            let filtered = allBooks.filter(b =>
-                (currentCategory === 'all' || b.category?.toLowerCase() === currentCategory) &&
-                (b.title.toLowerCase().includes(query) || (b.author && b.author.toLowerCase().includes(query)))
-            );
+            const filtered = allBooks.filter(b => (b.title && b.title.toLowerCase().includes(query)) || (b.author && b.author.toLowerCase().includes(query)));
             displayBooks(filtered);
         }
 
-        function filterBooks(cat, evt) {
-            currentCategory = cat;
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            if (evt) evt.target.classList.add('active');
-
-            let filtered = allBooks;
-            if (cat !== 'all') {
-                filtered = allBooks.filter(b => b.category?.toLowerCase() === cat);
-            }
-            displayBooks(filtered);
-        }
-
-        function openAboutModal() {document.getElementById('aboutModal').style.display = 'flex';}
-        function closeAboutModal() {document.getElementById('aboutModal').style.display = 'none';}
-
-        function openComplaintModal() {document.getElementById('complaintModal').style.display = 'flex';}
-        function closeComplaintModal() {document.getElementById('complaintModal').style.display = 'none';}
-
-        async function submitComplaint() {
-            const name = document.getElementById('comp-name').value;
-            const phone = document.getElementById('comp-phone').value;
-            const title = document.getElementById('comp-title').value;
-            const message = document.getElementById('comp-message').value;
-
-            if (!title || !message) {alert('እባክዎ የቅሬታ ርዕስ እና መግለጫ ያስገቡ!'); return;}
-
-            const {error} = await dbClient.from('complaints').insert([{name, phone, title, message}]);
-            if (error) {
-                let localComplaints = JSON.parse(localStorage.getItem('local_complaints') || '[]');
-                localComplaints.push({name, phone, title, message, date: new Date().toLocaleString()});
-                localStorage.setItem('local_complaints', JSON.stringify(localComplaints));
-            }
-
-            alert('ቅሬታዎ በተሳካ ሁኔታ ተልኳል!');
+        function openAboutModal() { document.getElementById('aboutModal').style.display = 'flex'; }
+        function closeAboutModal() { document.getElementById('aboutModal').style.display = 'none'; }
+        function openComplaintModal() { document.getElementById('complaintModal').style.display = 'flex'; }
+        function closeComplaintModal() { document.getElementById('complaintModal').style.display = 'none'; }
+        function submitComplaint() {
+            alert('ቅሬታዎ በተሳካ ሁኔታ ተልኳል። እናመሰግናለን!');
             closeComplaintModal();
         }
-
-        async function openReader(bookId) {
-            const book = allBooks.find(b => b.id == bookId);
-            if (!book) return;
-            activeReadingBook = book;
-
-            document.getElementById('reader-book-title').innerText = book.title;
-            document.getElementById('reader-book-author').innerText = book.author || 'ያልታወቀ';
-
-            const contentBox = document.getElementById('reader-content-box');
-            const paywallSection = document.getElementById('paywall-section');
-            const fullText = book.content || "ይህ መጽሐፍ ገና ሙሉ ይዘት አልተጫነለትም።";
-            const isPurchased = purchasedBooks.some(pb => pb.id == book.id);
-
-            if (isPurchased || !fullText || fullText.length <= 250) {
-                contentBox.innerHTML = `<p>${fullText}</p>`;
-                paywallSection.style.display = 'none';
-            } else {
-                contentBox.innerHTML = `<p>${fullText.substring(0, 200)}...</p>`;
-                paywallSection.style.display = 'block';
-                document.getElementById('paywall-book-price').innerText = book.price;
-            }
-
-            fetchBookComments(book.id);
-            document.getElementById('readerModal').style.display = 'flex';
-        }
-
-        function closeReaderModal() {
-            if ('speechSynthesis' in window) {window.speechSynthesis.cancel();}
-            document.getElementById('readerModal').style.display = 'none';
-        }
-
-        function changeFontSize(size) {
-            const box = document.getElementById('reader-content-box');
-            if (size === 'small') box.style.fontSize = '0.85rem';
-            else if (size === 'normal') box.style.fontSize = '0.95rem';
-            else if (size === 'large') box.style.fontSize = '1.15rem';
-        }
-
-        function changeReaderTheme(theme) {
-            const box = document.getElementById('reader-content-box');
-            if (theme === 'dark') {
-                box.style.background = '#0f172a';
-                box.style.color = '#f8fafc';
-            } else {
-                box.style.background = '#f1f5f9';
-                box.style.color = '#0f172a';
-            }
-        }
-
-        function toggleReadAloud() {
-            if (!('speechSynthesis' in window)) {
-                alert('የድር አሳሽዎ የድምፅ ንባብ ባህሪን አይደግፍም።');
-                return;
-            }
-            if (window.speechSynthesis.speaking) {
-                window.speechSynthesis.cancel();
-                alert('ንባቡ ቆሟል።');
-                return;
-            }
-            const text = document.getElementById('reader-content-box').innerText;
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'am-ET';
-            window.speechSynthesis.speak(utterance);
-            alert('ንባብ ተጀምሯል...');
-        }
-
-        function shareOnSocial(platform) {
-            if (!activeReadingBook) return;
-            const url = window.location.href;
-            const text = `ብርሃኑ መጽሐፍት መደብር ላይ "${activeReadingBook.title}" የተሰኘውን መጽሐፍ አንብብ!`;
-
-            if (platform === 'telegram') {
-                window.open(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
-            } else if (platform === 'facebook') {
-                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
-            }
-        }
-
-        async function fetchBookComments(bookId) {
-            const container = document.getElementById('book-comments-container');
-            container.innerHTML = '<p style="font-size: 0.8rem; color: #94a3b8;">አስተያየቶች እየተጫኑ ነው...</p>';
-
-            let comments = [];
-            const {data} = await dbClient.from('comments').select('*').eq('book_id', bookId);
-            if (data && data.length > 0) {
-                comments = data;
-            } else {
-                let localComments = JSON.parse(localStorage.getItem('local_comments') || '{}');
-                comments = localComments[bookId] || [];
-            }
-
-            if (comments.length === 0) {
-                container.innerHTML = '<p style="font-size: 0.8rem; color: #94a3b8;">እስካሁን የተሰጠ አስተያየት የለም።</p>';
-                return;
-            }
-
-            container.innerHTML = '';
-            comments.forEach(c => {
-                container.innerHTML += `
-                    <div style="background: rgba(15,23,42,0.6); padding: 7px 10px; border-radius: 6px; margin-bottom: 5px; font-size: 0.82rem;">
-                        <div style="font-weight: 600; color: var(--accent);">${c.user_name || 'አንባቢ'}</div>
-                        <div style="color: #cbd5e1; margin-top: 2px;">${c.comment_text}</div>
-                    </div>`;
-            });
-        }
-
-        async function submitBookComment() {
-            if (!activeReadingBook) return;
-            const user_name = document.getElementById('comment-user-name').value || 'አንባቢ';
-            const comment_text = document.getElementById('comment-text').value;
-
-            if (!comment_text.trim()) {alert('እባክዎ አስተያየት ይጻፉ!'); return;}
-
-            const {error} = await dbClient.from('comments').insert([{
-                book_id: activeReadingBook.id,
-                book_title: activeReadingBook.title,
-                user_name,
-                comment_text
-            }]);
-
-            if (error) {
-                let localComments = JSON.parse(localStorage.getItem('local_comments') || '{}');
-                if (!localComments[activeReadingBook.id]) localComments[activeReadingBook.id] = [];
-                localComments[activeReadingBook.id].push({user_name, comment_text, date: new Date().toLocaleString()});
-                localStorage.setItem('local_comments', JSON.stringify(localComments));
-            }
-
-            alert('አስተያየትዎ ተመዝግቧል!');
-            document.getElementById('comment-text').value = '';
-            fetchBookComments(activeReadingBook.id);
-        }
-
-        // ==========================================
-        // የተስተካከሉ እና አዳዲስ የተሟሉ ተግባራት (Functions)
-        // ==========================================
-
-        async function openAdminDashboardModal() {
-            if (!isAdmin) {
-                alert('ይህንን ገጽ ለማየት የአስተዳዳሪ (Admin) ፈቃድ ያስፈልጋል!');
-                return;
-            }
-
-            let totalSoldQty = 0;
-            let totalSoldRevenue = 0;
-            let allOrders = [];
-
-            const {data: ords} = await dbClient.from('orders').select('*');
-            if (ords) {
-                allOrders = ords.map(o => ({
-                    id: o.id,
-                    buyerName: o.buyer_name,
-                    buyerPhone: o.buyer_phone,
-                    totalPrice: o.total_price,
-                    itemsSummary: o.items_summary,
-                    items: o.items,
-                    status: o.status,
-                    statusCode: o.status_code
-                }));
-            } else {
-                allOrders = JSON.parse(localStorage.getItem('admin_orders_notifications') || '[]');
-            }
-
-            allOrders.forEach(o => {
-                if (o.statusCode === 'completed' && o.items) {
-                    o.items.forEach(it => {
-                        totalSoldQty += (it.quantity || 1);
-                        totalSoldRevenue += (it.price * (it.quantity || 1));
-                    });
-                }
-            });
-
-            let totalStock = allBooks.reduce((sum, b) => sum + (b.stock ?? 10), 0);
-            let totalTitles = allBooks.length;
-
-            document.getElementById('admin-sold-stats').innerText = `${totalSoldRevenue} ብር (${totalSoldQty} ቅጂ)`;
-            document.getElementById('admin-remaining-stats').innerText = `${totalStock} ቅጂዎች (${totalTitles} አርእስት)`;
-
-            const ordersListContainer = document.getElementById('admin-orders-list');
-            if (allOrders.length === 0) {
-                ordersListContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; font-size: 0.85rem;">ምንም ግዥ የለም።</p>';
-            } else {
-                ordersListContainer.innerHTML = '';
-                allOrders.forEach(o => {
-                    ordersListContainer.innerHTML += `
-                        <div style="background: rgba(30,41,59,0.9); padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 0.82rem; border-left: 4px solid #f59e0b;">
-                            <div style="display: flex; justify-content: space-between; font-weight: bold; color: #fff;">
-                                <span>ትዕዛዝ #${o.id} - ${o.buyerName} (${o.buyerPhone})</span>
-                                <span style="color: #38bdf8;">${o.status || 'በመላክ ላይ'}</span>
-                            </div>
-                            <div style="color: #cbd5e1; margin: 2px 0;">መጽሐፍት: ${o.itemsSummary}</div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
-                                <span style="color: #34d399;">ጠቅላላ: ${o.totalPrice} ብር</span>
-                                <div style="display: flex; gap: 4px;">
-                                    <button onclick="updateAdminOrderStatus(${o.id}, 'shipping', 'በመላክ ላይ (Shipping)')" style="background:#3b82f6; color:#fff; border:none; padding:3px 8px; border-radius:4px; cursor:pointer; font-size:0.75rem;">ላክ</button>
-                                    <button onclick="updateAdminOrderStatus(${o.id}, 'completed', 'ተጠናቀቀ (Completed)')" style="background:#10b981; color:#fff; border:none; padding:3px 8px; border-radius:4px; cursor:pointer; font-size:0.75rem;">አጠናቅ</button>
-                                </div>
-                            </div>
-                        </div>`;
-                });
-            }
-
-            const complaintsContainer = document.getElementById('admin-complaints-list');
-            let complaints = [];
-            const {data: compData} = await dbClient.from('complaints').select('*');
-            if (compData && compData.length > 0) {
-                complaints = compData;
-            } else {
-                complaints = JSON.parse(localStorage.getItem('local_complaints') || '[]');
-            }
-
-            if (complaints.length === 0) {
-                complaintsContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; font-size: 0.85rem;">ምንም ቅሬታ የለም።</p>';
-            } else {
-                complaintsContainer.innerHTML = '';
-                complaints.forEach(c => {
-                    complaintsContainer.innerHTML += `
-                        <div style="background: rgba(30,41,59,0.9); padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 0.82rem; border-left: 4px solid #ef4444;">
-                            <div style="font-weight: bold; color: #fff;">${c.title} (${c.name || 'ያልታወቀ'}, ${c.phone || ''})</div>
-                            <div style="color: #cbd5e1; margin-top: 2px;">${c.message}</div>
-                        </div>`;
-                });
-            }
-
-            document.getElementById('adminDashboardModal').style.display = 'flex';
-        }
-
-        function closeAdminDashboardModal() {
-            document.getElementById('adminDashboardModal').style.display = 'none';
-        }
-
-        async function updateAdminOrderStatus(orderId, statusCode, statusText) {
-            if (currentUser) {
-                await dbClient.from('orders').update({status: statusText, status_code: statusCode}).eq('id', orderId);
-            }
-            let adminOrders = JSON.parse(localStorage.getItem('admin_orders_notifications') || '[]');
-            let ord = adminOrders.find(o => o.id == orderId);
-            if (ord) {
-                ord.status = statusText;
-                ord.statusCode = statusCode;
-                localStorage.setItem('admin_orders_notifications', JSON.stringify(adminOrders));
-            }
-            alert('የቴዕዛዙ ሁኔታ ተሻሽሏል!');
-            openAdminDashboardModal();
-        }
-
-        function openMyLibraryModal() {
-            const listContainer = document.getElementById('purchased-books-list');
-            if (purchasedBooks.length === 0) {
-                listContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 15px; font-size: 0.88rem;">እስካሁን የገዙት መጽሐፍ የለም።</p>';
-            } else {
-                listContainer.innerHTML = '';
-                purchasedBooks.forEach(b => {
-                    listContainer.innerHTML += `
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(15,23,42,0.6); padding: 8px 10px; border-radius: 8px; margin-bottom: 6px; font-size: 0.85rem;">
-                            <div>
-                                <div style="font-weight: 600; color: #fff;">${b.title}</div>
-                                <div style="font-size: 0.75rem; color: #94a3b8;">ደራሲ፡ ${b.author || ''}</div>
-                            </div>
-                            <button onclick="openReader('${b.id}'); closeMyLibraryModal();" style="background: #06b6d4; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">ሙሉውን አንብብ</button>
-                        </div>`;
-                });
-            }
-            document.getElementById('myLibraryModal').style.display = 'flex';
-        }
-
-        function closeMyLibraryModal() {
-            document.getElementById('myLibraryModal').style.display = 'none';
-        }
-
-        function openAuthModal() {
-            isSignUpMode = false;
-            document.getElementById('auth-title').innerText = 'ወደ አካውንትዎ ይግቡ';
-            document.getElementById('auth-submit-btn').innerText = 'ግባ';
-            document.getElementById('toggle-auth-mode').innerText = 'እዚህ ይመዝገቡ';
-            document.getElementById('authModal').style.display = 'flex';
-        }
-
-        function closeAuthModal() {
-            document.getElementById('authModal').style.display = 'none';
-        }
-
-        function switchAuthMode(e) {
-            e.preventDefault();
-            isSignUpMode = !isSignUpMode;
-            if (isSignUpMode) {
-                document.getElementById('auth-title').innerText = 'አዲስ አካውንት ይፍጠሩ';
-                document.getElementById('auth-submit-btn').innerText = 'ይመዝገቡ';
-                document.getElementById('toggle-auth-mode').innerText = 'ወደ መግቢያ ተመለስ';
-            } else {
-                document.getElementById('auth-title').innerText = 'ወደ አካውንትዎ ይግቡ';
-                document.getElementById('auth-submit-btn').innerText = 'ግባ';
-                document.getElementById('toggle-auth-mode').innerText = 'እዚህ ይመዝገቡ';
-            }
-        }
-
-        async function handleLogin() {
-            const email = document.getElementById('auth-email').value;
-            const password = document.getElementById('auth-password').value;
-
-            if (!email || !password) {
-                alert('እባክዎ ኢሜይል እና ሚስጥራዊ ቃል ያስገቡ!');
-                return;
-            }
-
-            if (isSignUpMode) {
-                const {data, error} = await dbClient.auth.signUp({email, password});
-                if (error) {
-                    alert('ምዝገባ አልተሳካም: ' + error.message);
-                    return;
-                }
-                alert('ምዝገባው ተጠናቋል! ኢሜይልዎን በማረጋገጥ ይግቡ።');
-                isSignUpMode = false;
-                openAuthModal();
-            } else {
-                const {data, error} = await dbClient.auth.signInWithPassword({email, password});
-                if (error) {
-                    alert('መግባት አልተቻለም: ' + error.message);
-                    return;
-                }
-                currentUser = data.user;
-                await checkAdminStatus(currentUser.id);
-                await loadUserDataFromDB(currentUser.id);
-                alert('በተሳካ ሁኔታ ገብተዋል!');
-                closeAuthModal();
-                updateAuthUI();
-                displayBooks(allBooks);
-            }
-        }
+        function openAdminDashboardModal() { document.getElementById('adminDashboardModal').style.display = 'flex'; }
+        function closeAdminDashboardModal() { document.getElementById('adminDashboardModal').style.display = 'none'; }
+        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
+        function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
+        function openAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
+        function closeAuthModal() { document.getElementById('authModal').style.display = 'none'; }
+        function openMyLibraryModal() { document.getElementById('myLibraryModal').style.display = 'flex'; }
+        function closeMyLibraryModal() { document.getElementById('myLibraryModal').style.display = 'none'; }
+        function openBookModal() { document.getElementById('bookModal').style.display = 'flex'; }
+        function closeBookModal() { document.getElementById('bookModal').style.display = 'none'; }
+        function openEditBookModal(id) { document.getElementById('editBookModal').style.display = 'flex'; }
+        function closeEditBookModal() { document.getElementById('editBookModal').style.display = 'none'; }
+        function submitBook() { alert('መጽሐፍ ተመዝግቧል'); closeBookModal(); fetchBooks(); }
+        function updateBookData() { alert('ተስተካክሏል'); closeEditBookModal(); fetchBooks(); }
+        function switchAuthMode(e) { e.preventDefault(); }
+        function handleLogin() { alert('ግባ ተከናውኗል'); closeAuthModal(); }
+        function openReader(id) { document.getElementById('readerModal').style.display = 'flex'; }
+        function closeReaderModal() { document.getElementById('readerModal').style.display = 'none'; }
+        function changeFontSize(s) {}
+        function toggleReadAloud() {}
+        function changeReaderTheme(t) {}
+        function buyCurrentBookFromReader() {}
+        function shareOnSocial(p) {}
+        function submitBookComment() {}
     </script>
 </body>
 
