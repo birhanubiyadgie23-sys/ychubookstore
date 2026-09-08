@@ -126,7 +126,7 @@
         }
         .admin-action-btn:hover { transform: translateY(-2px); }
 
-        .my-library-btn, .about-btn, .complaint-btn, .wishlist-btn {
+        .my-library-btn, .about-btn, .complaint-btn, .wishlist-btn, .track-order-btn {
             background: linear-gradient(135deg, #8b5cf6, #7c3aed);
             color: white;
             border: none;
@@ -141,7 +141,8 @@
         .about-btn { background: linear-gradient(135deg, #06b6d4, #0891b2); box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3); }
         .complaint-btn { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); }
         .wishlist-btn { background: linear-gradient(135deg, #ec4899, #db2777); box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3); }
-        .my-library-btn:hover, .about-btn:hover, .complaint-btn:hover, .wishlist-btn:hover { transform: translateY(-2px); }
+        .track-order-btn { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+        .my-library-btn:hover, .about-btn:hover, .complaint-btn:hover, .wishlist-btn:hover, .track-order-btn:hover { transform: translateY(-2px); }
 
         .cart-info { 
             background: linear-gradient(135deg, #f59e0b, #d97706); 
@@ -291,13 +292,17 @@
         }
 
         @media (min-width: 900px) {
-            .sidebar-cart { width: 300px; position: sticky; top: 130px; }
+            .sidebar-cart { width: 320px; position: sticky; top: 130px; }
         }
 
         .sidebar-cart h3 { margin-top: 0; color: var(--accent); border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 8px; font-size: 1.1rem; }
-        .cart-items-list { max-height: 180px; overflow-y: auto; margin-bottom: 12px; font-size: 0.9rem; padding-right: 5px; }
-        .cart-item-row { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); padding-bottom: 6px; color: #cbd5e1; }
+        .cart-items-list { max-height: 220px; overflow-y: auto; margin-bottom: 12px; font-size: 0.85rem; padding-right: 5px; }
+        .cart-item-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed rgba(255, 255, 255, 0.1); padding-bottom: 6px; color: #cbd5e1; gap: 5px; }
         
+        .qty-controls { display: flex; align-items: center; gap: 4px; }
+        .qty-btn { background: #334155; color: white; border: none; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; }
+        .qty-btn:hover { background: var(--primary); }
+
         .sidebar-total { font-size: 1.05rem; font-weight: bold; color: #34d399; margin-bottom: 12px; text-align: center; background: rgba(15, 23, 42, 0.6); padding: 8px; border-radius: 8px; }
         .side-checkout-btn { width: 100%; background: #10b981; color: white; border: none; padding: 10px; cursor: pointer; font-weight: 600; border-radius: 8px; font-size: 0.9rem; transition: var(--transition); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
         .side-checkout-btn:hover { background: #059669; }
@@ -437,6 +442,7 @@
             <button class="about-btn" onclick="openAboutModal()">ℹ️ ስለኛ</button>
             <button class="wishlist-btn" onclick="openWishlistModal()">❤️ ተወዳጆች (<span id="wishlist-count">0</span>)</button>
             <button class="complaint-btn" onclick="openComplaintModal()">⚠️ ቅሬታ</button>
+            <button class="track-order-btn" onclick="openTrackOrderModal()">📦 ትዕዛዝ ክትትል</button>
             <button class="my-library-btn" id="myLibraryBtn" onclick="openMyLibraryModal()">📚 መጻሕፍቴ</button>
             <button class="admin-action-btn" id="adminBookBtn" onclick="openBookModal()">+ መጽሐፍ</button>
             <button class="admin-action-btn" id="adminDashboardBtn" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);" onclick="openAdminDashboardModal()">📊 ዳሽቦርድ</button>
@@ -536,6 +542,22 @@
         </div>
     </div>
 
+    <!-- የትዕዛዝ ክትትል ሞዳል (የሁኔታ ማሻሻያ እና ማረጋገጫ ቁልፍን የያዘ) -->
+    <div id="trackOrderModal" class="modal">
+        <div class="modal-content" style="max-width: 550px;">
+            <button class="close-btn" onclick="closeTrackOrderModal()">✕</button>
+            <h3 style="color: var(--accent); margin-top:0; font-size: 1.2rem;">📦 የትዕዛዞችዎ ክትትል (Active Orders)</h3>
+            <div id="track-orders-list" style="max-height: 220px; overflow-y: auto; margin-top: 10px;">
+                <p style="color: #94a3b8; text-align: center; padding: 15px; font-size: 0.88rem;">እስካሁን ያስገቡት ንቁ ትዕዛዝ የለም።</p>
+            </div>
+            
+            <h4 style="color: #38bdf8; font-size: 0.95rem; margin-top: 15px; margin-bottom: 6px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">📁 የተጠናቀቁ ትዕዛዞች ታሪክ (Order History):</h4>
+            <div id="history-orders-list" style="max-height: 180px; overflow-y: auto; background: rgba(15,23,42,0.6); padding: 8px; border-radius: 8px;">
+                <p style="color: #94a3b8; text-align: center; font-size: 0.82rem;">ምንም የታሪክ መዝገብ የለም።</p>
+            </div>
+        </div>
+    </div>
+
     <div id="complaintModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeComplaintModal()">✕</button>
@@ -550,18 +572,29 @@
     </div>
 
     <div id="adminDashboardModal" class="modal">
-        <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-content" style="max-width: 650px;">
             <button class="close-btn" onclick="closeAdminDashboardModal()">✕</button>
-            <h3 style="color: var(--accent); margin-top:0; font-size: 1.2rem;">📊 የአስተዳዳሪ ዳሽቦርድ</h3>
+            <h3 style="color: var(--accent); margin-top:0; font-size: 1.2rem;">📊 የአስተዳዳሪ ዳሽቦርድ እና የትዕዛዝ ሁኔታ ማስተካከያ</h3>
             <div style="margin-top: 12px;">
-                <h4 style="color: #38bdf8; font-size: 0.95rem; margin-bottom: 6px;">📥 የተቀበሉ ቅሬታዎች:</h4>
-                <div id="admin-complaints-list" style="max-height: 160px; overflow-y: auto; background: rgba(15,23,42,0.6); padding: 8px; border-radius: 8px; margin-bottom: 12px;">
-                    <p style="color: #94a3b8; text-align: center; font-size: 0.85rem;">ምንም ቅሬታ የለም።</p>
+                <div id="admin-stats-summary" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 15px;">
+                    <div style="background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4); padding: 10px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 0.8rem; color: #34d399;">የተሸጡ መጻሕፍት (ጠቅላላ ዋጋ እና ብዛት)</div>
+                        <div id="admin-sold-stats" style="font-size: 1rem; font-weight: bold; color: #fff; margin-top: 4px;">0 ብር (0 ቅጂ)</div>
+                    </div>
+                    <div style="background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.4); padding: 10px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 0.8rem; color: #60a5fa;">የቀሩ መጻሕፍት (እቃዎች)</div>
+                        <div id="admin-remaining-stats" style="font-size: 1rem; font-weight: bold; color: #fff; margin-top: 4px;">0 አርእስት</div>
+                    </div>
                 </div>
 
-                <h4 style="color: #f59e0b; font-size: 0.95rem; margin-bottom: 6px;">💬 የመጻሕፍት አስተያየቶች:</h4>
-                <div id="admin-comments-list" style="max-height: 160px; overflow-y: auto; background: rgba(15,23,42,0.6); padding: 8px; border-radius: 8px;">
-                    <p style="color: #94a3b8; text-align: center; font-size: 0.85rem;">ምንም አስተያየት የለም።</p>
+                <h4 style="color: #38bdf8; font-size: 0.95rem; margin-bottom: 6px;">🛒 የገዢዎች ትዕዛዞች እና የሁኔታ ማሻሻያ (Status Update):</h4>
+                <div id="admin-orders-list" style="max-height: 180px; overflow-y: auto; background: rgba(15,23,42,0.6); padding: 8px; border-radius: 8px; margin-bottom: 12px;">
+                    <p style="color: #94a3b8; text-align: center; font-size: 0.85rem;">ምንም አዲስ ግዥ የለም።</p>
+                </div>
+
+                <h4 style="color: #f59e0b; font-size: 0.95rem; margin-bottom: 6px;">📥 የተቀበሉ ቅሬታዎች:</h4>
+                <div id="admin-complaints-list" style="max-height: 130px; overflow-y: auto; background: rgba(15,23,42,0.6); padding: 8px; border-radius: 8px; margin-bottom: 12px;">
+                    <p style="color: #94a3b8; text-align: center; font-size: 0.85rem;">ምንም ቅሬታ የለም።</p>
                 </div>
             </div>
         </div>
@@ -573,7 +606,6 @@
             <h2 id="reader-book-title" style="color: var(--accent); margin-top:0; font-size: 1.2rem;"></h2>
             <p style="color: #94a3b8; font-size: 0.82rem; margin-bottom: 8px;">ደራሲ፡ <span id="reader-book-author" style="font-weight: 600; color: #e2e8f0;"></span></p>
             
-            <!-- የንባብ ማስተካከያ መሣሪያዎች (Reader Toolbar) -->
             <div class="reader-toolbar">
                 <button class="reader-tool-btn" onclick="changeFontSize('small')">አነስተኛ</button>
                 <button class="reader-tool-btn" onclick="changeFontSize('normal')">መደበኛ</button>
@@ -589,7 +621,6 @@
                 <button class="submit-btn" style="background: #f43f5e; margin-top: 8px; font-size: 0.88rem;" onclick="buyCurrentBookFromReader()">አሁን ይግዙ (<span id="paywall-book-price"></span> ብር)</button>
             </div>
 
-            <!-- ማህበራዊ ሚዲያ ማጋራት -->
             <div class="share-container">
                 <button class="share-btn telegram" onclick="shareOnSocial('telegram')">📤 በቴሌግራም አጋራ</button>
                 <button class="share-btn facebook" onclick="shareOnSocial('facebook')">📤 በፌስቡክ አጋራ</button>
@@ -634,6 +665,7 @@
             <div class="form-group"><label>ርዕስ:</label><input type="text" id="b-title"></div>
             <div class="form-group"><label>ደራሲ:</label><input type="text" id="b-author"></div>
             <div class="form-group"><label>ዋጋ (ብር):</label><input type="number" id="b-price"></div>
+            <div class="form-group"><label>ብዛት (Stock):</label><input type="number" id="b-stock" value="10"></div>
             <div class="form-group"><label>ካታጎሪ:</label>
                 <select id="b-category">
                     <option value="fiction">ልቦለድ</option>
@@ -658,6 +690,7 @@
             <div class="form-group"><label>ርዕስ:</label><input type="text" id="edit-b-title"></div>
             <div class="form-group"><label>ደራሲ:</label><input type="text" id="edit-b-author"></div>
             <div class="form-group"><label>ዋጋ (ብር):</label><input type="number" id="edit-b-price"></div>
+            <div class="form-group"><label>ብዛት (Stock):</label><input type="number" id="edit-b-stock"></div>
             <div class="form-group"><label>ካታጎሪ:</label>
                 <select id="edit-b-category">
                     <option value="fiction">ልቦለድ</option>
@@ -674,7 +707,6 @@
         </div>
     </div>
 
-    <!-- አዲስ የዜና መዝገቢያ ሞዳል -->
     <div id="newsModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeNewsModal()">✕</button>
@@ -686,7 +718,6 @@
         </div>
     </div>
 
-    <!-- አዲስ የማስታወቂያ መዝገቢያ ሞዳል -->
     <div id="announcementModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeAnnouncementModal()">✕</button>
@@ -720,7 +751,7 @@
             <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 10px;">ጠቅላላ ዋጋ: <strong id="modal-total-price" style="color: #34d399;">0</strong> ብር</p>
             
             <div class="form-group"><label>ስምዎ:</label><input type="text" id="c-name"></div>
-            <div class="form-group"><label>ስልክ ቁጥር:</label><input type="text" id="c-phone"></div>
+            <div class="form-group"><label>ስልክ ቁጥር:</label><input type="text" id="c-phone" placeholder="09..."></div>
             
             <div class="form-group">
                 <label>የክፍያ አማራጭ:</label>
@@ -759,9 +790,10 @@
         let currentUser = null;
         let isAdmin = false;
         let allBooks = [];
-        let cart = [];
+        let cart = []; 
         let purchasedBooks = []; 
         let wishlist = JSON.parse(localStorage.getItem('user_wishlist') || '[]');
+        let userOrders = JSON.parse(localStorage.getItem('user_orders_history') || '[]');
         let isSignUpMode = false;
         let activeReadingBook = null;
         let currentCategory = 'all';
@@ -777,6 +809,10 @@
                 "https://images.unsplash.com/photo-1507842217343-583bb7270b67?auto=format&fit=crop&w=1920&q=80",
                 "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&w=1920&q=80"
             ]
+        };
+
+        window.onload = async function() {
+            await initApp();
         };
 
         async function initApp() {
@@ -852,6 +888,7 @@
                     <div class="card-body">
                         <div class="card-title">${book.title}</div>
                         <div class="card-author">ደራሲ፡ ${book.author || 'ያልታወቀ'}</div>
+                        <div style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 4px;">ቀሪ ብዛት: ${book.stock ?? 10}</div>
                         <div class="rating-stars">★★★★☆</div>
                         <div class="price-row">
                             <div class="price">${book.price} ብር</div>
@@ -904,6 +941,77 @@
         }
         function closeWishlistModal() { document.getElementById('wishlistModal').style.display = 'none'; }
 
+        function openTrackOrderModal() {
+            renderTrackOrdersLists();
+            document.getElementById('trackOrderModal').style.display = 'flex';
+        }
+        function closeTrackOrderModal() { document.getElementById('trackOrderModal').style.display = 'none'; }
+
+        function renderTrackOrdersLists() {
+            const activeContainer = document.getElementById('track-orders-list');
+            const historyContainer = document.getElementById('history-orders-list');
+            
+            let activeOrders = userOrders.filter(o => o.statusCode !== 'completed');
+            let completedOrders = userOrders.filter(o => o.statusCode === 'completed');
+
+            if (activeOrders.length === 0) {
+                activeContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 10px; font-size: 0.85rem;">ምንም ንቁ ትዕዛዝ የለም።</p>';
+            } else {
+                activeContainer.innerHTML = '';
+                activeOrders.forEach(o => {
+                    let canConfirm = (o.statusCode === 'delivered' || o.statusCode === 'delivered_unconfirmed');
+                    activeContainer.innerHTML += `
+                        <div style="background: rgba(30,41,59,0.9); padding: 10px; border-radius: 8px; margin-bottom: 8px; font-size: 0.85rem; border-left: 4px solid ${canConfirm ? '#f59e0b' : '#3b82f6'};">
+                            <div style="display: flex; justify-content: space-between; font-weight: bold; color: #f8fafc;">
+                                <span>ትዕዛዝ #${o.id}</span>
+                                <span style="color: ${canConfirm ? '#fbbf24' : '#60a5fa'};">${o.status}</span>
+                            </div>
+                            <div style="color: #cbd5e1; margin: 4px 0;">መጽሐፍት: ${o.itemsSummary}</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                                <span style="font-size: 0.75rem; color: #94a3b8;">ጠቅላላ: ${o.totalPrice} ብር</span>
+                                ${canConfirm ? `<button onclick="confirmOrderReceipt(${o.id})" style="background: #10b981; color: white; border: none; padding: 5px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.78rem;">ተረክቢያለሁ (Confirm)</button>` : '<span style="font-size:0.75rem; color:#94a3b8;">አድሚኑ እስኪያደርስ በመጠባበቅ ላይ...</span>'}
+                            </div>
+                        </div>`;
+                });
+            }
+
+            if (completedOrders.length === 0) {
+                historyContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; font-size: 0.82rem;">ምንም የታሪክ መዝገብ የለም።</p>';
+            } else {
+                historyContainer.innerHTML = '';
+                completedOrders.forEach(o => {
+                    historyContainer.innerHTML += `
+                        <div style="background: rgba(30,41,59,0.8); padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 0.82rem; border-left: 4px solid #10b981;">
+                            <div style="display: flex; justify-content: space-between; font-weight: bold; color: #f8fafc;">
+                                <span>ትዕዛዝ #${o.id}</span>
+                                <span style="color: #34d399;">ተጠናቀቀ (Completed) ✓</span>
+                            </div>
+                            <div style="color: #cbd5e1; margin: 3px 0;">መጽሐፍት: ${o.itemsSummary}</div>
+                        </div>`;
+                });
+            }
+        }
+
+        function confirmOrderReceipt(orderId) {
+            let order = userOrders.find(o => o.id == orderId);
+            if (order) {
+                order.statusCode = 'completed';
+                order.status = 'ተጠናቀቀ (Completed)';
+                localStorage.setItem('user_orders_history', JSON.stringify(userOrders));
+
+                let adminOrders = JSON.parse(localStorage.getItem('admin_orders_notifications') || '[]');
+                let adminOrd = adminOrders.find(ao => ao.id == orderId);
+                if (adminOrd) {
+                    adminOrd.statusCode = 'completed';
+                    adminOrd.status = 'ተጠናቀቀ (Completed)';
+                    localStorage.setItem('admin_orders_notifications', JSON.stringify(adminOrders));
+                }
+
+                alert('መጽሐፉን በተሳካ ሁኔታ እንደተረከቡ ተረጋግጧል! ትዕዛዙ ወደ ታሪክ መዝገብ (Order History) ተዛውሯል።');
+                renderTrackOrdersLists();
+            }
+        }
+
         function openEditBookModal(bookId) {
             const book = allBooks.find(b => b.id == bookId);
             if (!book) return;
@@ -911,6 +1019,7 @@
             document.getElementById('edit-b-title').value = book.title;
             document.getElementById('edit-b-author').value = book.author || '';
             document.getElementById('edit-b-price').value = book.price;
+            document.getElementById('edit-b-stock').value = book.stock ?? 10;
             document.getElementById('edit-b-category').value = book.category || 'fiction';
             document.getElementById('edit-b-image').value = book.image_url || '';
             document.getElementById('edit-b-content').value = book.content || '';
@@ -923,6 +1032,7 @@
             const title = document.getElementById('edit-b-title').value;
             const author = document.getElementById('edit-b-author').value;
             const price = Number(document.getElementById('edit-b-price').value);
+            const stock = Number(document.getElementById('edit-b-stock').value);
             const category = document.getElementById('edit-b-category').value;
             const image_url = document.getElementById('edit-b-image').value;
             const content = document.getElementById('edit-b-content').value;
@@ -930,7 +1040,7 @@
             if (!title || isNaN(price)) { alert('እባክዎ ርዕስ እና ትክክለኛ ዋጋ ያስገቡ!'); return; }
 
             const { error } = await dbClient.from('books').update({
-                title, author, price, category, image_url, content
+                title, author, price, stock, category, image_url, content
             }).eq('id', id);
 
             if (error) { alert('ማስተካከል አልተቻለም: ' + error.message); return; }
@@ -971,9 +1081,11 @@
         const quoteItems = document.querySelectorAll('.quote-item');
         let currentQuoteIndex = 0;
         setInterval(() => {
-            quoteItems[currentQuoteIndex].classList.remove('active');
-            currentQuoteIndex = (currentQuoteIndex + 1) % quoteItems.length;
-            quoteItems[currentQuoteIndex].classList.add('active');
+            if (quoteItems.length > 0) {
+                quoteItems[currentQuoteIndex].classList.remove('active');
+                currentQuoteIndex = (currentQuoteIndex + 1) % quoteItems.length;
+                quoteItems[currentQuoteIndex].classList.add('active');
+            }
         }, 4000);
 
         async function fetchNews() {
@@ -1006,6 +1118,13 @@
                 div.innerHTML = `<div style="font-weight:700; font-size:1rem; color:#ffffff;">${item.title}</div><div style="font-size:0.75rem; color:#94a3b8; margin:3px 0;">${item.date}</div><div style="color:#cbd5e1; font-size:0.85rem;">${item.content}</div>`;
                 grid.appendChild(div);
             });
+        }
+
+        function toggleSection(sectionId, btnId) {
+            const section = document.getElementById(sectionId);
+            const btn = document.getElementById(btnId);
+            section.classList.toggle('show');
+            btn.classList.toggle('active');
         }
 
         async function submitNews() {
@@ -1125,7 +1244,6 @@
             document.getElementById('readerModal').style.display = 'none'; 
         }
 
-        // Font & Theme changer functions for reader
         function changeFontSize(size) {
             const box = document.getElementById('reader-content-box');
             if (size === 'small') box.style.fontSize = '0.85rem';
@@ -1144,7 +1262,6 @@
             }
         }
 
-        // Text to Speech
         function toggleReadAloud() {
             if (!('speechSynthesis' in window)) {
                 alert('የድር አሳሽዎ የድምፅ ንባብ ባህሪን አይደግፍም።');
@@ -1157,12 +1274,11 @@
             }
             const text = document.getElementById('reader-content-box').innerText;
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'am-ET'; // አማርኛ ድምፅ ድጋፍ ካለ
+            utterance.lang = 'am-ET';
             window.speechSynthesis.speak(utterance);
             alert('ንባብ ተጀምሯል...');
         }
 
-        // Social Share function
         function shareOnSocial(platform) {
             if (!activeReadingBook) return;
             const url = window.location.href;
@@ -1230,6 +1346,52 @@
         }
 
         async function openAdminDashboardModal() {
+            const ordersContainer = document.getElementById('admin-orders-list');
+            let orders = JSON.parse(localStorage.getItem('admin_orders_notifications') || '[]');
+            
+            if (orders.length === 0) {
+                ordersContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; font-size: 0.85rem;">ምንም አዲስ የግዥ ኦርደር የለም።</p>';
+            } else {
+                ordersContainer.innerHTML = '';
+                orders.forEach(o => {
+                    ordersContainer.innerHTML += `
+                        <div style="background: rgba(30,41,59,0.9); padding: 10px; border-radius: 6px; margin-bottom: 8px; font-size: 0.82rem; border-left: 4px solid #3b82f6;">
+                            <div style="font-weight: 600; color: #34d399;">ገዢ: ${o.buyerName} (${o.buyerPhone})</div>
+                            <div style="color: #f8fafc; margin-top: 2px;">ትዕዛዝ: ${o.itemsSummary} — <strong>${o.totalPrice} ብር</strong></div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                                <span style="color: #fbbf24; font-size: 0.78rem;">ሁኔታ: ${o.status || 'በሂደት ላይ'}</span>
+                                <div style="display: flex; gap: 5px;">
+                                    <button onclick="updateOrderStatus(${o.id}, 'processing')" style="background: #3b82f6; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:0.7rem;">በመላክ ላይ</button>
+                                    <button onclick="updateOrderStatus(${o.id}, 'delivered')" style="background: #10b981; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:0.7rem;">ተሰጥቷል (Delivered)</button>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            }
+
+            let totalSoldQty = 0;
+            let totalSoldRevenue = 0;
+            let totalRemainingStock = 0;
+            let totalRemainingValue = 0;
+
+            orders.forEach(o => {
+                if (o.items) {
+                    o.items.forEach(item => {
+                        totalSoldQty += item.quantity;
+                        totalSoldRevenue += (item.price * item.quantity);
+                    });
+                }
+            });
+
+            allBooks.forEach(b => {
+                const stock = b.stock ?? 10;
+                totalRemainingStock += stock;
+                totalRemainingValue += (b.price * stock);
+            });
+
+            document.getElementById('admin-sold-stats').innerHTML = `${totalSoldRevenue} ብር (${totalSoldQty} ቅጂዎች)`;
+            document.getElementById('admin-remaining-stats').innerHTML = `${totalRemainingValue} ብር (${totalRemainingStock} ቅጂዎች ቀርተዋል)`;
+
             const compContainer = document.getElementById('admin-complaints-list');
             let complaints = [];
             const { data: compData } = await dbClient.from('complaints').select('*');
@@ -1243,32 +1405,8 @@
                 complaints.forEach(cp => {
                     compContainer.innerHTML += `
                         <div style="background: rgba(30,41,59,0.8); padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 0.82rem;">
-                            <div style="font-weight: 600; color: #f87171;">${cp.title} (${cp.name || 'ስም የሌለው'})</div>
+                            <div style="font-weight: 600; color: #f47171;">${cp.title} (${cp.name || 'ስም የሌለው'})</div>
                             <div style="color: #cbd5e1; margin-top: 2px;">${cp.message}</div>
-                        </div>`;
-                });
-            }
-
-            const commContainer = document.getElementById('admin-comments-list');
-            let allComments = [];
-            const { data: commData } = await dbClient.from('comments').select('*');
-            if (commData && commData.length > 0) allComments = commData;
-            else {
-                let localCommsObj = JSON.parse(localStorage.getItem('local_comments') || '{}');
-                for (let bId in localCommsObj) {
-                    localCommsObj[bId].forEach(cm => allComments.push({ book_title: bId, ...cm }));
-                }
-            }
-
-            if (allComments.length === 0) {
-                commContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; font-size: 0.85rem;">ምንም አስተያየት የለም።</p>';
-            } else {
-                commContainer.innerHTML = '';
-                allComments.forEach(cm => {
-                    commContainer.innerHTML += `
-                        <div style="background: rgba(30,41,59,0.8); padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 0.82rem;">
-                            <div style="font-weight: 600; color: var(--accent);">${cm.user_name || 'አንባቢ'}</div>
-                            <div style="color: #cbd5e1; margin-top: 2px;">${cm.comment_text}</div>
                         </div>`;
                 });
             }
@@ -1276,6 +1414,28 @@
             document.getElementById('adminDashboardModal').style.display = 'flex';
         }
         function closeAdminDashboardModal() { document.getElementById('adminDashboardModal').style.display = 'none'; }
+
+        function updateOrderStatus(orderId, newStatusType) {
+            let adminOrders = JSON.parse(localStorage.getItem('admin_orders_notifications') || '[]');
+            let adminOrd = adminOrders.find(ao => ao.id == orderId);
+            
+            let statusText = newStatusType === 'delivered' ? 'ተሰጥቷል (Delivered)' : 'በመላክ ላይ (Shipping)';
+            if (adminOrd) {
+                adminOrd.statusCode = newStatusType;
+                adminOrd.status = statusText;
+                localStorage.setItem('admin_orders_notifications', JSON.stringify(adminOrders));
+            }
+
+            let userOrd = userOrders.find(uo => uo.id == orderId);
+            if (userOrd) {
+                userOrd.statusCode = newStatusType;
+                userOrd.status = statusText;
+                localStorage.setItem('user_orders_history', JSON.stringify(userOrders));
+            }
+
+            alert(`የተዕዛዝ ቁጥር #${orderId} ሁኔታ ወደ "${statusText}" ተቀይሯል!`);
+            openAdminDashboardModal();
+        }
 
         function buyCurrentBookFromReader() {
             if (activeReadingBook) {
@@ -1397,13 +1557,14 @@
             const title = document.getElementById('b-title').value;
             const author = document.getElementById('b-author').value;
             const price = Number(document.getElementById('b-price').value);
+            const stock = Number(document.getElementById('b-stock').value) || 10;
             const category = document.getElementById('b-category').value;
             const image_url = document.getElementById('b-image').value;
             const content = document.getElementById('b-content').value;
 
             if (!title || isNaN(price)) { alert('ርዕስ እና ዋጋ አስፈላጊ ናቸው!'); return; }
 
-            const { error } = await dbClient.from('books').insert([{ title, author, price, category, image_url, content }]);
+            const { error } = await dbClient.from('books').insert([{ title, author, price, stock, category, image_url, content }]);
             if (error) { alert('ስህተት ተፈጥሯል: ' + error.message); return; }
             alert('መጽሐፉ ተመዝግቧል!');
             closeBookModal();
@@ -1411,9 +1572,31 @@
         }
 
         function addToCart(book) {
-            cart.push(book);
-            document.getElementById('cart-count').innerText = cart.length;
+            const existing = cart.find(item => item.book.id == book.id);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ book: book, quantity: 1 });
+            }
+            updateCartCount();
             updateSidebarCart();
+        }
+
+        function changeCartQty(bookId, delta) {
+            const index = cart.findIndex(item => item.book.id == bookId);
+            if (index > -1) {
+                cart[index].quantity += delta;
+                if (cart[index].quantity <= 0) {
+                    cart.splice(index, 1);
+                }
+            }
+            updateCartCount();
+            updateSidebarCart();
+        }
+
+        function updateCartCount() {
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cart-count').innerText = totalCount;
         }
 
         function updateSidebarCart() {
@@ -1426,16 +1609,29 @@
             }
             container.innerHTML = '';
             let total = 0;
-            cart.forEach((linkItem, idx) => {
-                total += Number(linkItem.price || 0);
-                container.innerHTML += `<div class="cart-item-row"><span>${idx+1}. ${linkItem.title}</span><strong>${linkItem.price} ብር</strong></div>`;
+            cart.forEach((cartItem, idx) => {
+                const subTotal = Number(cartItem.book.price || 0) * cartItem.quantity;
+                total += subTotal;
+                container.innerHTML += `
+                    <div class="cart-item-row">
+                        <div>
+                            <div style="font-weight: 600; color: #fff;">${idx+1}. ${cartItem.book.title}</div>
+                            <div style="font-size: 0.75rem; color: #34d399;">${cartItem.book.price} ብር × ${cartItem.quantity}</div>
+                        </div>
+                        <div class="qty-controls">
+                            <button class="qty-btn" onclick="changeCartQty('${cartItem.book.id}', -1)">-</button>
+                            <span style="font-weight: bold; font-size: 0.85rem; padding: 0 3px;">${cartItem.quantity}</span>
+                            <button class="qty-btn" onclick="changeCartQty('${cartItem.book.id}', 1)">+</button>
+                        </div>
+                    </div>`;
             });
             totalElement.innerText = total;
         }
 
         function openCheckout() {
             if (cart.length === 0) { alert('እባክዎ መጀመሪያ መጽሐፍ ይምረጡ!'); return; }
-            document.getElementById('modal-total-price').innerText = cart.reduce((s, i) => s + Number(i.price), 0);
+            const total = cart.reduce((sum, item) => sum + (Number(item.book.price) * item.quantity), 0);
+            document.getElementById('modal-total-price').innerText = total;
             updatePaymentInstructions();
             document.getElementById('checkoutModal').style.display = 'flex';
         }
@@ -1467,71 +1663,44 @@
             }
         }
 
-        async function sendTelegramNotification(bookTitle, buyerName, price, screenshotFile) {
-            const BOT_TOKEN = '8974106277:AAFBx7uWcQjHT_s0vBRuaLqa8n1lMYprXXw';
-            const CHAT_ID = '1088785278'; 
-            
-            const caption = `📚 አዲስ መጽሐፍ ግዥ እና የክፍያ ስክሪንሹት ደርሷል!\n\n` +
-                            `📖 ርዕስ: ${bookTitle}\n` +
-                            `👤 ገዢ: ${buyerName || 'ያልታወቀ'}\n` +
-                            `💰 ዋጋ: ${price} ብር\n` +
-                            `⏰ ሰዓት: ${new Date().toLocaleString()}`;
-
-            if (screenshotFile) {
-                const formData = new FormData();
-                formData.append('chat_id', CHAT_ID);
-                formData.append('photo', screenshotFile);
-                formData.append('caption', caption);
-
-                try {
-                    await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-                        method: 'POST',
-                        body: formData
-                    });
-                } catch (e) {
-                    console.error("Photo telegram error:", e);
-                }
-            } else {
-                const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-                try {
-                    await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ chat_id: CHAT_ID, text: caption })
-                    });
-                } catch (error) {
-                    console.error("Telegram error:", error);
-                }
-            }
-        }
-
         async function completeOrder() {
-            if (cart.length === 0) return;
+            const name = document.getElementById('c-name').value;
+            const phone = document.getElementById('c-phone').value;
+            if (!name || !phone) { alert('እባክዎ ስምዎን እና ስልክ ቁጥርዎን ያስገቡ!'); return; }
+
+            const total = cart.reduce((sum, item) => sum + (Number(item.book.price) * item.quantity), 0);
+            const itemsSummary = cart.map(i => `${i.book.title} (${i.quantity})`).join(', ');
             
-            const buyerName = document.getElementById('c-name').value || (currentUser ? currentUser.email : 'እንግዳ ተጠቃሚ');
-            const screenshotInput = document.getElementById('c-screenshot');
-            const screenshotFile = screenshotInput.files[0] || null;
+            const newOrderId = Date.now();
+            const orderObj = {
+                id: newOrderId,
+                buyerName: name,
+                buyerPhone: phone,
+                totalPrice: total,
+                itemsSummary: itemsSummary,
+                items: cart.map(c => ({ bookId: c.book.id, title: c.book.title, price: c.book.price, quantity: c.quantity })),
+                status: 'በሂደት ላይ (Processing)',
+                statusCode: 'processing'
+            };
 
-            for (let item of cart) {
-                if (!purchasedBooks.some(p => p.id == item.id)) {
-                    purchasedBooks.push(item);
-                }
-                await sendTelegramNotification(item.title, buyerName, item.price, screenshotFile);
-            }
+            userOrders.push(orderObj);
+            localStorage.setItem('user_orders_history', JSON.stringify(userOrders));
 
-            alert('ትዕዛዝዎ እና የክፍያ ማረጋገጫዎ ተልኳል! እናመሰግናለን።');
+            let adminOrders = JSON.parse(localStorage.getItem('admin_orders_notifications') || '[]');
+            adminOrders.push(orderObj);
+            localStorage.setItem('admin_orders_notifications', JSON.stringify(adminOrders));
+
+            cart.forEach(item => {
+                purchasedBooks.push(item.book);
+            });
+
             cart = [];
-            document.getElementById('cart-count').innerText = 0;
+            updateCartCount();
             updateSidebarCart();
             closeCheckout();
-        }
 
-        function toggleSection(sectionId, btnId) {
-            document.getElementById(sectionId).classList.toggle('show');
-            document.getElementById(btnId).classList.toggle('active');
+            alert('ግዢዎ በተሳካ ሁኔታ ተጠናቋል! ከ "ትዕዛዝ ክትትል" (Track Order) ገጽ ሁኔታውን መከታተል ይችላሉ።');
         }
-
-        initApp();
     </script>
 </body>
 </html>
