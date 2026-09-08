@@ -56,24 +56,13 @@ async function handleLogout() {
     await supabase.auth.signOut();
     currentUser = null;
     await updateAuthUI();
-    alert("ከአካውንትዎ ወጥተዋል።");
+    alert("ከአካውንትዎ ውጥተዋል።");
 }
 
-// 4. የተጠቃሚውን ሚና (Role) ከ Supabase profiles ቴብል በማረጋገጥ አዝራሮችን መቆጣጠሪያ
+// 4. የተጠቃሚውን ሚና (Role) ከ Supabase profiles ቴብል በማረጋገጥ አዝራሮችን መቆጣጠሪያ (ሙሉ በሙሉ ከተሳሳቱ አይዲዎች የጸዳ)
 async function updateAuthUI() {
-    // የዴስክቶፕ እና የሞባይል ሜኑ አዝራሮች
     const authBtn = document.getElementById('authBtn');
     
-    // የኮምፒዩተር እና የሞባይል አድሚን አዝራሮች (በሁለቱም በኩል ያሉት እንዲስተካከሉ)
-    const adminBookBtn = document.getElementById('adminBookBtn');
-    const adminBookBtnMob = document.getElementById('adminBookBtnMob');
-    
-    const adminDashboardBtn = document.getElementById('adminDashboardBtn');
-    const adminDashboardBtnMob = document.getElementById('adminDashboardBtnMob');
-
-    const adminSettingsBtn = document.getElementById('adminSettingsBtn');
-    const adminSettingsBtnMob = document.getElementById('adminSettingsBtnMob');
-
     // አሁን የገባ ተጠቃሚ መኖሩን ማረጋገጥ
     const { data: { session } } = await supabase.auth.getSession();
     currentUser = session?.user || null;
@@ -94,28 +83,33 @@ async function updateAuthUI() {
         console.log("Profile Data:", profile);
         console.log("Error if any:", error);
 
-        // ተጠቃሚው አድሚን ሚና ካለው ብቻ አዝራሮቹን በሁለቱም ቦታዎች እናሳያለን
-        const displayStyle = (profile && profile.role === 'admin') ? 'inline-block' : 'none';
-        const displayFlexStyle = (profile && profile.role === 'admin') ? 'block' : 'none'; // ለሜኑ ውስጥ
+        const isAdmin = (profile && profile.role === 'admin');
+        const displayStyle = isAdmin ? 'inline-block' : 'none';
+        const displayFlexStyle = isAdmin ? 'block' : 'none';
 
-        if (adminBookBtn) adminBookBtn.style.display = displayStyle;
-        if (adminBookBtnMob) adminBookBtnMob.style.display = displayFlexStyle;
+        // ኤለመንቶቹ መኖራቸውን እየመረመረ የሚቀይር ረዳት ፈንክሽን (TypeError እንዳይፈጠር)
+        const safelySetDisplay = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = val;
+        };
 
-        if (adminDashboardBtn) adminDashboardBtn.style.display = displayStyle;
-        if (adminDashboardBtnMob) adminDashboardBtnMob.style.display = displayFlexStyle;
-
-        if (adminSettingsBtn) adminSettingsBtn.style.display = displayStyle;
-        if (adminSettingsBtnMob) adminSettingsBtnMob.style.display = displayFlexStyle;
+        safelySetDisplay('adminBookBtn', displayStyle);
+        safelySetDisplay('adminBookBtnMob', displayFlexStyle);
+        safelySetDisplay('adminDashboardBtn', displayStyle);
+        safelySetDisplay('adminDashboardBtnMob', displayFlexStyle);
+        safelySetDisplay('adminSettingsBtn', displayStyle);
+        safelySetDisplay('adminSettingsBtnMob', displayFlexStyle);
 
     } else {
         if (authBtn) {
             authBtn.innerText = 'ግባ';
-            authBtn.onclick = openAuthModal; // የግባ ፊርማ ሲነካ ሞዳሉን እንዲከፍት
+            authBtn.onclick = openAuthModal; 
         }
         
         // ካልገባ አዝራሮቹ ይጠፋሉ
-        [adminBookBtn, adminBookBtnMob, adminDashboardBtn, adminDashboardBtnMob, adminSettingsBtn, adminSettingsBtnMob].forEach(btn => {
-            if (btn) btn.style.display = 'none';
+        ['adminBookBtn', 'adminBookBtnMob', 'adminDashboardBtn', 'adminDashboardBtnMob', 'adminSettingsBtn', 'adminSettingsBtnMob'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
         });
     }
 }
