@@ -438,18 +438,24 @@
 
     <header>
         <div class="logo" onclick="filterBooks('all', null)">ብርሃኑ መደብር</div>
+        
         <div class="header-right">
-            <button class="about-btn" onclick="openAboutModal()">ℹ️ ስለኛ</button>
-            <button class="wishlist-btn" onclick="openWishlistModal()">❤️ ተወዳጆች (<span id="wishlist-count">0</span>)</button>
-            <button class="complaint-btn" onclick="openComplaintModal()">⚠️ ቅሬታ</button>
-            <button class="track-order-btn" onclick="openTrackOrderModal()">📦 ትዕዛዝ ክትትል</button>
-            <button class="my-library-btn" id="myLibraryBtn" onclick="openMyLibraryModal()">📚 መጻሕፍቴ</button>
-            <button class="admin-action-btn" id="adminBookBtn" onclick="openBookModal()">+ መጽሐፍ</button>
-            <button class="admin-action-btn" id="adminDashboardBtn" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);" onclick="openAdminDashboardModal()">📊 ዳሽቦርድ</button>
-            <button class="admin-action-btn" id="adminSettingsBtn" style="background: linear-gradient(135deg, #0d9488, #0f766e);" onclick="openSettingsModal()">⚙️ ቅንብር</button>
             <div class="cart-info" onclick="openCheckout()">🛒 (<span id="cart-count">0</span>)</div>
             <button class="btn-auth" id="authBtn" onclick="openAuthModal()">ግባ</button>
+            <button class="menu-toggle-btn" onclick="toggleMobileMenu()">☰ ሜኑ</button>
         </div>
+    </header>
+
+    <div class="mobile-dropdown-menu" id="mobileDropdownMenu">
+        <button class="about-btn" onclick="openAboutModal(); toggleMobileMenu();">ℹ️ ስለኛ</button>
+        <button class="wishlist-btn" onclick="openWishlistModal(); toggleMobileMenu();">❤️ ተወዳጆች (<span id="wishlist-count-mob">0</span>)</button>
+        <button class="complaint-btn" onclick="openComplaintModal(); toggleMobileMenu();">⚠️ ቅሬታ</button>
+        <button class="track-order-btn" onclick="openTrackOrderModal(); toggleMobileMenu();">📦 ትዕዛዝ ክትትል</button>
+        <button class="my-library-btn" id="myLibraryBtnMob" onclick="openMyLibraryModal(); toggleMobileMenu();">📚 መጻሕፍቴ</button>
+        <button class="admin-action-btn" id="adminBookBtnMob" onclick="openBookModal(); toggleMobileMenu();">+ መጽሐፍ</button>
+        <button class="admin-action-btn" id="adminDashboardBtnMob" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);" onclick="openAdminDashboardModal(); toggleMobileMenu();">📊 ዳሽቦርድ</button>
+        <button class="admin-action-btn" id="adminSettingsBtnMob" style="background: linear-gradient(135deg, #0d9488, #0f766e);" onclick="openSettingsModal(); toggleMobileMenu();">⚙️ ቅንብር</button>
+    </div>
     </header>
 
     <section class="hero">
