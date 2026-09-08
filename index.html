@@ -538,15 +538,17 @@
     </div>
 
     <!-- ተወዳጆች ሞዳል -->
-    <div id="wishlistModal" class="modal">
-        <div class="modal-content" style="max-width: 500px;">
-            <button class="close-btn" onclick="closeWishlistModal()">✕</button>
-            <h3 style="color: var(--accent); margin-top:0; font-size: 1.2rem;">❤️ የእርስዎ ተወዳጅ መጻሕፍት</h3>
-            <div id="wishlist-books-list" style="max-height: 250px; overflow-y: auto;">
-                <p style="color: #94a3b8; text-align: center; padding: 15px; font-size: 0.88rem;">እስካሁን የተመረጠ ተወዳጅ መጽሐፍ የለም።</p>
-            </div>
+<div id="wishlistModal" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+        <button class="close-btn" onclick="closeWishlistModal()">✕</button>
+        <h3 style="color: var(--accent); margin-top:0; font-size: 1.2rem;">
+            ❤️ የእርስዎ ተወዳጅ መጻሕፍት (<span id="wishlist-count">0</span>)
+        </h3>
+        <div id="wishlist-books-list" style="max-height: 250px; overflow-y: auto; margin-top: 15px;">
+            <p style="color: #94a3b8; text-align: center; padding: 15px; font-size: 0.88rem;">እስካሁን የተመረጠ ተወዳጅ መጽሐፍ የለም።</p>
         </div>
     </div>
+</div>
 
     <!-- የትዕዛዝ ክትትል ሞዳል -->
     <div id="trackOrderModal" class="modal">
