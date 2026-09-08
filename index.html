@@ -542,7 +542,7 @@
         </div>
     </div>
 
-    <!-- የትዕዛዝ ክትትል ሞዳል (የሁኔታ ማሻሻያ እና ማረጋገጫ ቁልፍን የያዘ) -->
+    <!-- የትዕዛዝ ክትትል ሞዳል -->
     <div id="trackOrderModal" class="modal">
         <div class="modal-content" style="max-width: 550px;">
             <button class="close-btn" onclick="closeTrackOrderModal()">✕</button>
@@ -792,8 +792,8 @@
         let allBooks = [];
         let cart = []; 
         let purchasedBooks = []; 
-        let wishlist = JSON.parse(localStorage.getItem('user_wishlist') || '[]');
-        let userOrders = JSON.parse(localStorage.getItem('user_orders_history') || '[]');
+        let wishlist = [];
+        let userOrders = [];
         let isSignUpMode = false;
         let activeReadingBook = null;
         let currentCategory = 'all';
@@ -820,6 +820,10 @@
             if (session) {
                 currentUser = session.user;
                 await checkAdminStatus(currentUser.id);
+                await loadUserDataFromDB(currentUser.id);
+            } else {
+                wishlist = JSON.parse(localStorage.getItem('user_wishlist') || '[]');
+                userOrders = JSON.parse(localStorage.getItem('user_orders_history') || '[]');
             }
             await fetchSettings();
             await fetchBooks();
@@ -827,6 +831,41 @@
             fetchAnnouncements();
             setupBackgroundSlideshow();
             updateWishlistCount();
+        }
+
+        async function loadUserDataFromDB(userId) {
+            // Load Wishlist from Supabase
+            const { data: wishData } = await dbClient.from('wishlists').select('book_data').eq('user_id', userId);
+            if (wishData) {
+                wishlist = wishData.map(w => w.book_data);
+            }
+
+            // Load Orders / Purchased Books from Supabase
+            const { data: ordData } = await dbClient.from('orders').select('*').eq('user_id', userId);
+            if (ordData) {
+                userOrders = ordData.map(o => ({
+                    id: o.id,
+                    buyerName: o.buyer_name,
+                    buyerPhone: o.buyer_phone,
+                    totalPrice: o.total_price,
+                    itemsSummary: o.items_summary,
+                    items: o.items,
+                    status: o.status,
+                    statusCode: o.status_code
+                }));
+
+                purchasedBooks = [];
+                userOrders.forEach(o => {
+                    if (o.statusCode === 'completed' && o.items) {
+                        o.items.forEach(it => {
+                            let foundBook = allBooks.find(b => b.id == it.bookId);
+                            if (foundBook && !purchasedBooks.some(pb => pb.id == foundBook.id)) {
+                                purchasedBooks.push(foundBook);
+                            }
+                        });
+                    }
+                });
+            }
         }
 
         async function checkAdminStatus(userId) {
@@ -904,14 +943,22 @@
             });
         }
 
-        function toggleWishlist(book) {
+        async function toggleWishlist(book) {
             const index = wishlist.findIndex(w => w.id == book.id);
             if (index > -1) {
                 wishlist.splice(index, 1);
+                if (currentUser) {
+                    await dbClient.from('wishlists').delete().eq('user_id', currentUser.id).eq('book_id', book.id);
+                }
             } else {
                 wishlist.push(book);
+                if (currentUser) {
+                    await dbClient.from('wishlists').insert([{ user_id: currentUser.id, book_id: book.id, book_data: book }]);
+                }
             }
-            localStorage.setItem('user_wishlist', JSON.stringify(wishlist));
+            if (!currentUser) {
+                localStorage.setItem('user_wishlist', JSON.stringify(wishlist));
+            }
             updateWishlistCount();
             displayBooks(allBooks);
         }
@@ -992,12 +1039,17 @@
             }
         }
 
-        function confirmOrderReceipt(orderId) {
+        async function confirmOrderReceipt(orderId) {
             let order = userOrders.find(o => o.id == orderId);
             if (order) {
                 order.statusCode = 'completed';
                 order.status = 'ተጠናቀቀ (Completed)';
-                localStorage.setItem('user_orders_history', JSON.stringify(userOrders));
+                
+                if (currentUser) {
+                    await dbClient.from('orders').update({ status: order.status, status_code: 'completed' }).eq('id', orderId);
+                } else {
+                    localStorage.setItem('user_orders_history', JSON.stringify(userOrders));
+                }
 
                 let adminOrders = JSON.parse(localStorage.getItem('admin_orders_notifications') || '[]');
                 let adminOrd = adminOrders.find(ao => ao.id == orderId);
@@ -1005,6 +1057,15 @@
                     adminOrd.statusCode = 'completed';
                     adminOrd.status = 'ተጠናቀቀ (Completed)';
                     localStorage.setItem('admin_orders_notifications', JSON.stringify(adminOrders));
+                }
+
+                if (order.items) {
+                    order.items.forEach(it => {
+                        let found = allBooks.find(b => b.id == it.bookId);
+                        if (found && !purchasedBooks.some(pb => pb.id == found.id)) {
+                            purchasedBooks.push(found);
+                        }
+                    });
                 }
 
                 alert('መጽሐፉን በተሳካ ሁኔታ እንደተረከቡ ተረጋግጧል! ትዕዛዙ ወደ ታሪክ መዝገብ (Order History) ተዛውሯል።');
@@ -1415,7 +1476,7 @@
         }
         function closeAdminDashboardModal() { document.getElementById('adminDashboardModal').style.display = 'none'; }
 
-        function updateOrderStatus(orderId, newStatusType) {
+        async function updateOrderStatus(orderId, newStatusType) {
             let adminOrders = JSON.parse(localStorage.getItem('admin_orders_notifications') || '[]');
             let adminOrd = adminOrders.find(ao => ao.id == orderId);
             
@@ -1430,7 +1491,11 @@
             if (userOrd) {
                 userOrd.statusCode = newStatusType;
                 userOrd.status = statusText;
-                localStorage.setItem('user_orders_history', JSON.stringify(userOrders));
+                if (currentUser) {
+                    await dbClient.from('orders').update({ status: statusText, status_code: newStatusType }).eq('id', orderId);
+                } else {
+                    localStorage.setItem('user_orders_history', JSON.stringify(userOrders));
+                }
             }
 
             alert(`የተዕዛዝ ቁጥር #${orderId} ሁኔታ ወደ "${statusText}" ተቀይሯል!`);
@@ -1489,6 +1554,7 @@
                 if (error) { alert('መግባት አልተቻለም: ' + error.message); return; }
                 currentUser = data.user;
                 await checkAdminStatus(currentUser.id);
+                await loadUserDataFromDB(currentUser.id);
                 closeAuthModal();
                 alert('እንኳን ደህና መጡ!');
             }
@@ -1684,15 +1750,26 @@
             };
 
             userOrders.push(orderObj);
-            localStorage.setItem('user_orders_history', JSON.stringify(userOrders));
+
+            if (currentUser) {
+                await dbClient.from('orders').insert([{
+                    id: newOrderId,
+                    user_id: currentUser.id,
+                    buyer_name: name,
+                    buyer_phone: phone,
+                    total_price: total,
+                    items_summary: itemsSummary,
+                    items: orderObj.items,
+                    status: orderObj.status,
+                    status_code: orderObj.statusCode
+                }]);
+            } else {
+                localStorage.setItem('user_orders_history', JSON.stringify(userOrders));
+            }
 
             let adminOrders = JSON.parse(localStorage.getItem('admin_orders_notifications') || '[]');
             adminOrders.push(orderObj);
             localStorage.setItem('admin_orders_notifications', JSON.stringify(adminOrders));
-
-            cart.forEach(item => {
-                purchasedBooks.push(item.book);
-            });
 
             cart = [];
             updateCartCount();
