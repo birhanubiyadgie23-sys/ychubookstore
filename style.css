@@ -8,34 +8,54 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+    color: #333;
 }
 
 .card {
     background: #ffffff;
-    padding: 40px;
+    padding: 30px 20px;
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     text-align: center;
     max-width: 400px;
-    width: 100%;
+    width: 90%; /* በሞባይል ስክሪን ላይ ዳርና ዳር እንዳይጣበቅ */
 }
 
 h2 {
-    color: #333333;
+    color: #1e293b;
     margin-bottom: 15px;
     font-size: 22px;
+    font-weight: 700;
 }
 
 #status {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 500;
     color: #666666;
-    padding: 10px;
-    border-radius: 6px;
+    padding: 12px;
+    border-radius: 8px;
     background: #f8f9fa;
-    margin-top: 10px;
+    margin-top: 15px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+/* ለተሻለ የሞባይል ንባብና እይታ */
+@media (max-width: 480px) {
+    .card {
+        padding: 20px 15px;
+    }
+    
+    h2 {
+        font-size: 19px;
+    }
+    
+    #status {
+        font-size: 14px;
+    }
 }
