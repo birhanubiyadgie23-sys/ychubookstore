@@ -102,7 +102,7 @@
             gap: 8px;
             align-items: center;
             flex-wrap: wrap;
-            position: relative; /* የቶፕ-አፕ ሳጥኑ በትክክል እንዲሰቀል ይረዳል */
+            position: relative;
         }
 
         .btn-auth {
@@ -965,13 +965,14 @@
             <button class="btn-auth" id="authBtn" onclick="openAuthModal()">ግባ</button>
             <button class="menu-toggle-btn" onclick="toggleMobileMenu()">☰ ሜኑ</button>
 
-            <!-- የሞባይል ድሮፕዳውን ሜኑ ከራስጌው (header-right) ውስጥ ተካቷል -->
+            <!-- የሞባይል ድሮፕዳውን ሜኑ -->
             <div class="mobile-dropdown-menu" id="mobileDropdownMenu">
                 <button class="about-btn" onclick="openAboutModal(); toggleMobileMenu();">ℹ️ ስለኛ</button>
                 <button class="wishlist-btn" onclick="openWishlistModal(); toggleMobileMenu();">❤️ ተወዳጆች (<span
                         id="wishlist-count-mob">0</span>)</button>
                 <button class="complaint-btn" onclick="openComplaintModal(); toggleMobileMenu();">⚠️ ቅሬታ</button>
-                <button class="track-order-btn" onclick="openTrackOrderModal(); toggleMobileMenu();">📦 ትዕዛዝ ክትትል</button>
+                <button class="track-order-btn" onclick="openTrackOrderModal(); toggleMobileMenu();">📦 ትዕዛዝ
+                    ክትትል</button>
                 <button class="my-library-btn" id="myLibraryBtnMob" style="display:none;"
                     onclick="openMyLibraryModal(); toggleMobileMenu();">📚
                     መጻሕፍቴ</button>
@@ -2226,8 +2227,201 @@
             fetchBookComments(activeReadingBook.id);
         }
 
+        // ==========================================
+        // የተስተካከሉ እና አዳዲስ የተሟሉ ተግባራት (Functions)
+        // ==========================================
+
         async function openAdminDashboardModal() {
-            // ... (ቀጣይ ኮዶች)
+            if (!isAdmin) {
+                alert('ይህንን ገጽ ለማየት የአስተዳዳሪ (Admin) ፈቃድ ያስፈልጋል!');
+                return;
+            }
+
+            let totalSoldQty = 0;
+            let totalSoldRevenue = 0;
+            let allOrders = [];
+
+            const {data: ords} = await dbClient.from('orders').select('*');
+            if (ords) {
+                allOrders = ords.map(o => ({
+                    id: o.id,
+                    buyerName: o.buyer_name,
+                    buyerPhone: o.buyer_phone,
+                    totalPrice: o.total_price,
+                    itemsSummary: o.items_summary,
+                    items: o.items,
+                    status: o.status,
+                    statusCode: o.status_code
+                }));
+            } else {
+                allOrders = JSON.parse(localStorage.getItem('admin_orders_notifications') || '[]');
+            }
+
+            allOrders.forEach(o => {
+                if (o.statusCode === 'completed' && o.items) {
+                    o.items.forEach(it => {
+                        totalSoldQty += (it.quantity || 1);
+                        totalSoldRevenue += (it.price * (it.quantity || 1));
+                    });
+                }
+            });
+
+            let totalStock = allBooks.reduce((sum, b) => sum + (b.stock ?? 10), 0);
+            let totalTitles = allBooks.length;
+
+            document.getElementById('admin-sold-stats').innerText = `${totalSoldRevenue} ብር (${totalSoldQty} ቅጂ)`;
+            document.getElementById('admin-remaining-stats').innerText = `${totalStock} ቅጂዎች (${totalTitles} አርእስት)`;
+
+            const ordersListContainer = document.getElementById('admin-orders-list');
+            if (allOrders.length === 0) {
+                ordersListContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; font-size: 0.85rem;">ምንም ግዥ የለም።</p>';
+            } else {
+                ordersListContainer.innerHTML = '';
+                allOrders.forEach(o => {
+                    ordersListContainer.innerHTML += `
+                        <div style="background: rgba(30,41,59,0.9); padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 0.82rem; border-left: 4px solid #f59e0b;">
+                            <div style="display: flex; justify-content: space-between; font-weight: bold; color: #fff;">
+                                <span>ትዕዛዝ #${o.id} - ${o.buyerName} (${o.buyerPhone})</span>
+                                <span style="color: #38bdf8;">${o.status || 'በመላክ ላይ'}</span>
+                            </div>
+                            <div style="color: #cbd5e1; margin: 2px 0;">መጽሐፍት: ${o.itemsSummary}</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 6px;">
+                                <span style="color: #34d399;">ጠቅላላ: ${o.totalPrice} ብር</span>
+                                <div style="display: flex; gap: 4px;">
+                                    <button onclick="updateAdminOrderStatus(${o.id}, 'shipping', 'በመላክ ላይ (Shipping)')" style="background:#3b82f6; color:#fff; border:none; padding:3px 8px; border-radius:4px; cursor:pointer; font-size:0.75rem;">ላክ</button>
+                                    <button onclick="updateAdminOrderStatus(${o.id}, 'completed', 'ተጠናቀቀ (Completed)')" style="background:#10b981; color:#fff; border:none; padding:3px 8px; border-radius:4px; cursor:pointer; font-size:0.75rem;">አጠናቅ</button>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            }
+
+            const complaintsContainer = document.getElementById('admin-complaints-list');
+            let complaints = [];
+            const {data: compData} = await dbClient.from('complaints').select('*');
+            if (compData && compData.length > 0) {
+                complaints = compData;
+            } else {
+                complaints = JSON.parse(localStorage.getItem('local_complaints') || '[]');
+            }
+
+            if (complaints.length === 0) {
+                complaintsContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; font-size: 0.85rem;">ምንም ቅሬታ የለም።</p>';
+            } else {
+                complaintsContainer.innerHTML = '';
+                complaints.forEach(c => {
+                    complaintsContainer.innerHTML += `
+                        <div style="background: rgba(30,41,59,0.9); padding: 8px; border-radius: 6px; margin-bottom: 6px; font-size: 0.82rem; border-left: 4px solid #ef4444;">
+                            <div style="font-weight: bold; color: #fff;">${c.title} (${c.name || 'ያልታወቀ'}, ${c.phone || ''})</div>
+                            <div style="color: #cbd5e1; margin-top: 2px;">${c.message}</div>
+                        </div>`;
+                });
+            }
+
+            document.getElementById('adminDashboardModal').style.display = 'flex';
+        }
+
+        function closeAdminDashboardModal() {
+            document.getElementById('adminDashboardModal').style.display = 'none';
+        }
+
+        async function updateAdminOrderStatus(orderId, statusCode, statusText) {
+            if (currentUser) {
+                await dbClient.from('orders').update({status: statusText, status_code: statusCode}).eq('id', orderId);
+            }
+            let adminOrders = JSON.parse(localStorage.getItem('admin_orders_notifications') || '[]');
+            let ord = adminOrders.find(o => o.id == orderId);
+            if (ord) {
+                ord.status = statusText;
+                ord.statusCode = statusCode;
+                localStorage.setItem('admin_orders_notifications', JSON.stringify(adminOrders));
+            }
+            alert('የቴዕዛዙ ሁኔታ ተሻሽሏል!');
+            openAdminDashboardModal();
+        }
+
+        function openMyLibraryModal() {
+            const listContainer = document.getElementById('purchased-books-list');
+            if (purchasedBooks.length === 0) {
+                listContainer.innerHTML = '<p style="color: #94a3b8; text-align: center; padding: 15px; font-size: 0.88rem;">እስካሁን የገዙት መጽሐፍ የለም።</p>';
+            } else {
+                listContainer.innerHTML = '';
+                purchasedBooks.forEach(b => {
+                    listContainer.innerHTML += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(15,23,42,0.6); padding: 8px 10px; border-radius: 8px; margin-bottom: 6px; font-size: 0.85rem;">
+                            <div>
+                                <div style="font-weight: 600; color: #fff;">${b.title}</div>
+                                <div style="font-size: 0.75rem; color: #94a3b8;">ደራሲ፡ ${b.author || ''}</div>
+                            </div>
+                            <button onclick="openReader('${b.id}'); closeMyLibraryModal();" style="background: #06b6d4; color: white; border: none; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">ሙሉውን አንብብ</button>
+                        </div>`;
+                });
+            }
+            document.getElementById('myLibraryModal').style.display = 'flex';
+        }
+
+        function closeMyLibraryModal() {
+            document.getElementById('myLibraryModal').style.display = 'none';
+        }
+
+        function openAuthModal() {
+            isSignUpMode = false;
+            document.getElementById('auth-title').innerText = 'ወደ አካውንትዎ ይግቡ';
+            document.getElementById('auth-submit-btn').innerText = 'ግባ';
+            document.getElementById('toggle-auth-mode').innerText = 'እዚህ ይመዝገቡ';
+            document.getElementById('authModal').style.display = 'flex';
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+        }
+
+        function switchAuthMode(e) {
+            e.preventDefault();
+            isSignUpMode = !isSignUpMode;
+            if (isSignUpMode) {
+                document.getElementById('auth-title').innerText = 'አዲስ አካውንት ይፍጠሩ';
+                document.getElementById('auth-submit-btn').innerText = 'ይመዝገቡ';
+                document.getElementById('toggle-auth-mode').innerText = 'ወደ መግቢያ ተመለስ';
+            } else {
+                document.getElementById('auth-title').innerText = 'ወደ አካውንትዎ ይግቡ';
+                document.getElementById('auth-submit-btn').innerText = 'ግባ';
+                document.getElementById('toggle-auth-mode').innerText = 'እዚህ ይመዝገቡ';
+            }
+        }
+
+        async function handleLogin() {
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+
+            if (!email || !password) {
+                alert('እባክዎ ኢሜይል እና ሚስጥራዊ ቃል ያስገቡ!');
+                return;
+            }
+
+            if (isSignUpMode) {
+                const {data, error} = await dbClient.auth.signUp({email, password});
+                if (error) {
+                    alert('ምዝገባ አልተሳካም: ' + error.message);
+                    return;
+                }
+                alert('ምዝገባው ተጠናቋል! ኢሜይልዎን በማረጋገጥ ይግቡ።');
+                isSignUpMode = false;
+                openAuthModal();
+            } else {
+                const {data, error} = await dbClient.auth.signInWithPassword({email, password});
+                if (error) {
+                    alert('መግባት አልተቻለም: ' + error.message);
+                    return;
+                }
+                currentUser = data.user;
+                await checkAdminStatus(currentUser.id);
+                await loadUserDataFromDB(currentUser.id);
+                alert('በተሳካ ሁኔታ ገብተዋል!');
+                closeAuthModal();
+                updateAuthUI();
+                displayBooks(allBooks);
+            }
         }
     </script>
 </body>
