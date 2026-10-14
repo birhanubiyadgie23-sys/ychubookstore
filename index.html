@@ -1668,7 +1668,7 @@
             isAdmin = false;
             purchasedBooks = [];
             updateAuthUI();
-            alert('በሳካ ሁኔታ ወጥተዋል!');
+            alert('በተሳካ ሁኔታ ወጥተዋል!');
             window.location.reload();
         }
 
@@ -1805,7 +1805,7 @@
 
         function openCheckout() {
             if (cart.length === 0) {
-                alert('እባክዎ መጀመሪያ ቅርጫት ውስጥ መጽሐፍ ይክቱ!');
+                alert('እባክዎ መጀመሪያ የሚገዙትን መጽሐፍ ይምረጡ!');
                 return;
             }
             let totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -1871,7 +1871,7 @@
                 return;
             }
 
-            alert('ግዢዎ በተሳካ ሁኔታ ተልኳል!');
+            alert('የግዥ ጥያቄዎ በተሳካ ሁኔታ ተልኳል!');
             cart = [];
             updateCartUI();
             closeCheckout();
@@ -1882,7 +1882,7 @@
             if (!order) return;
 
             order.statusCode = 'completed';
-            order.status = 'ተጠናቀቀ (Completed)';
+            order.status = 'ግብይትዎ ተጠናቋል (Completed)';
 
             if (currentUser) {
                 await dbClient.from('orders').update({ status: 'ተጠናቀቀ (Completed)', status_code: 'completed' }).eq('id', orderId);
