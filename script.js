@@ -464,7 +464,7 @@ function handleNewOrder(orderData) {
 
     // ለ) ድምጽ ማጫወት
     notificationSound.play().catch(error => {
-        console.log("አሳሹ አቶፕሌይ (Autoplay) ስለከለከለ ድምጹ አልተጫወተም:", error);
+        console.log("አሳሹ አውቶፕሌይ (Autoplay) ስለከለከለ ድምጹ አልተጫወተም:", error);
     });
 
     // ሐ) ማሳወቂያን በ Screen ላይ ማሳየት (ከተፈለገ)
